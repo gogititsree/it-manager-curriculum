@@ -38,7 +38,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Build shared packages
-        run: pnpm -r --filter './packages/*' build
+        run: pnpm -r --filter "./packages/*" build
 
       # The gate that matters most: every lesson, quiz and flashcard is schema-checked here, so a
       # bad authoring change cannot reach main.
@@ -55,6 +55,15 @@ jobs:
         run: |
           pnpm --filter @itmc/api build
           pnpm --filter @itmc/web build
+
+      # Runs the composite script from package.json rather than its steps individually. This matters
+      # on Windows: the steps above run in PowerShell, but `pnpm run` executes a script through
+      # cmd.exe, where single quotes are literal characters rather than quoting. A filter written as
+      # --filter './packages/*' therefore matched nothing, and because "no projects matched" exits
+      # zero, the chain carried on and failed later with a confusing module-not-found. Only invoking
+      # the real script catches that class of bug.
+      - name: The composite build script
+        run: pnpm build
 
       # Starts the real server the way `pnpm start` does, from the repo root, and exercises auth,
       # content and the SPA fallback. On Windows this is the closest thing to a production

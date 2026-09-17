@@ -3,9 +3,12 @@
   "private": true,
   "version": "1.0.0",
   "packageManager": "pnpm@11.5.0",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
-    "build": "pnpm -r --filter './packages/*' build && pnpm content:build && pnpm --filter @itmc/api build && pnpm --filter @itmc/web build",
+    "build": "pnpm -r --filter \"./packages/*\" build && pnpm content:build && pnpm --filter @itmc/api build && pnpm --filter @itmc/web build",
+    "build:static": "pnpm -r --filter \"./packages/*\" build && pnpm content:build && pnpm --filter @itmc/web build:static",
     "dev": "pnpm --parallel --filter @itmc/api --filter @itmc/web dev",
     "start": "node apps/api/dist/main.js",
     "content:build": "pnpm --filter @itmc/content-build run build-content",
