@@ -230,3 +230,24 @@ redirect to a file on Windows.
 | Lesson shows "not written yet" | That level is still a stub. Check `status` in the lesson's frontmatter. |
 | Progress looks lower after an upgrade | Expected when sections were removed from a lesson. Completion is derived, not stored. |
 | Database locked | Two processes opened the same file. Only one API instance may run per database. |
+
+### Windows notes
+
+Four Windows-specific faults have been found and fixed in this project. They are recorded here
+because each one is easy to reintroduce.
+
+| Fault | Why it happened | Guard |
+| --- | --- | --- |
+| A native module would not install | `better-sqlite3` needs a C++ toolchain when no prebuilt binary matches the Node version | The driver is `@libsql/client`, which ships prebuilt binaries. Do not switch back. |
+| `pnpm dev` could not open the database | Relative paths in `.env` were resolved against the working directory, which differs between `pnpm dev` and `pnpm start` | `apps/api/src/lib/paths.ts` resolves them against the repo root |
+| An invalid database URL | A path was turned into a URL by string concatenation, so a `#` in it started a URL fragment | `toDatabaseUrl` in `packages/db` uses `pathToFileURL` |
+| `pnpm build` silently built nothing | `pnpm run` uses cmd.exe, where single quotes are literal, so `--filter './packages/*'` matched no projects and exited zero | Filters are double-quoted, and CI runs the composite `pnpm build` script, not only its steps |
+
+Two rules follow from these:
+
+- **Never use single quotes in a package.json script.** They are not quote characters in cmd.exe.
+  Use double quotes, escaped for JSON.
+- **Never build a file URL by concatenation.** Use `pathToFileURL`. A Windows path is not a URL.
+
+A directory whose path contains a space is fully supported; the build and the server are tested
+from one.
