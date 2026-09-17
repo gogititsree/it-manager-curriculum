@@ -1,8 +1,10 @@
 node_modules/
 dist/
 *.tsbuildinfo
-.env
-.env.local
+# Every .env variant holds real secrets. Only the example is committed. The glob matters:
+# a stray .env.bak or .env.old is exactly the file that leaks a token.
+.env*
+!.env.example
 data/
 backups/
 content/dist/
