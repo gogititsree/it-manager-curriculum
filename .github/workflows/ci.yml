@@ -8,13 +8,24 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # Ubuntu is the production target: the container is node:22-bookworm-slim.
+    # Windows is the development machine, and this project has already been bitten twice by
+    # Windows-only problems (a native module that would not compile, and working-directory path
+    # resolution). Both are cheap enough to keep, so both stay.
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+
     steps:
       - uses: actions/checkout@v4
 
+      # No `version:` here on purpose. package.json sets "packageManager": "pnpm@11.5.0", and
+      # specifying it in both places makes this action fail with "Multiple versions of pnpm
+      # specified". The manifest is the single source of truth.
       - uses: pnpm/action-setup@v4
-        with:
-          version: 11
 
       - uses: actions/setup-node@v4
         with:
@@ -26,8 +37,8 @@ jobs:
       - name: Build shared packages
         run: pnpm -r --filter './packages/*' build
 
-      # Content validation is the gate that matters most: every lesson, quiz and flashcard
-      # is schema-checked here, so a bad authoring PR cannot reach main.
+      # The gate that matters most: every lesson, quiz and flashcard is schema-checked here, so a
+      # bad authoring change cannot reach main.
       - name: Validate and build content
         run: pnpm content:build
 
@@ -42,24 +53,72 @@ jobs:
           pnpm --filter @itmc/api build
           pnpm --filter @itmc/web build
 
+      # Starts the real server the way `pnpm start` does, from the repo root, and exercises auth,
+      # content and the SPA fallback. Running it on Windows too is what would have caught the
+      # working-directory path bug.
       - name: Smoke test the API
+        shell: bash
         env:
-          AUTH_TOKEN: ci-smoke-token
+          AUTH_TOKEN: ci-smoke-token-not-a-real-secret
           DATABASE_PATH: ./data/ci.db
           CONTENT_DIST: ./content/dist
-          PORT: 4000
+          PORT: '4000'
         run: |
+          set -euo pipefail
           pnpm db:migrate
           node apps/api/dist/main.js &
           API_PID=$!
-          for i in $(seq 1 30); do
+          trap 'kill $API_PID 2>/dev/null || true' EXIT
+
+          for i in $(seq 1 60); do
             curl -sf http://localhost:4000/api/health >/dev/null && break
             sleep 1
           done
-          echo "--- health"
+
+          echo "health:"
           curl -sf http://localhost:4000/api/health
-          echo "--- unauthenticated request must be rejected"
+
+          echo "unauthenticated request must be rejected:"
           test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:4000/api/content/manifest)" = "401"
-          echo "--- authenticated manifest"
-          curl -sf -H "Authorization: Bearer ci-smoke-token" http://localhost:4000/api/content/manifest >/dev/null
-          kill $API_PID
+
+          echo "authenticated manifest:"
+          curl -sf -H "Authorization: Bearer $AUTH_TOKEN" http://localhost:4000/api/content/manifest >/dev/null
+
+          echo "a lesson loads:"
+          curl -sf -H "Authorization: Bearer $AUTH_TOKEN" \
+            "http://localhost:4000/api/content/lessons/java%2Foop-fundamentals%40rusty" >/dev/null
+
+          echo "the web client is served with an SPA fallback:"
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:4000/topics/java/oop-fundamentals)" = "200"
+
+          echo "all smoke checks passed"
+
+  # Proves the Dockerfile still builds. Linux only: there is no Windows container target.
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Build the image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          load: true
+          tags: itmc:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Run it and check health
+        run: |
+          set -euo pipefail
+          docker run -d --name itmc-ci -p 4000:4000 \
+            -e AUTH_TOKEN=ci-smoke-token-not-a-real-secret \
+            itmc:ci
+          for i in $(seq 1 60); do
+            if [ "$(docker inspect --format '{{.State.Health.Status}}' itmc-ci)" = "healthy" ]; then break; fi
+            sleep 2
+          done
+          test "$(docker inspect --format '{{.State.Health.Status}}' itmc-ci)" = "healthy"
+          curl -sf http://localhost:4000/api/health
+          echo "container is healthy"
+          docker rm -f itmc-ci
