@@ -61,6 +61,12 @@ signal-based graceful shutdown — were both confirmed once Docker was working. 
 tested natively because Windows does not deliver POSIX signals to a detached Node process; sending it
 to the container's PID 1 proved the handler works.
 
+**The deployment target is Windows**, running `pnpm start`. CI therefore builds and tests on
+windows-latest first and ubuntu-latest second, plus a job that builds the container image and waits
+for its healthcheck. A Windows failure is a production failure; a Linux-only failure is a
+portability bug. The graceful shutdown handler does not run on Windows, which is safe rather than
+merely tolerated: SQLite in WAL mode is crash-safe, so an abrupt stop cannot corrupt the database.
+
 ### Docker status on this machine
 
 Working and verified. Docker Desktop 4.91.0, CLI and engine 29.8.0 (linux/amd64), WSL 2.7.14 with

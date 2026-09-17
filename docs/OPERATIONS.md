@@ -5,8 +5,12 @@ which is also the person using it.
 
 ## 1. What the deployment actually is
 
-One Node process. It serves the JSON API under `/api` and the built web client at `/`. Its state is
-one SQLite file. There is no external service, no message broker, no separate web server required.
+One Node process, running on **Windows**, started with `pnpm start`. It serves the JSON API under
+`/api` and the built web client at `/`. Its state is one SQLite file. There is no external service,
+no message broker, no separate web server required.
+
+The app also runs unchanged on Linux and in a container, and CI builds and tests all three, but
+Windows is the target that matters here.
 
 ```
   browser / phone
@@ -42,12 +46,14 @@ not be asked again on that device.
 
 ## 3. Running it as a service
 
-### Windows (the authoring machine)
+### Windows — the primary deployment target
 
-Use a scheduled task that runs at logon, or NSSM if you want a true service.
+This app is run on Windows with `pnpm start`. Everything below assumes that.
+
+A scheduled task that starts at logon is the simplest way to keep it running:
 
 ```powershell
-# Scheduled task, runs at logon, restarts on failure
+# Runs at logon, restarts up to 3 times on failure
 $action  = New-ScheduledTaskAction -Execute "node.exe" `
            -Argument "apps\api\dist\main.js" -WorkingDirectory "C:\Users\Tia\Projectsree\ITMgrTrain"
 $trigger = New-ScheduledTaskTrigger -AtLogOn
@@ -55,7 +61,29 @@ $settings = New-ScheduledTaskSettingsSet -RestartCount 3 -RestartInterval (New-T
 Register-ScheduledTask -TaskName "ITMgrCurriculum" -Action $action -Trigger $trigger -Settings $settings
 ```
 
+That only runs while you are logged in. For something that starts at boot and survives logoff, wrap
+it as a real service with [NSSM](https://nssm.cc/):
+
+```powershell
+nssm install ITMgrCurriculum "C:\Program Files\nodejs\node.exe" "apps\api\dist\main.js"
+nssm set ITMgrCurriculum AppDirectory "C:\Users\Tia\Projectsree\ITMgrTrain"
+nssm set ITMgrCurriculum AppStdout "C:\Users\Tia\Projectsree\ITMgrTrain\logs\itmc.log"
+nssm set ITMgrCurriculum AppStderr "C:\Users\Tia\Projectsree\ITMgrTrain\logs\itmc.log"
+nssm start ITMgrCurriculum
+```
+
+**On stopping it.** Windows does not deliver POSIX signals, so the graceful shutdown handler in
+`apps/api/src/main.ts` does not run when the process is killed on Windows. It is only exercised in
+the container. This is safe rather than merely tolerable: SQLite in WAL mode is crash-safe by
+design, so an abrupt stop cannot corrupt the database. The worst case is that the last write in
+flight is rolled back. Take a backup before upgrades anyway.
+
+**Upgrading.** Stop the task or service, `git pull`, `pnpm install`, `pnpm build`, `pnpm db:migrate`,
+start it again. Section 6 has the detail.
+
 ### Linux / NAS (systemd)
+
+Not the primary path here, but the app runs unchanged on Linux.
 
 ```ini
 # /etc/systemd/system/itmc.service

@@ -8,14 +8,17 @@ on:
 
 jobs:
   build:
-    # Ubuntu is the production target: the container is node:22-bookworm-slim.
-    # Windows is the development machine, and this project has already been bitten twice by
-    # Windows-only problems (a native module that would not compile, and working-directory path
-    # resolution). Both are cheap enough to keep, so both stay.
+    # Windows is the deployment target: this app is self-hosted on a Windows machine and run with
+    # `pnpm start`. It is listed first for that reason, and a Windows failure is a production
+    # failure. This project has already been bitten twice by Windows-only faults (a native module
+    # that would not compile, and environment paths resolving against the working directory).
+    #
+    # Ubuntu is kept as the portability check and because the container image is Linux
+    # (node:22-bookworm-slim). A Linux-only failure is a portability bug, not an outage.
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [windows-latest, ubuntu-latest]
 
     runs-on: ${{ matrix.os }}
 
@@ -54,8 +57,8 @@ jobs:
           pnpm --filter @itmc/web build
 
       # Starts the real server the way `pnpm start` does, from the repo root, and exercises auth,
-      # content and the SPA fallback. Running it on Windows too is what would have caught the
-      # working-directory path bug.
+      # content and the SPA fallback. On Windows this is the closest thing to a production
+      # rehearsal, and it is what would have caught the working-directory path bug.
       - name: Smoke test the API
         shell: bash
         env:
@@ -93,7 +96,8 @@ jobs:
 
           echo "all smoke checks passed"
 
-  # Proves the Dockerfile still builds. Linux only: there is no Windows container target.
+  # Proves the Dockerfile still builds and the image actually comes up healthy. Not the primary
+  # deployment path here, but it keeps the container option from rotting.
   docker:
     runs-on: ubuntu-latest
     steps:
