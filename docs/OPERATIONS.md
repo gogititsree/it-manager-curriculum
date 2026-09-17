@@ -55,7 +55,7 @@ A scheduled task that starts at logon is the simplest way to keep it running:
 ```powershell
 # Runs at logon, restarts up to 3 times on failure
 $action  = New-ScheduledTaskAction -Execute "node.exe" `
-           -Argument "apps\api\dist\main.js" -WorkingDirectory "C:\Users\Tia\Projectsree\ITMgrTrain"
+           -Argument "apps\api\dist\main.js" -WorkingDirectory "C:\itmc"
 $trigger = New-ScheduledTaskTrigger -AtLogOn
 $settings = New-ScheduledTaskSettingsSet -RestartCount 3 -RestartInterval (New-TimeSpan -Minutes 1)
 Register-ScheduledTask -TaskName "ITMgrCurriculum" -Action $action -Trigger $trigger -Settings $settings
@@ -66,9 +66,9 @@ it as a real service with [NSSM](https://nssm.cc/):
 
 ```powershell
 nssm install ITMgrCurriculum "C:\Program Files\nodejs\node.exe" "apps\api\dist\main.js"
-nssm set ITMgrCurriculum AppDirectory "C:\Users\Tia\Projectsree\ITMgrTrain"
-nssm set ITMgrCurriculum AppStdout "C:\Users\Tia\Projectsree\ITMgrTrain\logs\itmc.log"
-nssm set ITMgrCurriculum AppStderr "C:\Users\Tia\Projectsree\ITMgrTrain\logs\itmc.log"
+nssm set ITMgrCurriculum AppDirectory "C:\itmc"
+nssm set ITMgrCurriculum AppStdout "C:\itmc\logs\itmc.log"
+nssm set ITMgrCurriculum AppStderr "C:\itmc\logs\itmc.log"
 nssm start ITMgrCurriculum
 ```
 
@@ -185,7 +185,7 @@ Schedule it:
 ```powershell
 # Windows: daily at 02:00
 $a = New-ScheduledTaskAction -Execute "node.exe" -Argument "scripts\backup.mjs" `
-     -WorkingDirectory "C:\Users\Tia\Projectsree\ITMgrTrain"
+     -WorkingDirectory "C:\itmc"
 Register-ScheduledTask -TaskName "ITMgrCurriculumBackup" -Action $a `
      -Trigger (New-ScheduledTaskTrigger -Daily -At 2am)
 ```
