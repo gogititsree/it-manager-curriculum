@@ -1,0 +1,174 @@
+questions:
+  - id: q-001
+    levels: [beginner, rusty]
+    audience: all
+    type: single
+    prompt: "What does encapsulation primarily protect?"
+    options:
+      - "The performance of method calls"
+      - "The invariants of an object's data, by controlling how it can change"
+      - "The class from being subclassed"
+      - "The object from being garbage collected"
+    answer: [1]
+    explanation: "Encapsulation keeps fields private so the only way to change state is through methods that enforce the rules. Subclassing is controlled by final/sealed, not encapsulation."
+    tags: [encapsulation]
+
+  - id: q-002
+    levels: [beginner, intermediate, rusty]
+    audience: manager
+    type: single
+    prompt: "In a design review you see a class hierarchy four levels deep whose levels exist to share utility methods. The most useful question is:"
+    options:
+      - "Which design pattern is this?"
+      - "What happens to the subclasses when the base class needs to change, and could composition share this code instead?"
+      - "Can we add an interface at the top?"
+      - "Have the classes been unit tested?"
+    answer: [1]
+    explanation: "Inheritance for code reuse couples children to parent internals. Composition shares behaviour without that fragility. Tests and patterns do not address the structural risk."
+    tags: [inheritance, review]
+
+  - id: q-003
+    levels: [beginner]
+    audience: engineer
+    type: single
+    prompt: "Which declaration makes a Java class impossible to extend?"
+    options:
+      - "private class Account"
+      - "static class Account"
+      - "final class Account"
+      - "abstract class Account"
+    answer: [2]
+    explanation: "final on a class forbids subclassing. abstract requires it. private and static have other meanings for nested classes."
+    tags: [syntax]
+
+  - id: q-004
+    levels: [rusty, intermediate]
+    audience: engineer
+    type: multi
+    prompt: "Which of these does a Java record generate automatically?"
+    options:
+      - "A canonical constructor"
+      - "equals and hashCode based on all components"
+      - "Setter methods for each component"
+      - "Accessor methods named after the components (e.g. cents())"
+    answer: [0, 1, 3]
+    explanation: "Records are immutable, so there are no setters. Accessors are named after the component without a get prefix."
+    tags: [records, changed-since]
+
+  - id: q-005
+    levels: [rusty, intermediate]
+    audience: all
+    type: truefalse
+    prompt: "A record holding a List is deeply immutable: callers cannot modify the list."
+    options: ["True", "False"]
+    answer: [1]
+    explanation: "Records are shallowly immutable. The reference cannot change but a mutable List can still be modified. Copy defensively with List.copyOf in the compact constructor."
+    tags: [records, gotcha]
+
+  - id: q-006
+    levels: [intermediate, rusty]
+    audience: manager
+    type: single
+    prompt: "A team models payment outcomes as a sealed interface with record implementations and an exhaustive switch. What is the governance benefit?"
+    options:
+      - "Faster serialisation"
+      - "Adding a new outcome fails compilation wherever it is not handled, so no case can be silently ignored"
+      - "It removes the need for unit tests"
+      - "It allows outcomes to be modified after creation"
+    answer: [1]
+    explanation: "Exhaustive matching over a sealed hierarchy turns a missed case into a build failure rather than a runtime fall-through. That is a control you can describe to risk and audit."
+    tags: [sealed, bank-context]
+
+  - id: q-007
+    levels: [beginner, intermediate]
+    audience: all
+    type: single
+    prompt: "Code that depends on a PaymentRail interface rather than a concrete SwiftGateway class mainly buys you:"
+    options:
+      - "Better runtime performance"
+      - "The ability to swap or fake the implementation without changing the caller"
+      - "Automatic retries"
+      - "Thread safety"
+    answer: [1]
+    explanation: "Polymorphism through an interface decouples callers from implementations, which is what enables test doubles and vendor replacement."
+    tags: [interfaces]
+
+  - id: q-008
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "Where should the rule 'a payment status can never move backwards' live?"
+    options:
+      - "In every service that updates payments"
+      - "In the database trigger only"
+      - "Inside the PaymentInstruction class, in the methods that perform transitions"
+      - "In the controller that receives the request"
+    answer: [2]
+    explanation: "Invariants belong with the data they protect. Putting the rule in the object means there is exactly one place it can be enforced and one place to test it."
+    tags: [encapsulation, design]
+
+  - id: q-009
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "A service class has grown to forty methods, many named like canCancel(Order o) that only read the order's own fields. The most useful review question is:"
+    options:
+      - "Is the class well tested?"
+      - "Should canCancel move onto Order itself, since the rule only needs Order's own data?"
+      - "Should the class be renamed?"
+      - "Is the class thread-safe?"
+    answer: [1]
+    explanation: "A method that only needs its argument's own fields is a sign the rule has migrated out of the object it belongs to. Renaming and thread-safety do not address the structural issue; tests can pass on a badly organised class."
+    tags: [design-smell, review]
+
+  - id: q-010
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "Under the open/closed principle, adding a new case to existing behaviour should ideally require:"
+    options:
+      - "Editing the existing switch or if-chain that handles the other cases"
+      - "Adding a new class (or record) that implements the existing abstraction, without editing the others"
+      - "Adding a new boolean parameter to the existing method"
+      - "Adding a comment explaining the new case"
+    answer: [1]
+    explanation: "Open/closed means open for extension, closed for modification: new behaviour arrives as new code, not edits scattered through existing conditionals that every other case also depends on."
+    tags: [solid, design]
+
+  - id: q-011
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "A method reads elements from a List<? extends Number> but never writes to it. This use of a wildcard is:"
+    options:
+      - "Wrong; it should be List<Number>"
+      - "Correct: PECS says a producer (something you only read from) should use extends"
+      - "Correct, but only because Number is abstract"
+      - "Unnecessary; List<Object> would behave identically"
+    answer: [1]
+    explanation: "PECS: Producer Extends, Consumer Super. A list you only read from is a producer, so ? extends Number is right and also more flexible than List<Number>, since it accepts List<Integer> or List<Double>."
+    tags: [generics]
+
+  - id: q-012
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "A domain package imports org.springframework.* directly in several classes. What does this tell a reviewer?"
+    options:
+      - "Nothing; Spring is the standard, so this is expected"
+      - "The domain's business rules cannot be tested or reused without a Spring context, which was a decision worth surfacing"
+      - "The code will run slower"
+      - "The team has not adopted dependency inversion anywhere in the codebase"
+    answer: [1]
+    explanation: "Dependency direction is a spectrum, not pass/fail; the point of asking is to confirm the coupling was a conscious tradeoff (and is acceptable for this service's size) rather than an accident."
+    tags: [dependency-inversion, review]
+
+  - id: q-013
+    levels: [intermediate]
+    audience: engineer
+    type: truefalse
+    prompt: "Wrapping every primitive field (age, counts, flags) in its own record type is generally good practice, regardless of whether it has ever been confused with another value."
+    options: ["True", "False"]
+    answer: [1]
+    explanation: "Wrap identifiers and money because they are commonly confused with bare strings/longs and the mistake is costly. Wrapping every primitive by default adds ceremony without a corresponding bug class it prevents."
+    tags: [design, gotcha]

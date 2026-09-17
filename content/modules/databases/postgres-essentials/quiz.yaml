@@ -1,0 +1,203 @@
+questions:
+  - id: q-001
+    levels: [beginner]
+    audience: engineer
+    type: single
+    prompt: "By default in Postgres, what happens if you try to insert a row into `payments` whose `customer_id` does not exist in `customers`, given a foreign key constraint?"
+    options:
+      - "The insert succeeds and the row is flagged for later cleanup"
+      - "The insert is rejected with a constraint violation error"
+      - "The customer row is automatically created"
+      - "The insert succeeds but customer_id is set to NULL"
+    answer: [1]
+    explanation: "A foreign key constraint is enforced at write time; Postgres rejects the insert rather than allowing a reference to a row that doesn't exist."
+    tags: [keys, constraints]
+
+  - id: q-002
+    levels: [beginner]
+    audience: manager
+    type: single
+    prompt: "In a schema review, what is the specific risk of a table with no primary key and a customer_id column with no REFERENCES constraint?"
+    options:
+      - "The table will be slower to query"
+      - "The database is not enforcing a rule the business relies on, so any future code bug can silently violate it"
+      - "The table cannot be backed up"
+      - "Postgres will refuse to create the table"
+    answer: [1]
+    explanation: "Missing keys and constraints mean correctness depends entirely on application code being right every time, forever, rather than being enforced once by the engine."
+    tags: [review, keys]
+
+  - id: q-003
+    levels: [beginner, intermediate]
+    audience: engineer
+    type: truefalse
+    prompt: "In Postgres, a foreign key column is automatically indexed when the constraint is created."
+    options: ["True", "False"]
+    answer: [1]
+    explanation: "Unlike the primary key (which is indexed automatically), foreign key columns are not automatically indexed in Postgres. This is a common cause of slow joins and slow cascading deletes."
+    tags: [indexes, gotcha]
+
+  - id: q-004
+    levels: [beginner]
+    audience: all
+    type: single
+    prompt: "What does wrapping two UPDATE statements in BEGIN/COMMIT primarily guarantee?"
+    options:
+      - "Both statements run faster"
+      - "Either both statements' effects are visible after a crash, or neither is — no partial state"
+      - "The statements run in parallel"
+      - "Other transactions are blocked from reading the table"
+    answer: [1]
+    explanation: "This is atomicity: a transaction's effects are all-or-nothing, including across a crash. It does not by itself parallelize work or block all readers."
+    tags: [transactions, acid]
+
+  - id: q-005
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "What does MVCC mean for how Postgres handles an UPDATE?"
+    options:
+      - "The old row is deleted immediately and replaced in place"
+      - "A new row version is written and the old one is left in place until vacuum reclaims it"
+      - "The update is queued until all readers finish"
+      - "The table is locked exclusively for the duration of the update"
+    answer: [1]
+    explanation: "MVCC writes a new row version rather than overwriting in place, which is why readers never block writers — but it's also why dead row versions accumulate and need vacuum."
+    tags: [mvcc]
+
+  - id: q-006
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "A team reads a balance, checks in application code that it covers a withdrawal, then issues a separate UPDATE, at default Read Committed isolation. Under load, occasional overdrafts happen. What is the cheapest correct fix?"
+    options:
+      - "Switch the whole database to Serializable isolation"
+      - "A single atomic statement: UPDATE ... SET balance = balance - amount WHERE balance >= amount"
+      - "Add a unique index on the balance column"
+      - "Increase max_connections"
+      - "None; Read Committed prevents this"
+    answer: [1]
+    explanation: "Read Committed does not protect a check-then-act sequence across two statements. An atomic conditional UPDATE closes the race window cheaply without extra locking or retry logic."
+    tags: [isolation, race-condition]
+
+  - id: q-007
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "A design review shows a core business fact (payment status, an amount finance will reconcile) stored inside a JSONB column 'for flexibility.' What is the right response?"
+    options:
+      - "Approve it; JSONB is always more flexible than columns"
+      - "Push back — reporting and reconciliation needs are exactly what a JSONB blob makes harder, and flexibility here is risk deferred to the reporting team"
+      - "Require the entire table to be converted to JSONB for consistency"
+      - "Ignore it; it's an implementation detail"
+    answer: [1]
+    explanation: "JSONB is the right tool for genuinely variable, application-owned data — not for facts that need to be queried, joined, or reconciled across many rows, which is where the intermediate lesson's decision rule points."
+    tags: [jsonb, decision]
+
+  - id: q-008
+    levels: [intermediate]
+    audience: engineer
+    type: multi
+    prompt: "Which of these are genuine costs or limitations of table partitioning in Postgres?"
+    options:
+      - "A query that doesn't filter on the partition key gets no pruning benefit"
+      - "More partitions means more objects (and usually indexes) to manage"
+      - "It makes foreign key constraints impossible anywhere in the database"
+      - "It guarantees faster writes for every workload"
+    answer: [0, 1]
+    explanation: "Partitioning does not universally speed up writes and does not disable foreign keys elsewhere in the database. Its real costs are management overhead and the loss of pruning benefit for queries that don't filter on the partition key."
+    tags: [partitioning]
+
+  - id: q-009
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "In pgbouncer's transaction pooling mode, what is the practical implication for application code?"
+    options:
+      - "Nothing changes; all session-level features work exactly as with a direct connection"
+      - "Session-level state (PREPARE, session-level SET, advisory locks held across statements) can't be relied on, because the underlying real connection can change between transactions"
+      - "All queries must be wrapped in explicit transactions"
+      - "It only supports read-only queries"
+    answer: [1]
+    explanation: "Transaction pooling returns the real connection to the pool after each transaction, so anything relying on session state surviving across transactions is unsafe."
+    tags: [pgbouncer, pooling]
+
+  - id: q-010
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "What is the most common real production incident caused by not thinking about connection pooling?"
+    options:
+      - "Slow disk I/O"
+      - "New connections are refused because the connection limit is exhausted, while the database's CPU/memory look otherwise healthy"
+      - "Data corruption"
+      - "Increased storage costs"
+    answer: [1]
+    explanation: "Postgres connections have real per-connection overhead and a hard limit. Many app instances each opening their own connections can exhaust that limit long before compute resources are stressed, and the symptom is confusing without prior awareness."
+    tags: [pooling, ops]
+
+  - id: q-011
+    levels: [intermediate, rusty]
+    audience: engineer
+    type: single
+    prompt: "What does n_dead_tup climbing steadily relative to n_live_tup on a busy table most likely indicate?"
+    options:
+      - "The table needs a new index"
+      - "Bloat: dead row versions from MVCC are accumulating faster than vacuum is reclaiming them"
+      - "A missing foreign key"
+      - "The table should be partitioned"
+    answer: [1]
+    explanation: "This is the classic bloat early-warning sign: autovacuum is not keeping pace with the update/delete churn on that table."
+    tags: [vacuum, bloat]
+
+  - id: q-012
+    levels: [rusty]
+    audience: engineer
+    type: single
+    prompt: "What replaced hand-rolled inheritance-plus-trigger partitioning as the recommended approach, and when?"
+    options:
+      - "Logical replication, in PostgreSQL 10 (2017)"
+      - "Declarative partitioning (PARTITION BY / PARTITION OF), in PostgreSQL 10 (2017)"
+      - "Parallel query, in PostgreSQL 9.6 (2016)"
+      - "JSONB, in PostgreSQL 9.4 (2014)"
+    answer: [1]
+    explanation: "Declarative partitioning, native CREATE TABLE ... PARTITION BY syntax, arrived in PostgreSQL 10 (2017) and made the old inheritance/trigger/constraint-exclusion pattern legacy."
+    tags: [changed-since, partitioning]
+
+  - id: q-013
+    levels: [rusty]
+    audience: engineer
+    type: single
+    prompt: "What does built-in logical replication (PostgreSQL 10, 2017) add over streaming replication that already existed in the 9.x era?"
+    options:
+      - "It is the only way to get a standby at all"
+      - "Table-level, row-by-row replication — enabling selective replication and replication across major versions, unlike byte-for-byte streaming replication"
+      - "It removes the need for backups"
+      - "It replaces vacuum"
+    answer: [1]
+    explanation: "Streaming replication (available since the 9.x era) replicates the whole cluster byte-for-byte. Logical replication operates at the table level and can target a different major version, enabling selective sync and near-zero-downtime upgrades."
+    tags: [changed-since, replication]
+
+  - id: q-014
+    levels: [rusty]
+    audience: manager
+    type: truefalse
+    prompt: "On managed Postgres, autovacuum and bloat are fully handled by the provider and never need attention from your team."
+    options: ["True", "False"]
+    answer: [1]
+    explanation: "Managed services tune defaults better on average, but a high-churn table can still bloat faster than autovacuum keeps up. Monitoring dead-tuple counts is still the team's job."
+    tags: [gotcha, vacuum]
+
+  - id: q-015
+    levels: [rusty, beginner]
+    audience: engineer
+    type: single
+    prompt: "What is the current recommended way to declare an auto-incrementing primary key, versus the 9.x-era `SERIAL`?"
+    options:
+      - "id UUID PRIMARY KEY"
+      - "id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY"
+      - "id BIGINT PRIMARY KEY AUTOINCREMENT"
+      - "There is no alternative; SERIAL is still the only option"
+    answer: [1]
+    explanation: "Identity columns (PostgreSQL 10, 2017) are the SQL-standard-following recommended pattern now. SERIAL still works and doesn't need urgent migration in existing schemas."
+    tags: [changed-since, identity]

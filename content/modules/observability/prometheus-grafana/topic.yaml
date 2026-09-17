@@ -1,0 +1,4 @@
+title: "Prometheus & Grafana"
+summary: "The pull model, metric types, PromQL, recording rules, dashboards people actually use, retention, HA, and cost."
+prerequisites: [observability/logs-metrics-traces]
+tags: [observability, prometheus, grafana, promql, metrics, dashboards]

@@ -1,0 +1,4 @@
+title: "REST API Design"
+summary: "Resources, verbs, status codes, versioning, pagination, idempotency, and API review checklists."
+prerequisites: []
+tags: [api, rest, http, openapi]

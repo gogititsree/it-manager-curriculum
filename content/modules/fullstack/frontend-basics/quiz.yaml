@@ -1,0 +1,136 @@
+questions:
+  - id: q-001
+    levels: [beginner]
+    audience: all
+    type: single
+    prompt: "In the HTML/CSS/JS split, which one owns 'what happens when the user clicks this button'?"
+    options:
+      - "HTML"
+      - "CSS"
+      - "JavaScript"
+      - "All three equally"
+    answer: [2]
+    explanation: "JavaScript owns behaviour. HTML owns structure/meaning, CSS owns presentation. Mixing behaviour into CSS selectors or structure is a common source of tangled code."
+    tags: [fundamentals]
+
+  - id: q-002
+    levels: [beginner, rusty]
+    audience: all
+    type: single
+    prompt: "What is the main difference between a component-based UI and a page-at-a-time (jQuery-era) UI?"
+    options:
+      - "Components use more CSS"
+      - "The unit of reuse and ownership is a piece of UI (component) rather than a full page template"
+      - "Component-based UIs cannot use JavaScript events"
+      - "Pages load faster in a component model automatically"
+    answer: [1]
+    explanation: "The component model decomposes UI into self-contained, reusable pieces with their own markup, styling hooks and behaviour, composed together, rather than one template per URL."
+    tags: [components]
+
+  - id: q-003
+    levels: [beginner, intermediate]
+    audience: manager
+    type: single
+    prompt: "A screen design only shows the 'happy path' with data loaded successfully. What should you ask for before estimating the build?"
+    options:
+      - "Nothing; the happy path is enough to estimate from"
+      - "Loading, error and empty states for every data-fetching part of the screen"
+      - "A different colour palette"
+      - "A backend architecture diagram"
+    answer: [1]
+    explanation: "Loading/error/empty states are real, separate engineering work almost never shown in a mock-up. Estimating from the happy path alone is a leading cause of frontend estimate slip."
+    tags: [estimation, management]
+
+  - id: q-004
+    levels: [beginner]
+    audience: engineer
+    type: truefalse
+    prompt: "A build step (bundler/transpiler) is only needed for very large frontend projects; small ones can ship source files directly to the browser."
+    options: ["True", "False"]
+    answer: [1]
+    explanation: "Any project using JSX, TypeScript, or npm-installed dependencies needs a build step, because browsers cannot parse those directly. Size is not the deciding factor."
+    tags: [tooling]
+
+  - id: q-005
+    levels: [intermediate]
+    audience: engineer
+    type: multi
+    prompt: "Which of these are examples of 'server state' as distinct from local component state?"
+    options:
+      - "Whether a dropdown is currently open"
+      - "The list of transactions fetched from the API"
+      - "An account balance fetched from the backend"
+      - "The current value typed into a search box before submission"
+    answer: [1, 2]
+    explanation: "Server state is data owned by the backend and cached client-side: it can go stale, fail, or be edited elsewhere. Dropdown-open and in-progress typed input are local UI-only state."
+    tags: [state]
+
+  - id: q-006
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "A team hand-rolls data fetching with useEffect and useState on every screen instead of using a server-state library (e.g. TanStack Query). What is the main risk?"
+    options:
+      - "It will not compile"
+      - "Repeated bugs: no caching, no request de-duplication, and race conditions when parameters change quickly"
+      - "It is illegal under most coding standards"
+      - "It makes the bundle smaller, which is a benefit"
+    answer: [1]
+    explanation: "Hand-rolled fetching reproduces the same class of bug on every screen: stale data, duplicate in-flight requests, and race conditions where an earlier request resolves after a later one."
+    tags: [data-fetching]
+
+  - id: q-007
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "A table with thousands of rows 're-renders slowly' whenever unrelated state elsewhere on the page changes. What is the most likely first thing to check?"
+    options:
+      - "Whether the API response is gzip-compressed"
+      - "Whether row components are memoised (e.g. React.memo) so they skip re-rendering when their own props have not changed"
+      - "Whether the CSS file is minified"
+      - "Whether the database has an index on the relevant table"
+    answer: [1]
+    explanation: "Unnecessary re-renders of unaffected rows are the most common cause of a sluggish-feeling UI when data is already loaded; memoisation prevents re-rendering rows whose props are unchanged."
+    tags: [performance]
+
+  - id: q-008
+    levels: [intermediate]
+    audience: all
+    type: single
+    prompt: "Why is retrofitting accessibility (a11y) onto an existing UI typically more expensive than building it in from the start?"
+    options:
+      - "Accessibility tools are expensive to license"
+      - "It usually requires restructuring markup that other components already depend on, rather than adding an isolated feature"
+      - "Accessibility only applies to new features, not existing ones"
+      - "It is a purely visual change with no structural impact"
+    answer: [1]
+    explanation: "Accessible markup (semantic elements, correct structure, focus order) is foundational, not additive. Retrofitting means changing structure other code and styling already depend on."
+    tags: [accessibility]
+
+  - id: q-009
+    levels: [rusty]
+    audience: engineer
+    type: single
+    prompt: "In jQuery-era code you would call $('#balance').text(newValue) to update the UI. What is the component-era equivalent?"
+    options:
+      - "Call document.getElementById directly inside the component, same as before"
+      - "Update state via its setter function and let the framework re-render the element that displays it"
+      - "Reload the page with location.reload()"
+      - "Edit the HTML file directly"
+    answer: [1]
+    explanation: "The component model replaces direct DOM mutation with state changes; the framework re-renders whatever depends on that state. Direct DOM access from inside a component bypasses this and gets overwritten."
+    tags: [changed-since]
+
+  - id: q-010
+    levels: [rusty]
+    audience: manager
+    type: single
+    prompt: "A team proposes rewriting a working jQuery application in React, justified only as 'jQuery is old'. What is the better question to ask?"
+    options:
+      - "How many lines of code will be removed?"
+      - "What specific maintainability, team-scale, or hiring problem does the rewrite solve, since jQuery itself still functions?"
+      - "Can it be done over a single weekend?"
+      - "Will it change the company logo?"
+    answer: [1]
+    explanation: "Age alone is not a justification; jQuery still works and is maintained. The real case is usually team-scale maintainability, component reuse, typed contracts, or hiring pool, and should be stated explicitly."
+    tags: [bank-context, review]

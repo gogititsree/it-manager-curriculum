@@ -1,0 +1,85 @@
+cards:
+  - id: c-001
+    levels: [beginner]
+    audience: all
+    front: "Route, in one sentence"
+    back: "A binding between an HTTP method + URL pattern and the Python function that handles matching requests."
+    tags: [routing]
+  - id: c-002
+    levels: [beginner, intermediate]
+    audience: manager
+    front: "Why GET should never change data"
+    back: "GET is assumed safe to repeat and cache by browsers, load balancers and retry logic. A destructive GET can fire accidentally or automatically."
+    tags: [http-methods]
+  - id: c-003
+    levels: [beginner, intermediate]
+    audience: engineer
+    front: "What does request validation at the edge buy you?"
+    back: "Bad input is rejected clearly before business logic runs, instead of causing a confusing failure several functions deep."
+    tags: [validation]
+  - id: c-004
+    levels: [intermediate, rusty]
+    audience: manager
+    front: "FastAPI vs Flask: default heuristic"
+    back: "External/multiple consumers needing a validated, documented contract: lean FastAPI. Small internal tool, team already fluent in Flask: Flask is fine."
+    tags: [decision, framework-choice]
+  - id: c-005
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "pydantic v1 to v2: key renames"
+    back: "@validator -> @field_validator, .dict() -> .model_dump(), .parse_obj() -> .model_validate(), class Config -> model_config = ConfigDict(...)."
+    tags: [pydantic, changed-since]
+  - id: c-006
+    levels: [intermediate]
+    audience: engineer
+    front: "async def: what does it actually help with?"
+    back: "I/O-bound waiting (network, DB calls) — lets other requests proceed while one waits. Does not speed up CPU-bound work."
+    tags: [async]
+  - id: c-007
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "Biggest async gotcha"
+    back: "A blocking (non-async) call inside async def stalls the whole event loop for every other concurrent request on that worker — often worse than not using async."
+    tags: [async, gotcha]
+  - id: c-008
+    levels: [intermediate]
+    audience: all
+    front: "What does FastAPI generate automatically that Flask doesn't?"
+    back: "An OpenAPI spec and interactive docs (/docs), generated from the same type hints used for request validation — so docs and validated shape can't drift apart."
+    tags: [openapi]
+  - id: c-009
+    levels: [intermediate]
+    audience: manager
+    front: "Auth checked inline per-endpoint: what's the risk?"
+    back: "It reliably produces at least one endpoint where the check was forgotten. Use a shared dependency/middleware applied consistently instead."
+    tags: [auth, review]
+  - id: c-010
+    levels: [beginner, intermediate, rusty]
+    audience: manager
+    front: "\"It's internal, so no auth needed\" — why risky?"
+    back: "Internal networks get breached, internal systems get compromised, and audit expects to know who accessed what. Network location is not an auth boundary."
+    tags: [bank-context, auth]
+  - id: c-011
+    levels: [beginner, rusty]
+    audience: engineer
+    front: "Dev server vs production server"
+    back: "uvicorn --reload / flask run --debug: local development only. Production: gunicorn (with uvicorn workers for FastAPI), process-managed, behind a load balancer."
+    tags: [deployment]
+  - id: c-012
+    levels: [rusty]
+    audience: engineer
+    front: "httpx vs requests"
+    back: "requests is synchronous only. httpx supports both sync and async — use httpx.AsyncClient inside async def handlers instead of requests."
+    tags: [async, changed-since]
+  - id: c-013
+    levels: [beginner]
+    audience: engineer
+    front: "400 vs 404 for a bad request"
+    back: "400: the request itself is malformed (bad format, missing field). 404: the request is well-formed but the resource doesn't exist. Callers need to tell these apart."
+    tags: [http-status]
+  - id: c-014
+    levels: [intermediate]
+    audience: manager
+    front: "How much to invest in an API's OpenAPI contract"
+    back: "One consumer, same team: auto-generated docs are enough. Multiple consuming teams or cross-org: treat spec changes with the same scrutiny as a breaking schema change."
+    tags: [openapi, decision]

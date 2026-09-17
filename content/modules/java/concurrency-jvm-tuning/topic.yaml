@@ -1,0 +1,4 @@
+title: "Concurrency & JVM Tuning"
+summary: "Threads, executors, virtual threads, GC choices, heap sizing, and reading a thread dump or GC log."
+prerequisites: [java/oop-fundamentals]
+tags: [java, concurrency, jvm, performance, gc]

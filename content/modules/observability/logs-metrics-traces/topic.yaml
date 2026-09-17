@@ -1,0 +1,4 @@
+title: "Logging vs Metrics vs Tracing"
+summary: "The three pillars, what each answers, structured logging, cardinality, sampling, correlation IDs, and cost."
+prerequisites: []
+tags: [observability, logging, metrics, tracing, cardinality, cost]

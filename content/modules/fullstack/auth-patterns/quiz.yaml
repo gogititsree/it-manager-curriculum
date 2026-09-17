@@ -1,0 +1,160 @@
+questions:
+  - id: q-001
+    levels: [beginner]
+    audience: all
+    type: single
+    prompt: "What is the difference between authentication and authorization?"
+    options:
+      - "They are two names for the same control"
+      - "Authentication verifies who someone is; authorization decides what they are allowed to do"
+      - "Authentication is for APIs, authorization is for browsers"
+      - "Authorization always happens before authentication"
+    answer: [1]
+    explanation: "Authentication answers 'who is this?'. Authorization, given that identity, answers 'are they allowed to do this specific thing?'. A system can get one right and the other wrong independently."
+    tags: [fundamentals]
+
+  - id: q-002
+    levels: [beginner]
+    audience: engineer
+    type: single
+    prompt: "What does a server do differently to validate a request under session-based auth vs token-based auth?"
+    options:
+      - "Both require an identical database lookup"
+      - "Session-based typically looks up server-side state from a cookie ID; token-based typically verifies a cryptographic signature with no lookup needed"
+      - "Token-based auth cannot be used by mobile apps"
+      - "Session-based auth cannot use HTTPS"
+    answer: [1]
+    explanation: "Sessions store an opaque ID that maps to server-side state. Tokens (e.g. JWTs) are self-contained and signed, so the server verifies the signature rather than looking anything up."
+    tags: [sessions-tokens]
+
+  - id: q-003
+    levels: [beginner, rusty]
+    audience: engineer
+    type: multi
+    prompt: "Which are the four roles defined by OAuth2?"
+    options:
+      - "Resource Owner"
+      - "Client"
+      - "Authorization Server"
+      - "Session Manager"
+    answer: [0, 1, 2]
+    explanation: "The four OAuth2 roles are Resource Owner, Client, Authorization Server and Resource Server. 'Session Manager' is not an OAuth2 role."
+    tags: [oauth2]
+
+  - id: q-004
+    levels: [beginner]
+    audience: manager
+    type: single
+    prompt: "A team says 'we have MFA' because users enter a password and then a security question. Is this true multi-factor authentication?"
+    options:
+      - "Yes, two checks were made"
+      - "No, both are 'something you know' — the same factor category, checked twice"
+      - "Yes, as long as the security question is long enough"
+      - "No MFA can ever use knowledge-based factors"
+    answer: [1]
+    explanation: "MFA requires factors from different categories (know / have / are). A password plus a security question are both 'something you know', so this is one factor checked twice, not MFA."
+    tags: [mfa]
+
+  - id: q-005
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "What is the current best-practice OAuth2/OIDC flow for a mobile app or single-page app authenticating a user?"
+    options:
+      - "Resource Owner Password Credentials flow"
+      - "Implicit flow"
+      - "Authorization Code flow with PKCE"
+      - "Client Credentials flow"
+    answer: [2]
+    explanation: "Authorization Code with PKCE is current best practice for public clients that cannot hold a confidential secret. Implicit is deprecated in current guidance; Password Credentials exposes the real password to the client; Client Credentials is for machine-to-machine, not user auth."
+    tags: [oidc, flows]
+
+  - id: q-006
+    levels: [intermediate, rusty]
+    audience: engineer
+    type: single
+    prompt: "Why must JWT verification code pin the expected signing algorithm instead of trusting the alg field in the token's own header?"
+    options:
+      - "It makes verification faster"
+      - "Trusting the token's own claimed algorithm has historically enabled forgery attacks (e.g. accepting alg: none or algorithm confusion)"
+      - "It is required by JSON syntax"
+      - "It has no security relevance, only style"
+    answer: [1]
+    explanation: "Some vulnerable implementations accepted whatever algorithm the token claimed, including 'none' or a mismatched algorithm. Correct verification pins the expected algorithm server-side and rejects anything else."
+    tags: [jwt, gotcha]
+
+  - id: q-007
+    levels: [intermediate]
+    audience: engineer
+    type: truefalse
+    prompt: "A JWT's payload is encrypted, so it is safe to store sensitive personal data in it."
+    options: ["True", "False"]
+    answer: [1]
+    explanation: "A standard JWT is signed, not encrypted. Anyone holding the token can decode and read the payload. Sensitive data needs an encrypted JWT (JWE) or should not be placed in the token at all."
+    tags: [jwt, gotcha]
+
+  - id: q-008
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "What does mTLS add compared to standard TLS?"
+    options:
+      - "Faster encryption"
+      - "The server also requires and verifies a client certificate, so both sides prove their identity"
+      - "It replaces the need for any application-level authentication"
+      - "It only works for browser traffic"
+    answer: [1]
+    explanation: "Standard TLS authenticates the server to the client. mTLS adds the reverse: the server checks a client certificate too. It proves which system is calling, not which end user, so user-level auth is usually still needed on top."
+    tags: [mtls]
+
+  - id: q-009
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "An access-control system has grown to 200+ roles because permissions vary by branch, product and seniority. What is this, and what is a reasonable fix?"
+    options:
+      - "Normal RBAC behaviour requiring no change"
+      - "Role explosion; consider a hybrid model with a small set of RBAC roles plus ABAC-style policy for the varying attributes"
+      - "A sign that RBAC should be abandoned entirely in favour of no access control"
+      - "A database performance problem only"
+    answer: [1]
+    explanation: "This is the textbook RBAC role-explosion problem. A hybrid model keeps a small, auditable set of roles for real job functions while moving contextual constraints (branch, amount, product) into ABAC-style policy."
+    tags: [rbac-abac]
+
+  - id: q-010
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "What question does a segregation-of-duties (SoD) audit typically require your access model to answer directly?"
+    options:
+      - "How fast can the system process a login?"
+      - "Who could both initiate and approve the same payment?"
+      - "What colour scheme does the approval UI use?"
+      - "How many total users exist in the system?"
+    answer: [1]
+    explanation: "Segregation of duties requires demonstrating that no single person can both initiate and approve a sensitive transaction. RBAC's role-based structure is well suited to answering this directly and auditably."
+    tags: [rbac-abac, bank-context]
+
+  - id: q-011
+    levels: [rusty]
+    audience: all
+    type: single
+    prompt: "In SAML-to-OIDC terms, what is the closest equivalent of a SAML signed XML assertion?"
+    options:
+      - "The OAuth2 Client"
+      - "The ID Token (a signed JWT)"
+      - "The Resource Server"
+      - "The token endpoint URL"
+    answer: [1]
+    explanation: "The ID token, introduced by OIDC on top of OAuth2, plays the role SAML's signed XML assertion played: a signed statement from the identity provider about who authenticated."
+    tags: [changed-since]
+
+  - id: q-012
+    levels: [rusty]
+    audience: engineer
+    type: truefalse
+    prompt: "Current OAuth security guidance still recommends the Implicit flow as the best choice for new single-page app development."
+    options: ["True", "False"]
+    answer: [1]
+    explanation: "The Implicit flow's recommendation has reversed: it is now deprecated in current guidance in favour of the Authorization Code flow with PKCE, because it exposed tokens in browser history and referrer headers."
+    tags: [changed-since]

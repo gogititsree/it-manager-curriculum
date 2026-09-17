@@ -1,0 +1,136 @@
+questions:
+  - id: q-001
+    levels: [beginner, rusty]
+    audience: engineer
+    type: single
+    prompt: "Why should subprocess calls avoid shell=True with untrusted input?"
+    options:
+      - "It's slower than shell=False"
+      - "It allows a value with shell metacharacters (e.g. a semicolon) to inject a second command"
+      - "It doesn't capture stdout"
+      - "It requires administrator privileges"
+    answer: [1]
+    explanation: "shell=True hands the string to a shell for interpretation, so metacharacters in unsanitised input can run arbitrary additional commands. Passing a list of arguments avoids this entirely."
+    tags: [subprocess, security]
+
+  - id: q-002
+    levels: [beginner]
+    audience: engineer
+    type: single
+    prompt: "Why is a timeout required on network calls in an unattended script?"
+    options:
+      - "It makes the request faster"
+      - "Without one, a hung network call blocks the script indefinitely with no error"
+      - "It's required by the HTTP protocol"
+      - "It reduces the number of retries needed"
+    answer: [1]
+    explanation: "requests (and most HTTP clients) will wait forever by default if a server never responds. A timeout turns an indefinite hang into a bounded failure the script can handle."
+    tags: [http, reliability]
+
+  - id: q-003
+    levels: [beginner, intermediate]
+    audience: manager
+    type: single
+    prompt: "A script that changes production state has no --dry-run mode. In review, this is:"
+    options:
+      - "A nitpick, not worth mentioning"
+      - "A legitimate concern — it means every test of the script is a production change"
+      - "Irrelevant if the script has good variable names"
+      - "Only a problem for scripts run by more than one person"
+    answer: [1]
+    explanation: "Dry-run mode is one of the cheapest safety features available. Without it, there is no way to validate a change-making script's behaviour without actually making the change."
+    tags: [review, safety]
+
+  - id: q-004
+    levels: [intermediate]
+    audience: engineer
+    type: multi
+    prompt: "Which of these are appropriate to retry automatically with backoff?"
+    options:
+      - "A GET request that timed out"
+      - "A POST that creates a payment and returned a connection error before any response arrived, with no idempotency key"
+      - "A GET request that returned a connection reset"
+      - "A request that returned HTTP 400 Bad Request"
+    answer: [0, 2]
+    explanation: "GETs are naturally safe to retry. A 400 is a definitive answer that will not change on retry. A non-idempotent POST with no idempotency key and an uncertain outcome (was the payment created before the error?) is unsafe to blindly retry."
+    tags: [retries, idempotency]
+
+  - id: q-005
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "A credential is found hardcoded in a script that's already been merged and deployed. The most complete fix is:"
+    options:
+      - "Delete the line in a new commit"
+      - "Rotate the credential, move future credentials to a secrets manager, and treat the old value as compromised regardless of the fix"
+      - "Add the file to .gitignore"
+      - "Rename the variable so it's less obvious"
+    answer: [1]
+    explanation: "Deleting a line does not remove it from git history. Once a credential has been committed, it must be treated as exposed and rotated; the structural fix (secrets manager) prevents recurrence."
+    tags: [secrets, bank-context]
+
+  - id: q-006
+    levels: [intermediate, rusty]
+    audience: engineer
+    type: single
+    prompt: "What does logger.exception() add compared to logger.error()?"
+    options:
+      - "Nothing, they are identical"
+      - "It automatically includes the current exception's traceback"
+      - "It sends an email alert"
+      - "It stops the script immediately"
+    answer: [1]
+    explanation: "logger.exception() is a convenience for calling error-level logging with exc_info=True, capturing the traceback of the exception currently being handled."
+    tags: [logging]
+
+  - id: q-007
+    levels: [intermediate]
+    audience: engineer
+    type: truefalse
+    prompt: "A script that appends a row to an output file on every run is idempotent — running it twice for the same input has the same effect as running it once."
+    options: ["True", "False"]
+    answer: [1]
+    explanation: "Appending duplicates the row on a second run. Idempotent behaviour requires something like an upsert keyed by a stable identifier, not a blind append."
+    tags: [idempotency]
+
+  - id: q-008
+    levels: [rusty]
+    audience: engineer
+    type: single
+    prompt: "What is uv, in current Python tooling?"
+    options:
+      - "A new web framework"
+      - "A fast tool that replaces pip + virtualenv (and more) for dependency and environment management"
+      - "A replacement for cron"
+      - "A logging library"
+    answer: [1]
+    explanation: "uv handles virtual environments, dependency installation and locking, aiming to replace the pip/venv/pip-tools combination with a single faster tool. pip and venv still work fine."
+    tags: [changed-since, tooling]
+
+  - id: q-009
+    levels: [rusty]
+    audience: manager
+    type: single
+    prompt: "A team runs all its scheduled jobs from personal crontab entries on a shared jump box. The main risk this creates is:"
+    options:
+      - "Cron syntax is deprecated"
+      - "No shared visibility or ownership: the box, credentials and failure alerting depend on individuals rather than the team"
+      - "Cron jobs run too frequently by default"
+      - "Python scripts cannot be run from cron"
+    answer: [1]
+    explanation: "The technology (cron) is fine; the risk is organisational — jobs tied to one person's account and a box nobody manages as shared infrastructure, with failure visibility depending on that person noticing."
+    tags: [bank-context, scheduling]
+
+  - id: q-010
+    levels: [beginner, rusty]
+    audience: engineer
+    type: single
+    prompt: "What does argparse give you for free compared to reading sys.argv directly?"
+    options:
+      - "Faster execution"
+      - "Automatic --help text, type conversion, and errors for missing/invalid arguments"
+      - "Network access"
+      - "Automatic retries"
+    answer: [1]
+    explanation: "argparse generates usage/help output, validates required arguments, converts types, and exits with an appropriate error message and exit code on bad input."
+    tags: [argparse]

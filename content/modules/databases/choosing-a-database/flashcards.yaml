@@ -1,0 +1,121 @@
+cards:
+  - id: c-001
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "Relational database: best fit"
+    back: "Strong consistency needs, query patterns that aren't fully known yet, anything that must reconcile (ledgers, positions)."
+    tags: [relational, categories]
+  - id: c-002
+    levels: [beginner, intermediate]
+    audience: all
+    front: "Document database: best fit, and the weak point"
+    back: "Best fit: read-heavy access to a single self-contained entity with variable shape. Weak point: cross-document consistency and ad-hoc reporting/joins."
+    tags: [document, categories]
+  - id: c-003
+    levels: [beginner]
+    audience: all
+    front: "Key-value store: what do you give up?"
+    back: "Everything except lookup by the exact key you planned for. No ad-hoc querying without a second index you build yourself."
+    tags: [key-value, categories]
+  - id: c-004
+    levels: [beginner]
+    audience: all
+    front: "Wide-column store: what decides the schema?"
+    back: "The queries you already know you will run — the partition key is chosen to match a known access pattern, not to model the entity."
+    tags: [wide-column, categories]
+  - id: c-005
+    levels: [beginner, intermediate]
+    audience: all
+    front: "Search engine store: lookup or search?"
+    back: "Use it for genuine full-text/relevance/fuzzy search. A lookup by known key belongs in an index on the primary store, not a search engine."
+    tags: [search, categories]
+  - id: c-006
+    levels: [beginner]
+    audience: all
+    front: "Graph database: the tell that you need one"
+    back: "The team keeps writing recursive queries or hand-building traversal logic against a relational store, and it keeps growing — a graph problem trying to happen in the wrong tool."
+    tags: [graph, categories]
+  - id: c-007
+    levels: [beginner]
+    audience: all
+    front: "Timestamped vs time-series: what's the difference?"
+    back: "Timestamped just means a column holds a time. Time-series means the access pattern is append-mostly, queried by time range and aggregation. A ledger is timestamped but not time-series."
+    tags: [time-series, categories]
+  - id: c-008
+    levels: [beginner, intermediate]
+    audience: all
+    front: "Analytical/columnar store: why it's separate from OLTP"
+    back: "Column-oriented storage makes wide aggregate scans fast but makes row-by-row inserts/updates slow. Keeps heavy reporting queries from competing with the transactional workload."
+    tags: [analytical, categories]
+  - id: c-009
+    levels: [beginner, intermediate, rusty]
+    audience: manager
+    front: "Resume-driven selection: the tell"
+    back: "The proposal names a specific database product before it states the consistency needs, query shape and scale shape."
+    tags: [decision, review]
+  - id: c-010
+    levels: [intermediate]
+    audience: manager
+    front: "The seven quality attributes for a database decision"
+    back: "Consistency needs, query shape, scale shape, operational maturity, licensing, managed-service availability, exit cost."
+    tags: [framework]
+  - id: c-011
+    levels: [intermediate]
+    audience: all
+    front: "What is exit cost, and when should you estimate it?"
+    back: "What undoing the choice costs in ~18 months if it's wrong — config change vs. multi-quarter migration. Estimate it before committing, not after a painful renewal."
+    tags: [framework, risk]
+  - id: c-012
+    levels: [intermediate]
+    audience: engineer
+    front: "What should a database proof-of-concept try to do?"
+    back: "Falsify the choice, not justify it. Run real query shapes at realistic volume, test concurrent writes, and inject a failure — assign someone explicitly to try to break it."
+    tags: [poc, decision]
+  - id: c-013
+    levels: [intermediate, rusty]
+    audience: manager
+    front: "Polyglot persistence: the two taxes the pitch usually omits"
+    back: "Integration tax (a sync/CDC pipeline between stores that can silently drift) and reporting tax (a query that was one join now needs a cross-system pipeline)."
+    tags: [polyglot, risk]
+  - id: c-014
+    levels: [intermediate]
+    audience: manager
+    front: "Polyglot proposal: the one question that exposes it isn't ready"
+    back: "Who owns the pipeline that keeps the stores consistent, and what happens when it breaks at 2am? If the answer is 'nobody yet,' it isn't ready."
+    tags: [polyglot, review]
+  - id: c-015
+    levels: [rusty]
+    audience: all
+    front: "What changed: database licensing since ~2018"
+    back: "MongoDB moved to SSPL (2018), Elastic changed licence (2021, partly reverted to AGPL 2024), Redis changed licence (2024, producing the Valkey fork). 'Open source' now needs checking per-product, per-date."
+    tags: [changed-since, licensing]
+  - id: c-016
+    levels: [rusty]
+    audience: engineer
+    front: "What changed: distributed SQL / NewSQL"
+    back: "Systems like Spanner-influenced CockroachDB/YugabyteDB deliver horizontally scalable strong consistency via consensus and synchronised clocks — narrowing a tradeoff the CAP-theorem era treated as settled, at a real latency/complexity cost."
+    tags: [changed-since, newsql]
+  - id: c-017
+    levels: [rusty]
+    audience: engineer
+    front: "What changed: vector databases"
+    back: "A new category optimised for nearest-neighbour search over embeddings, driven by LLM/RAG use cases (accelerating from around 2023). Also available as an extension (pgvector) inside Postgres."
+    tags: [changed-since, vector]
+  - id: c-018
+    levels: [rusty, intermediate]
+    audience: all
+    front: "What changed: why 'just use Postgres' is now more defensible"
+    back: "JSONB, full-text search, pgvector, PostGIS and the extension ecosystem mean one Postgres instance now covers document-ish, search-ish and vector workloads that used to justify separate specialist stores."
+    tags: [changed-since, postgres]
+  - id: c-019
+    levels: [rusty]
+    audience: manager
+    front: "CAP theorem: still true, but…"
+    back: "Still a real constraint, but not a licence to skip analysis. It describes a tradeoff shape, not a fixed 'pick two forever' rule — distributed SQL changed where the line sits."
+    tags: [gotcha, cap]
+  - id: c-020
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "What disqualifies a database before performance is even discussed?"
+    back: "Inability to produce an immutable, queryable record of what changed, when, and by whom, for the required retention period, or a data-residency requirement it can't meet."
+    tags: [bank-context, compliance]

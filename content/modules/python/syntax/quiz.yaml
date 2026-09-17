@@ -1,0 +1,136 @@
+questions:
+  - id: q-001
+    levels: [beginner, rusty]
+    audience: engineer
+    type: single
+    prompt: "What does `def f(items=[]):` risk?"
+    options:
+      - "A syntax error at definition time"
+      - "The default list is created once and shared across every call that doesn't pass items"
+      - "It forces items to always be empty"
+      - "Nothing; Python creates a fresh list per call"
+    answer: [1]
+    explanation: "Default argument values are evaluated once, when the function is defined, not on each call. A mutable default is shared and accumulates state across calls."
+    tags: [gotcha, functions]
+
+  - id: q-002
+    levels: [beginner]
+    audience: engineer
+    type: single
+    prompt: "Which best describes Python's typing?"
+    options:
+      - "Statically typed and compiled, like Java"
+      - "Untyped — values have no type at all"
+      - "Dynamically typed — variables label values, and values have a definite type at runtime"
+      - "Statically typed only when type hints are present"
+    answer: [2]
+    explanation: "Every Python value has a definite runtime type; variables are just names bound to values and can be rebound to a value of a different type. Type hints are optional and unenforced by the interpreter."
+    tags: [types]
+
+  - id: q-003
+    levels: [beginner, intermediate]
+    audience: engineer
+    type: multi
+    prompt: "Which of these are true about Python's built-in collections?"
+    options:
+      - "A tuple is immutable"
+      - "A set does not preserve insertion order for membership purposes and has no duplicates"
+      - "A dict cannot have string keys"
+      - "A list is ordered and mutable"
+    answer: [0, 1, 3]
+    explanation: "Dicts commonly use string keys — that option is simply false. Tuples are immutable, sets deduplicate, lists are ordered and mutable."
+    tags: [collections]
+
+  - id: q-004
+    levels: [intermediate, rusty]
+    audience: manager
+    type: single
+    prompt: "A codebase has zero type hints anywhere and is a few thousand lines, actively maintained by three people. Best first move?"
+    options:
+      - "Rewrite it in a statically typed language"
+      - "Require type hints on new and touched public functions going forward, and run mypy in CI even if most of the codebase is still unhinted"
+      - "Ignore it; type hints are a style preference with no real cost"
+      - "Block all further changes until the whole codebase is hinted"
+    answer: [1]
+    explanation: "Type hints are incremental and non-breaking. Requiring them going forward captures the benefit on new code without a disruptive, low-value full rewrite of old code."
+    tags: [typing, review]
+
+  - id: q-005
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "A function processes a 50GB export file. What is most likely to cause it to run out of memory?"
+    options:
+      - "Using a for loop instead of a while loop"
+      - "Reading the file with f.readlines() into a list instead of iterating line by line"
+      - "Using type hints"
+      - "Using a dataclass instead of a plain class"
+    answer: [1]
+    explanation: "readlines() loads every line into memory as a list at once. Iterating the file object directly, or writing a generator with yield, processes one line at a time."
+    tags: [generators, performance]
+
+  - id: q-006
+    levels: [intermediate]
+    audience: engineer
+    type: truefalse
+    prompt: "A with block in Python guarantees cleanup code runs even if an exception is raised inside the block."
+    options: ["True", "False"]
+    answer: [0]
+    explanation: "with is built on the context manager protocol, which runs __exit__ (or the finally clause of a contextmanager generator) regardless of whether the block raised."
+    tags: [context-managers]
+
+  - id: q-007
+    levels: [rusty]
+    audience: engineer
+    type: single
+    prompt: "Porting old Python 2 code, `5 / 2` now evaluates to:"
+    options:
+      - "2 (unchanged)"
+      - "2.5 — division between ints returns a float by default in Python 3"
+      - "A TypeError"
+      - "'2.5' as a string"
+    answer: [1]
+    explanation: "Python 3 changed / to true division for all numeric types. // is the old Python 2 integer-division behaviour, and still works in Python 3."
+    tags: [python2-to-3, changed-since]
+
+  - id: q-008
+    levels: [rusty]
+    audience: all
+    type: single
+    prompt: "Which is now the idiomatic way to format a string with variables in current Python?"
+    options:
+      - "The % operator"
+      - ".format()"
+      - "f-strings, e.g. f\"{name}: {amount:.2f}\""
+      - "String concatenation with +"
+    answer: [2]
+    explanation: "f-strings (Python 3.6, 2016) are the current default. % and .format() still work and appear in older code but are not what new code should use."
+    tags: [changed-since, strings]
+
+  - id: q-009
+    levels: [rusty, intermediate]
+    audience: manager
+    type: single
+    prompt: "You learn a production script still runs on Python 2. What is the appropriate response?"
+    options:
+      - "Nothing — if it works, it works"
+      - "Treat it as a live risk finding: Python 2 has had no security patches since its January 2020 end-of-life"
+      - "Ask the author to add more comments"
+      - "Convert it to Java"
+    answer: [1]
+    explanation: "An unsupported runtime with no security patches is a standard audit and vendor-risk finding, independent of whether the script currently functions correctly."
+    tags: [bank-context, python2-to-3]
+
+  - id: q-010
+    levels: [beginner, intermediate]
+    audience: engineer
+    type: single
+    prompt: "What does @dataclass primarily save you from writing by hand?"
+    options:
+      - "Import statements"
+      - "__init__, __repr__ and __eq__ boilerplate for a set of typed fields"
+      - "Type hints"
+      - "The class keyword"
+    answer: [1]
+    explanation: "dataclass generates the constructor, string representation and equality comparison from the annotated field list, similar to what a Java record generates."
+    tags: [dataclasses]

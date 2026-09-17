@@ -1,0 +1,91 @@
+cards:
+  - id: c-001
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "Symptom alert vs cause alert"
+    back: "Symptom: what the customer would notice (errors, timeouts) — default for paging. Cause: internal condition (CPU, disk) — early warning, usually not a page."
+    tags: [symptom-vs-cause]
+  - id: c-002
+    levels: [beginner, intermediate]
+    audience: engineer
+    front: "Single most common alerting mistake"
+    back: "No sustained-duration requirement (for: clause) on a threshold alert — fires on brief blips and trains people to ignore it."
+    tags: [alert-quality, gotcha]
+  - id: c-003
+    levels: [beginner, intermediate]
+    audience: manager
+    front: "Question to ask before approving a new paging alert"
+    back: "What does the responder do differently, right now, because this fired, that they would not do otherwise? No distinct action means no page."
+    tags: [alert-quality]
+  - id: c-004
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "SLO / SLI / error budget"
+    back: "SLI: the measured indicator (e.g. % requests <300ms). SLO: the target over a window (e.g. 99.9% over 30 days). Error budget: the allowed gap (0.1%) — a resource to deliberately spend."
+    tags: [slo]
+  - id: c-005
+    levels: [intermediate]
+    audience: manager
+    front: "Error budget as a release conversation"
+    back: "Turns 'can we ship this risky change' into 'how much budget is left this month' — a shared number instead of a recurring values debate."
+    tags: [error-budget]
+  - id: c-006
+    levels: [intermediate]
+    audience: engineer
+    front: "Burn-rate alerting, one sentence"
+    back: "Alerts on how fast the error budget is being consumed, not the raw error rate — a fast burn pages, a slow burn tickets."
+    tags: [burn-rate]
+  - id: c-007
+    levels: [intermediate]
+    audience: engineer
+    front: "Why burn-rate alerts use two time windows"
+    back: "A short window alone pages on blips; a long window alone is too slow for a real fast outage. Both required together catches genuine fast burns while filtering noise."
+    tags: [burn-rate]
+  - id: c-008
+    levels: [beginner, intermediate]
+    audience: manager
+    front: "What makes a runbook actually useful"
+    back: "Names the exact dashboard, the exact log query, and the two or three most likely causes based on history — not 'investigate the issue.'"
+    tags: [runbooks]
+  - id: c-009
+    levels: [beginner, intermediate]
+    audience: manager
+    front: "On-call health: what to track"
+    back: "Pages per person per week, specifically after-hours pages, and false-positive/duplicate pages. A rotation paging one person nightly is heading toward burnout and attrition."
+    tags: [on-call-health]
+  - id: c-010
+    levels: [intermediate]
+    audience: manager
+    front: "Best post-incident review question for alerting"
+    back: "If this exact failure happened again next week, would current alerts and the runbook get someone to the fix faster? If no, the review isn't done."
+    tags: [post-incident-review]
+  - id: c-011
+    levels: [intermediate]
+    audience: engineer
+    front: "Setting an SLO: the common mistake"
+    back: "Setting the target equal to current performance bakes in no margin to detect real degradation. Set it from actual customer need instead."
+    tags: [slo, gotcha]
+  - id: c-012
+    levels: [rusty]
+    audience: all
+    front: "What SLO/error-budget culture changed (Google SRE book, 2016, widely adopted after)"
+    back: "Replaced threshold-by-feel tuning with a calculated, defensible basis for urgency, tied to an explicit customer-facing target."
+    tags: [changed-since]
+  - id: c-013
+    levels: [rusty]
+    audience: all
+    front: "Burn-rate multiplier example (Google SRE multi-window)"
+    back: "Roughly 14x base rate on short+long windows for a fast-burn page; roughly 3x on a longer window for a slow-burn ticket. Exact numbers depend on risk tolerance."
+    tags: [burn-rate, changed-since]
+  - id: c-014
+    levels: [beginner, intermediate, rusty]
+    audience: manager
+    front: "Regulatory relevance of alerting speed"
+    back: "Time from 'problem starts' to 'someone competent is actively working it' is often the clock a regulatory incident-reporting window is measured against."
+    tags: [bank-context]
+  - id: c-015
+    levels: [rusty, intermediate]
+    audience: engineer
+    front: "Gotcha that persists even for experienced on-call veterans"
+    back: "Cause alerts (CPU, memory) creeping back in as pages instead of staying warnings — the discipline doesn't get easier just because the SLO framework exists."
+    tags: [gotcha]

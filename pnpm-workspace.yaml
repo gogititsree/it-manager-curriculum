@@ -1,0 +1,9 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+  - "tools/*"
+
+# Postinstall build scripts allowed to run (pnpm >= 10 blocks all others by default).
+allowBuilds:
+  esbuild: true
+  better-sqlite3: false

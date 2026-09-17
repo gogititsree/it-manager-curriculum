@@ -1,0 +1,4 @@
+title: "Choosing a Database"
+summary: "Relational, document, key-value, wide-column, search, graph, time-series and columnar analytical stores compared on what they are good at and what they cost to run, plus a repeatable, quality-attribute-driven decision framework for picking (and defending) one."
+prerequisites: [databases/when-not-mongodb, databases/postgres-essentials]
+tags: [databases, architecture, decision-framework, polyglot-persistence]

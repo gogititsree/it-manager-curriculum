@@ -1,0 +1,136 @@
+questions:
+  - id: q-001
+    levels: [beginner, rusty]
+    audience: all
+    type: single
+    prompt: "Which OWASP category is currently ranked #1 in the 2021 list?"
+    options:
+      - "Injection"
+      - "Broken Access Control"
+      - "Cross-Site Scripting"
+      - "Security Misconfiguration"
+    answer: [1]
+    explanation: "Broken Access Control moved from #5 in 2017 to #1 in 2021, based on real-world reported frequency. Injection dropped to #3, and XSS was folded into Injection rather than staying its own top-level category."
+    tags: [access-control, changed-since]
+
+  - id: q-002
+    levels: [beginner]
+    audience: engineer
+    type: single
+    prompt: "An API endpoint returns a customer's statement based on an account ID in the URL, with no check that the logged-in user owns that account. What category is this?"
+    options:
+      - "Security Misconfiguration"
+      - "Broken Access Control"
+      - "Server-Side Request Forgery"
+      - "Cryptographic Failures"
+    answer: [1]
+    explanation: "This is a classic Broken Access Control (A01) bug: the server trusts a client-supplied identifier instead of independently verifying the requester is authorised for that resource."
+    tags: [access-control]
+
+  - id: q-003
+    levels: [beginner, intermediate]
+    audience: engineer
+    type: single
+    prompt: "What is the fix for a SQL query built by concatenating user input directly into the query string?"
+    options:
+      - "Escape only single quotes in the input"
+      - "Use a parameterised query / bound parameters so input is always treated as data, never code"
+      - "Run the query with elevated database privileges"
+      - "Validate the input is shorter than 255 characters"
+    answer: [1]
+    explanation: "Parameterised queries separate the query structure from the data, which prevents injection regardless of what the input contains. Length checks and partial escaping are not reliable defences."
+    tags: [injection]
+
+  - id: q-004
+    levels: [beginner, intermediate]
+    audience: all
+    type: single
+    prompt: "A password-reset flow generates a 6-digit code with no attempt limit and no expiry. Which category best describes this flaw?"
+    options:
+      - "Security Misconfiguration"
+      - "Insecure Design"
+      - "Vulnerable and Outdated Components"
+      - "Security Logging and Monitoring Failures"
+    answer: [1]
+    explanation: "The application is working exactly as designed; the flaw is architectural (no rate limiting, no expiry were ever specified), which is what Insecure Design (A04) covers. No code-level patch fixes a design gap like this."
+    tags: [insecure-design]
+
+  - id: q-005
+    levels: [intermediate]
+    audience: engineer
+    type: multi
+    prompt: "Which of these does SAST (static application security testing) typically catch well?"
+    options:
+      - "Injection patterns in source code"
+      - "Hardcoded secrets"
+      - "Access control bugs that depend on runtime request context"
+      - "Business-logic flaws"
+    answer: [0, 1]
+    explanation: "SAST analyses source code without running it, so it finds pattern-based issues like injection and hardcoded secrets well, but generally misses access control and business-logic flaws that only manifest at runtime with real request context."
+    tags: [sast, tooling]
+
+  - id: q-006
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "A team has budget for exactly one new security tool this quarter and currently has zero automated coverage. What is generally the fastest, cheapest first investment?"
+    options:
+      - "A dynamic application security testing (DAST) suite"
+      - "Software composition analysis (SCA) for dependency vulnerabilities"
+      - "An annual manual penetration test"
+      - "A web application firewall"
+    answer: [1]
+    explanation: "SCA is fast to deploy, produces low false-positive results (a known CVE either matches the version in use or it doesn't), and Vulnerable/Outdated Components (A06) is a common, cheaply preventable cause of real breaches."
+    tags: [sca, decision]
+
+  - id: q-007
+    levels: [intermediate, rusty]
+    audience: manager
+    type: single
+    prompt: "Why is 'shift left' more than a developer productivity slogan?"
+    options:
+      - "It makes code review optional"
+      - "A flaw caught at design time costs a conversation; the same flaw caught after release costs a redesign under pressure or an incident"
+      - "It removes the need for penetration testing"
+      - "It only applies to cryptographic failures"
+    answer: [1]
+    explanation: "The cost of fixing a flaw rises sharply the later it's caught — a structural, not just cultural, argument for threat modelling and automated checks earlier in the lifecycle."
+    tags: [sdlc]
+
+  - id: q-008
+    levels: [rusty]
+    audience: engineer
+    type: single
+    prompt: "In the 2021 OWASP list, Cross-Site Scripting (XSS) is classified under which category?"
+    options:
+      - "Its own standalone category, as in 2017"
+      - "Injection (A03)"
+      - "Security Logging and Monitoring Failures"
+      - "Server-Side Request Forgery"
+    answer: [1]
+    explanation: "The 2021 list folded XSS into the broader Injection category, since both are cases of untrusted input being interpreted as executable code."
+    tags: [changed-since]
+
+  - id: q-009
+    levels: [rusty, intermediate]
+    audience: all
+    type: truefalse
+    prompt: "Server-Side Request Forgery (SSRF) was a new top-level category added in the 2021 OWASP Top 10 list."
+    options: ["True", "False"]
+    answer: [0]
+    explanation: "SSRF (A10) is one of two genuinely new categories in 2021 (alongside Insecure Design), reflecting how common it became as applications routinely fetch attacker-influenced URLs and cloud environments exposed convenient internal metadata endpoints."
+    tags: [ssrf, changed-since]
+
+  - id: q-010
+    levels: [beginner, rusty]
+    audience: engineer
+    type: single
+    prompt: "A feature lets users supply a URL for the server to fetch and convert to PDF. What is the primary defence against SSRF here?"
+    options:
+      - "Increase the request timeout"
+      - "Allow-list permitted destination hosts server-side, and explicitly block internal/metadata address ranges"
+      - "Log the URL after fetching it"
+      - "Require the user to be logged in"
+    answer: [1]
+    explanation: "An allow-list that fails closed (rejects anything not explicitly permitted) and blocks internal ranges like the cloud metadata address is the standard SSRF defence. Login alone doesn't stop an authenticated user from abusing the feature."
+    tags: [ssrf]

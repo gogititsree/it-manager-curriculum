@@ -1,0 +1,136 @@
+questions:
+  - id: q-001
+    levels: [beginner, rusty]
+    audience: all
+    type: single
+    prompt: "What is the main difference between MongoDB's $lookup and a relational join?"
+    options:
+      - "$lookup is faster in every case"
+      - "$lookup is explicit and per-query, not automatically indexed like a foreign-key relationship, and enforces no referential integrity"
+      - "$lookup can only join a collection to itself"
+      - "$lookup requires sharding to work"
+    answer: [1]
+    explanation: "$lookup works, but it is one stage you write explicitly, without the automatic indexing or referential-integrity enforcement a relational foreign key often provides."
+    tags: [joins]
+
+  - id: q-002
+    levels: [beginner]
+    audience: all
+    type: truefalse
+    prompt: "MongoDB's multi-document transactions have effectively the same performance cost as a single-document write."
+    options: ["True", "False"]
+    answer: [1]
+    explanation: "Multi-document transactions exist and work, but they carry a real performance cost relative to a single-document write. A workload needing cross-document atomicity on most writes is fighting the tool's fast path."
+    tags: [transactions]
+
+  - id: q-003
+    levels: [beginner, intermediate]
+    audience: manager
+    type: single
+    prompt: "Finance wants ad-hoc SQL-style slicing of data that lives in MongoDB. What is the honest expectation to set?"
+    options:
+      - "MongoDB has full native support for ad-hoc SQL, no extra work needed"
+      - "This will likely need an ETL pipeline into a reporting store, or a standing function writing aggregation pipelines on request"
+      - "This is impossible with MongoDB under any circumstances"
+      - "Only the DBA team can query MongoDB, so finance should be denied access"
+    answer: [1]
+    explanation: "The aggregation framework can answer these questions, but the relational BI ecosystem generally doesn't talk to MongoDB natively — budget for ETL or a bespoke pipeline-writing function rather than assuming SQL-client-style self-service."
+    tags: [reporting]
+
+  - id: q-004
+    levels: [beginner, intermediate]
+    audience: all
+    type: single
+    prompt: "By default, what happens to the previous value of a field when updateOne() changes it in MongoDB?"
+    options:
+      - "It is automatically kept in a hidden history collection"
+      - "It is overwritten with nothing kept, unless the application explicitly wrote history somewhere"
+      - "MongoDB refuses the update unless versioning is enabled"
+      - "It is archived to a separate database automatically"
+    answer: [1]
+    explanation: "MongoDB documents are mutable by default with no built-in temporal or append-only mechanism. An audit trail must be deliberately engineered by the application (e.g. an events collection, change streams to an immutable log)."
+    tags: [audit]
+
+  - id: q-005
+    levels: [intermediate, rusty]
+    audience: manager
+    type: multi
+    prompt: "Which of these are among the five decision criteria for choosing MongoDB at a bank, as covered in this topic?"
+    options:
+      - "Transactional weight and consequence of violated atomicity"
+      - "Join density of the domain"
+      - "The programming language the team prefers"
+      - "Team's operational maturity with MongoDB specifically"
+    answer: [0, 1, 3]
+    explanation: "The framework covers transactional weight, join density, reporting/audit requirement, immutability requirement, and team operational maturity. Programming language preference is not one of the weighted criteria."
+    tags: [decision-framework]
+
+  - id: q-006
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "What is schema drift, in the context covered by this topic?"
+    options:
+      - "A MongoDB bug that corrupts documents over time"
+      - "Inconsistent field names, types and undocumented fields accumulating because no one owns or reviews the document shape"
+      - "The automatic migration MongoDB performs on old documents"
+      - "A performance degradation caused by too many indexes"
+    answer: [1]
+    explanation: "Without a named schema owner and validation, a flexible schema drifts as different writers make different, uncoordinated choices. It's a governance gap, not a database defect — but MongoDB removes the forcing function (a failed ALTER) that surfaces it early in a relational system."
+    tags: [schema-drift]
+
+  - id: q-007
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "A team proposes MongoDB for a system with heavy cross-document transactional writes and a strict regulatory reproducibility requirement. This is best described as:"
+    options:
+      - "An easy yes, since transactions and validation now exist"
+      - "A case where the criteria that matter most for a bank point against MongoDB, regardless of feature existence"
+      - "Impossible to evaluate without knowing the programming language"
+      - "Automatically disqualifying MongoDB from any use at the bank"
+    answer: [1]
+    explanation: "Feature existence (transactions, validation) narrows the gap but doesn't settle the case when the weighted criteria — transactional weight and reproducibility — are both high. This is a scoring decision, not a blanket rule against MongoDB everywhere."
+    tags: [decision-framework]
+
+  - id: q-008
+    levels: [intermediate, rusty]
+    audience: all
+    type: single
+    prompt: "In a real migration away from MongoDB, what is usually the largest source of delay?"
+    options:
+      - "Rewriting the connection string"
+      - "Reconciling data quality problems and drifted shapes that the flexible schema had been hiding"
+      - "Renaming the database"
+      - "Installing the new database software"
+    answer: [1]
+    explanation: "Years of flexible-schema writes typically hide inconsistent types, missing values covered by application defaults, and drifted document shapes. Reconciling this before it fits a rigid schema is usually the largest source of delay, more than the mechanical schema translation."
+    tags: [migration]
+
+  - id: q-009
+    levels: [beginner, intermediate]
+    audience: all
+    type: single
+    prompt: "According to this topic, which kind of system is a genuinely good fit for MongoDB?"
+    options:
+      - "A core ledger with heavy cross-document transactions and strict audit requirements"
+      - "A read-heavy, document-shaped domain like a customer profile or content store, with low cross-document transaction needs and no strict immutability requirement"
+      - "Any system, since the limits described no longer apply"
+      - "Only systems with no regulatory scope whatsoever"
+    answer: [1]
+    explanation: "The topic is explicit that MongoDB is a strong fit for naturally document-shaped, read-heavy domains with predictable access and low transactional/immutability demands — it isn't a blanket rejection of the technology."
+    tags: [good-fit]
+
+  - id: q-010
+    levels: [rusty]
+    audience: all
+    type: single
+    prompt: "What changed about the transactional argument against MongoDB since multi-document transactions were introduced (4.0, 2018)?"
+    options:
+      - "The argument disappeared entirely; transactions now cost the same as a single-document write"
+      - "The gap narrowed but didn't close — transactions exist but still cost more, so volume and consequence still matter"
+      - "Nothing changed; MongoDB still cannot do multi-document transactions"
+      - "Transactions became mandatory for every write"
+    answer: [1]
+    explanation: "\"MongoDB can't do transactions\" stopped being a valid blanket reason to rule it out in 2018, but the performance cost relative to single-document writes remains real, so the decision still depends on how much of the workload needs it and what's at stake."
+    tags: [changed-since, transactions]

@@ -1,0 +1,136 @@
+questions:
+  - id: q-001
+    levels: [beginner, rusty]
+    audience: all
+    type: single
+    prompt: "What does each stage in an aggregation pipeline receive as input?"
+    options:
+      - "The original, unfiltered collection, every time"
+      - "The exact output of the previous stage"
+      - "A random sample of the collection"
+      - "Whatever fields are listed in the final $project"
+    answer: [1]
+    explanation: "A pipeline is a sequence of stages where each stage's output becomes exactly the next stage's input, like a pipe. Only the first stage sees the raw collection."
+    tags: [fundamentals]
+
+  - id: q-002
+    levels: [beginner]
+    audience: engineer
+    type: single
+    prompt: "Which stage collapses documents into one per distinct value of a key, using accumulators like $sum and $avg?"
+    options:
+      - "$match"
+      - "$project"
+      - "$group"
+      - "$sort"
+    answer: [2]
+    explanation: "$group is the collapsing stage; every field besides _id must be built with an accumulator. $match filters, $project reshapes without collapsing, $sort orders."
+    tags: [group]
+
+  - id: q-003
+    levels: [beginner, intermediate]
+    audience: engineer
+    type: truefalse
+    prompt: "After a $group stage, the original per-document fields that were not included in the grouping or an accumulator are still available in later stages."
+    options: ["True", "False"]
+    answer: [1]
+    explanation: "$group reshapes documents entirely; only _id and the accumulator-built fields survive. Any other original field is gone unless explicitly carried forward (e.g. with $first/$push)."
+    tags: [group, gotcha]
+
+  - id: q-004
+    levels: [intermediate, rusty]
+    audience: engineer
+    type: single
+    prompt: "Which stage performs a left outer join against another collection?"
+    options:
+      - "$facet"
+      - "$lookup"
+      - "$unwind"
+      - "$merge"
+    answer: [1]
+    explanation: "$lookup joins another collection by matching fields (or a sub-pipeline). $unwind flattens an array field, $facet runs parallel sub-pipelines, $merge writes output into a collection."
+    tags: [lookup]
+
+  - id: q-005
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "A pipeline against a 40-million-row monthly transaction collection puts $lookup before any $match. The most useful review question is:"
+    options:
+      - "Whether the report's numbers are formatted correctly"
+      - "Whether the date and other filters can move before the $lookup, since the join is currently run against the full unfiltered collection"
+      - "Whether $facet should replace $lookup"
+      - "Whether the collection needs to be sharded"
+    answer: [1]
+    explanation: "Joining before filtering forces MongoDB to look up matches for every document in the collection instead of only the ones that will survive filtering. Moving the filter earlier is the fix; sharding and $facet address different problems."
+    tags: [performance, review]
+
+  - id: q-006
+    levels: [intermediate, rusty]
+    audience: engineer
+    type: multi
+    prompt: "Which of these are true about $facet?"
+    options:
+      - "It runs multiple independent sub-pipelines against the same input documents"
+      - "It parallelises expensive sub-pipelines so each runs faster"
+      - "Its sub-pipelines' results are buffered in memory before the stage returns"
+      - "It avoids re-running an earlier $match once per summary needed"
+    answer: [0, 2, 3]
+    explanation: "$facet saves round trips and repeated filtering by sharing one input across sub-pipelines, buffering their results in memory. It does not make any individual sub-pipeline run faster or in parallel."
+    tags: [facet]
+
+  - id: q-007
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "A $match placed immediately after a $group stage can use an index on the pre-group field. True or false?"
+    options:
+      - "True, indexes apply throughout the whole pipeline"
+      - "False — $group produces new documents unrelated to the original collection's indexes"
+      - "True, but only for sharded collections"
+      - "False, because $match can never use an index in an aggregation"
+    answer: [1]
+    explanation: "Only a $match that is effectively the first operation (or otherwise directly against the underlying collection) can use an index. Once $group has reshaped the documents, there is no longer an index relationship to the original fields."
+    tags: [performance]
+
+  - id: q-008
+    levels: [rusty, intermediate]
+    audience: engineer
+    type: single
+    prompt: "Which stage computes a per-document value over a sorted/partitioned window (e.g. a running balance) without collapsing documents the way $group does?"
+    options:
+      - "$bucket"
+      - "$setWindowFields"
+      - "$facet"
+      - "$sortByCount"
+    answer: [1]
+    explanation: "$setWindowFields (5.0, 2021) computes window functions like running totals and rankings per document, leaving the documents uncollapsed — unlike $group, which produces one output document per key."
+    tags: [changed-since, window-functions]
+
+  - id: q-009
+    levels: [rusty]
+    audience: engineer
+    type: single
+    prompt: "What changed about $lookup in the version that added the let/pipeline form?"
+    options:
+      - "It became possible to join more than one collection at once"
+      - "It became possible to filter the foreign collection before the join, and use non-equality match conditions"
+      - "It stopped supporting simple localField/foreignField joins"
+      - "It began returning a single object instead of an array"
+    answer: [1]
+    explanation: "The let/pipeline form (3.6, 2017) lets you run a sub-pipeline against the foreign collection, including filtering it before the join — the fix for joining a large collection before narrowing it. The simple localField/foreignField form still works."
+    tags: [changed-since, lookup]
+
+  - id: q-010
+    levels: [beginner, intermediate]
+    audience: engineer
+    type: single
+    prompt: "A $group stage is missing which required field?"
+    options:
+      - "$sum"
+      - "_id"
+      - "$project"
+      - "accumulator"
+    answer: [1]
+    explanation: "Every $group stage must specify _id, the field(s) to group by (use _id: null to collapse everything into one summary document)."
+    tags: [group, syntax]

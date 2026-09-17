@@ -1,0 +1,145 @@
+cards:
+  - id: c-001
+    levels: [beginner, intermediate, rusty]
+    audience: engineer
+    front: "Primary key vs foreign key"
+    back: "Primary key uniquely identifies a row in its own table. Foreign key points at another table's primary key and the database refuses to let it point at nothing."
+    tags: [keys]
+  - id: c-002
+    levels: [beginner, intermediate]
+    audience: engineer
+    front: "Foreign key columns: indexed automatically?"
+    back: "No. Unlike the primary key, Postgres does not automatically index a foreign key column — a common cause of slow joins and slow cascading deletes."
+    tags: [gotcha, indexes]
+  - id: c-003
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "ACID, one word each"
+    back: "Atomicity (all-or-nothing), Consistency (rules always hold), Isolation (concurrent transactions don't see each other's half-finished work), Durability (survives a crash once committed)."
+    tags: [transactions, acid]
+  - id: c-004
+    levels: [beginner, intermediate]
+    audience: manager
+    front: "Pragmatic normalisation rule of thumb"
+    back: "Normalise data that must stay consistent and gets updated. Accept deliberate, documented duplication for effectively immutable historical facts (e.g. the amount on a past payment)."
+    tags: [modelling]
+  - id: c-005
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "MVCC in one sentence"
+    back: "An UPDATE writes a new row version rather than overwriting in place; readers never block writers, but old versions linger until vacuum reclaims them."
+    tags: [mvcc]
+  - id: c-006
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "Postgres isolation levels that matter in practice"
+    back: "Read Committed (default, per-statement snapshot), Repeatable Read (per-transaction snapshot), Serializable (result equivalent to some serial execution, enforced by conflict detection at commit)."
+    tags: [isolation]
+  - id: c-007
+    levels: [intermediate]
+    audience: engineer
+    front: "Check-then-act race at Read Committed: cheapest fix"
+    back: "A single atomic statement, e.g. UPDATE ... SET balance = balance - amt WHERE balance >= amt. Zero rows affected means the check failed — no race window."
+    tags: [isolation, race-condition]
+  - id: c-008
+    levels: [intermediate]
+    audience: engineer
+    front: "EXPLAIN vs EXPLAIN (ANALYZE, BUFFERS)"
+    back: "EXPLAIN shows the planned execution without running it. ANALYZE actually runs the query and shows real row counts and timing; BUFFERS shows cache hits vs disk reads."
+    tags: [explain]
+  - id: c-009
+    levels: [intermediate]
+    audience: engineer
+    front: "Composite index column order rule"
+    back: "Put equality-filter columns first, range-filter columns after, matching the actual query shape. An index on (a,b) doesn't efficiently serve a query filtering on b alone."
+    tags: [indexes]
+  - id: c-010
+    levels: [beginner, intermediate]
+    audience: manager
+    front: "JSONB: when is it the right column choice?"
+    back: "Genuinely variable, per-record, application-owned data rarely queried in bulk. Not for core business facts (status, amount) that reporting or reconciliation needs to query across many rows."
+    tags: [jsonb, decision]
+  - id: c-011
+    levels: [intermediate]
+    audience: manager
+    front: "JSONB field becomes a report requirement: what now?"
+    back: "That's the signal to promote it to a real, indexed column — backfill from the JSONB key, add constraints. The decision is per-field, not all-or-nothing for the column."
+    tags: [jsonb]
+  - id: c-012
+    levels: [intermediate]
+    audience: engineer
+    front: "What does partition pruning let Postgres do?"
+    back: "Skip partitions a query's WHERE clause rules out entirely, instead of scanning them. Requires the query to filter on the partition key."
+    tags: [partitioning]
+  - id: c-013
+    levels: [intermediate]
+    audience: manager
+    front: "Partitioning as a retention mechanism"
+    back: "Dropping an old partition is a fast metadata operation, versus a slow, lock-heavy DELETE across a live table for the same retention policy."
+    tags: [partitioning, retention]
+  - id: c-014
+    levels: [intermediate]
+    audience: engineer
+    front: "pgbouncer transaction pooling: the tradeoff"
+    back: "Lets a few dozen real connections serve thousands of app connections, but session-level state (PREPARE, session SET, advisory locks across statements) can't be relied on."
+    tags: [pgbouncer, pooling]
+  - id: c-015
+    levels: [intermediate, rusty]
+    audience: manager
+    front: "The connection-exhaustion failure mode"
+    back: "New connections refused while the database's CPU/memory look healthy — caused by too many app instances each opening their own connections without pooling."
+    tags: [pooling, ops]
+  - id: c-016
+    levels: [intermediate]
+    audience: engineer
+    front: "pg_stat_statements: what it's for"
+    back: "Tracks execution stats per normalised query. The fastest route to 'what's actually slow in production,' ranked by real aggregate cost."
+    tags: [extensions]
+  - id: c-017
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "Bloat: what causes it and what watches for it"
+    back: "MVCC dead row versions accumulating faster than vacuum reclaims them. Watch n_dead_tup vs n_live_tup and last_autovacuum in pg_stat_user_tables."
+    tags: [vacuum, bloat]
+  - id: c-018
+    levels: [intermediate]
+    audience: engineer
+    front: "VACUUM vs VACUUM FULL"
+    back: "VACUUM reclaims space for reuse without blocking. VACUUM FULL rewrites the table, actually shrinking it on disk, but takes an exclusive lock — a last resort, not routine."
+    tags: [vacuum]
+  - id: c-019
+    levels: [rusty]
+    audience: engineer
+    front: "Declarative partitioning: what changed and when"
+    back: "PostgreSQL 10 (2017) added native PARTITION BY / PARTITION OF syntax, replacing the old inheritance-plus-trigger, constraint-exclusion approach."
+    tags: [changed-since, partitioning]
+  - id: c-020
+    levels: [rusty]
+    audience: engineer
+    front: "Logical replication: what changed and when"
+    back: "PostgreSQL 10 (2017) added built-in CREATE PUBLICATION/SUBSCRIPTION — table-level, row-by-row replication, enabling selective sync and cross-major-version replication, unlike byte-for-byte streaming replication."
+    tags: [changed-since, replication]
+  - id: c-021
+    levels: [rusty]
+    audience: engineer
+    front: "Parallel query: what changed and when"
+    back: "Introduced PostgreSQL 9.6 (2016), matured through 10-13: the planner can split a scan/join/aggregate across worker processes automatically. Doesn't replace a missing index."
+    tags: [changed-since, performance]
+  - id: c-022
+    levels: [rusty]
+    audience: engineer
+    front: "Upsert and MERGE: what changed and when"
+    back: "INSERT ... ON CONFLICT DO UPDATE arrived in 9.5 (2015). A full standard SQL MERGE statement arrived in PostgreSQL 15 (2022)."
+    tags: [changed-since, sql]
+  - id: c-023
+    levels: [rusty]
+    audience: manager
+    front: "What changed about running Postgres day to day"
+    back: "Managed offerings (RDS/Aurora, Cloud SQL/AlloyDB, Azure) made backup, PITR, patching and failover largely configuration choices; newer entrants add serverless autoscaling and branching."
+    tags: [changed-since, managed]
+  - id: c-024
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "Bank-context: why enforce rules in the database, not just application code?"
+    back: "It's auditable evidence: 'the database will not allow it to exist' answers a regulator's question better than 'our code is supposed to check that.'"
+    tags: [bank-context]

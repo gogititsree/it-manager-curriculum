@@ -1,0 +1,4 @@
+title: "API Development (FastAPI & Flask)"
+summary: "Routing, validation, async, OpenAPI, auth middleware and deployment — and the actual FastAPI-vs-Flask decision."
+prerequisites: ["python/syntax"]
+tags: [python, api, fastapi, flask]

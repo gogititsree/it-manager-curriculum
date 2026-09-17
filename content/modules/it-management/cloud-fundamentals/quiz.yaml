@@ -1,0 +1,136 @@
+questions:
+  - id: q-001
+    levels: [beginner]
+    audience: engineer
+    type: single
+    prompt: "A team needs to store large PDF documents that will be read occasionally but never modified. Which storage type fits best?"
+    options:
+      - "Block storage (an attached disk)"
+      - "Object storage (S3 / Blob Storage)"
+      - "File storage mounted on every server"
+      - "In-memory cache"
+    answer: [1]
+    explanation: "Object storage is durable, cheap and scales without pre-provisioning, and is the default choice for files that don't need a mounted filesystem. Block storage is for a single machine's filesystem, typically a database's data files."
+    tags: [storage]
+
+  - id: q-002
+    levels: [beginner, rusty]
+    audience: all
+    type: single
+    prompt: "Under the shared responsibility model, who is responsible for encrypting your application's data and configuring its access controls?"
+    options:
+      - "The cloud provider, entirely"
+      - "You, as the customer — the provider secures the underlying data centre and platform, not your data or configuration"
+      - "Nobody; encryption is automatic and access is open by default"
+      - "A third-party auditor"
+    answer: [1]
+    explanation: "The provider secures 'of the cloud' (physical data centre, hardware, virtualization); the customer secures 'in the cloud' (data, identity configuration, network rules, OS patches on anything self-managed)."
+    tags: [shared-responsibility]
+
+  - id: q-003
+    levels: [beginner]
+    audience: all
+    type: single
+    prompt: "What does an availability zone protect against that a single data centre deployment does not?"
+    options:
+      - "A whole-region outage"
+      - "A single data centre's failure, by spreading resources across physically separate facilities in the same region"
+      - "A misconfigured IAM policy"
+      - "A rising cloud bill"
+    answer: [1]
+    explanation: "Availability zones are physically separate data centres within one region. Multi-AZ protects against one facility failing; it does not protect against an entire region becoming unavailable, which needs multi-region replication."
+    tags: [regions]
+
+  - id: q-004
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "A landing zone's main organisational benefit is:"
+    options:
+      - "It makes cloud resources free"
+      - "Security guardrails and account structure are enforced before a team starts building, rather than reviewed after the fact"
+      - "It removes the need for IAM"
+      - "It guarantees the lowest possible cost automatically"
+    answer: [1]
+    explanation: "A landing zone bakes in guardrails (logging, policy, account structure) at provisioning time, turning security review from an after-the-fact check into a built-in guarantee that scales across many teams and accounts."
+    tags: [landing-zone]
+
+  - id: q-005
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "What is the strongest review question about standing admin access to a production cloud account?"
+    options:
+      - "How many people have it, and is it permanent standing access or time-boxed just-in-time elevation?"
+      - "What password policy is used?"
+      - "How many resources are in the account?"
+      - "Is multi-factor authentication enabled on the root account only?"
+    answer: [0]
+    explanation: "Permanent standing admin access for a broad group is the most common real-world finding in cloud security reviews. Time-boxed, just-in-time elevation with logging is the safer pattern."
+    tags: [iam, bank-context]
+
+  - id: q-006
+    levels: [intermediate, rusty]
+    audience: engineer
+    type: single
+    prompt: "A team wants a service in one VPC to reach a managed database service without traffic crossing the public internet. What is the relevant AWS/Azure feature?"
+    options:
+      - "A public NAT gateway"
+      - "PrivateLink / VPC endpoints (AWS) or Private Link (Azure)"
+      - "A wider security group rule"
+      - "Elastic IP addresses"
+    answer: [1]
+    explanation: "PrivateLink/Private Link lets traffic to a managed service stay on the provider's private network rather than transiting the public internet, even though the service is outside your VPC/VNet."
+    tags: [networking]
+
+  - id: q-007
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "The honest cost comparison for 'run our own database on a VM' vs 'use the managed database service' is:"
+    options:
+      - "Managed service sticker price alone"
+      - "VM price alone"
+      - "Managed service price vs VM price plus the engineering time to replicate patching, backup, failover and monitoring to the same standard"
+      - "Whichever the vendor with the existing relationship recommends"
+    answer: [2]
+    explanation: "The VM's sticker price omits the ongoing engineering cost of reproducing what a managed service already provides, which is usually the larger number and is rarely tracked."
+    tags: [managed-services, decision]
+
+  - id: q-008
+    levels: [intermediate, rusty]
+    audience: manager
+    type: single
+    prompt: "A cloud bill increases 40% month over month, and tagging coverage is only 60%. What is the first practical step?"
+    options:
+      - "Cancel all non-production accounts immediately"
+      - "Break down the cost-by-service change to find the top movers, then narrow by tag where available and by account/subscription where not"
+      - "Switch cloud providers"
+      - "Wait for next month's bill to see if it repeats"
+    answer: [1]
+    explanation: "Investigation starts with identifying which service categories grew, then narrowing to a team or workload using whatever attribution (tags, account) is available, before deciding on a fix."
+    tags: [cost, finops]
+
+  - id: q-009
+    levels: [rusty]
+    audience: engineer
+    type: truefalse
+    prompt: "Data transfer out to the internet is generally billed by cloud providers, while data transfer in is usually free."
+    options: ["True", "False"]
+    answer: [0]
+    explanation: "Egress (outbound) data transfer is a common cost surprise; ingress is typically free. Designs that move a lot of data out (cross-provider backups, cross-region replication) should model this cost up front."
+    tags: [cost, gotcha]
+
+  - id: q-010
+    levels: [rusty]
+    audience: all
+    type: single
+    prompt: "What is the main practical shift 'infrastructure as code' brings compared to console-configured, hand-built environments?"
+    options:
+      - "It makes cloud resources cheaper automatically"
+      - "The infrastructure's definition becomes a reviewable, version-controlled artefact, answerable by reading a repository instead of asking whoever last touched it"
+      - "It removes the need for IAM policies"
+      - "It is required by all cloud providers"
+    answer: [1]
+    explanation: "Declarative tools (Terraform, CloudFormation, Bicep/ARM) make infrastructure changes reviewable diffs checked into version control, the same discipline applied to application code, rather than tribal knowledge."
+    tags: [changed-since, iac]

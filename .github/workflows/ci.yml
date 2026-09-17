@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build shared packages
+        run: pnpm -r --filter './packages/*' build
+
+      # Content validation is the gate that matters most: every lesson, quiz and flashcard
+      # is schema-checked here, so a bad authoring PR cannot reach main.
+      - name: Validate and build content
+        run: pnpm content:build
+
+      - name: Typecheck
+        run: pnpm -r typecheck
+
+      - name: Test
+        run: pnpm -r test
+
+      - name: Build apps
+        run: |
+          pnpm --filter @itmc/api build
+          pnpm --filter @itmc/web build
+
+      - name: Smoke test the API
+        env:
+          AUTH_TOKEN: ci-smoke-token
+          DATABASE_PATH: ./data/ci.db
+          CONTENT_DIST: ./content/dist
+          PORT: 4000
+        run: |
+          pnpm db:migrate
+          node apps/api/dist/main.js &
+          API_PID=$!
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:4000/api/health >/dev/null && break
+            sleep 1
+          done
+          echo "--- health"
+          curl -sf http://localhost:4000/api/health
+          echo "--- unauthenticated request must be rejected"
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:4000/api/content/manifest)" = "401"
+          echo "--- authenticated manifest"
+          curl -sf -H "Authorization: Bearer ci-smoke-token" http://localhost:4000/api/content/manifest >/dev/null
+          kill $API_PID

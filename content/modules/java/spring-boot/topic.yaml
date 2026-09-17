@@ -1,0 +1,4 @@
+title: "Spring Boot"
+summary: "Dependency injection, starters, configuration, REST controllers, and what the magic is doing."
+prerequisites: [java/oop-fundamentals]
+tags: [java, spring, spring-boot, dependency-injection, rest]

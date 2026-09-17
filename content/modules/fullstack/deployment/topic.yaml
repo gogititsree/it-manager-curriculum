@@ -1,0 +1,4 @@
+title: "Deployment"
+summary: "Containers, Kubernetes basics, blue/green and canary, config and secrets, rollback."
+prerequisites: [it-management/cicd-concepts]
+tags: [deployment, kubernetes, containers, change-control]

@@ -1,0 +1,4 @@
+title: "MongoDB Document Modeling"
+summary: "Embedding vs referencing, schema design patterns, schema validation, and modelling for the queries you will actually run."
+prerequisites: []
+tags: [mongodb, schema-design, data-modeling]

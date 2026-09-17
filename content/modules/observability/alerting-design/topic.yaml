@@ -1,0 +1,4 @@
+title: "Alerting Design"
+summary: "Symptom vs cause alerts, SLOs and error budgets, burn-rate alerting, runbooks, paging etiquette, and on-call health."
+prerequisites: [observability/logs-metrics-traces]
+tags: [observability, alerting, slo, error-budget, on-call, runbooks]

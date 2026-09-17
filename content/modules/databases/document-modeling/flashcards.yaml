@@ -1,0 +1,91 @@
+cards:
+  - id: c-001
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "Embed or reference: the first question to ask"
+    back: "How is this queried, and how big does it grow? A schema proposal that can't answer both hasn't been designed yet."
+    tags: [fundamentals]
+  - id: c-002
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "When to embed"
+    back: "Bounded, fast-to-read-together data that is normally accessed with its parent (a handful to a few hundred items)."
+    tags: [embedding]
+  - id: c-003
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "When to reference"
+    back: "Unbounded or fast-growing data, or data queried/written independently of the parent at meaningful volume."
+    tags: [referencing]
+  - id: c-004
+    levels: [beginner, intermediate]
+    audience: engineer
+    front: "MongoDB document size limit"
+    back: "16 MB per document. Unbounded embedding is the most common way schemas hit it."
+    tags: [limits]
+  - id: c-005
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "Bucket pattern"
+    back: "Group time-boxed events (e.g. one account-day) into one document with precomputed totals, instead of one document per event."
+    tags: [patterns]
+  - id: c-006
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "Outlier pattern"
+    back: "Flag and cap the rare oversized document (e.g. a high-volume merchant account) instead of redesigning the whole collection around it."
+    tags: [patterns]
+  - id: c-007
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "Subset pattern"
+    back: "Embed only the slice most reads need (e.g. last 10 transactions); keep the full set in a referenced collection."
+    tags: [patterns]
+  - id: c-008
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "Computed pattern"
+    back: "Store a precomputed value (balance, count, total) at write time instead of recalculating it on every read."
+    tags: [patterns]
+  - id: c-009
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "$jsonSchema validation: what it enforces"
+    back: "Required fields, BSON types, enums and patterns, checked server-side on writes to a collection. Off by default."
+    tags: [validation]
+  - id: c-010
+    levels: [intermediate]
+    audience: engineer
+    front: "validationAction: warn vs error"
+    back: "warn logs violations without rejecting writes (safe rollout on existing data); error rejects non-conforming writes."
+    tags: [validation]
+  - id: c-011
+    levels: [intermediate, rusty]
+    audience: all
+    front: "schemaVersion field: what it's for"
+    back: "Marks which shape a document is in so application code can branch or migrate it, since MongoDB never rewrites existing documents when the schema changes."
+    tags: [versioning]
+  - id: c-012
+    levels: [intermediate, rusty]
+    audience: manager
+    front: "Migrate-on-touch: where it's risky"
+    back: "For audit-relevant history. It can silently rewrite what a document looked like at the time of the original event. Fine for operational data, wrong for immutable records."
+    tags: [bank-context, versioning]
+  - id: c-013
+    levels: [rusty]
+    audience: all
+    front: "What multi-document transactions (4.0, 2018) changed about modeling"
+    back: "Removed the old reason to embed purely for atomicity. Reference more freely when the access pattern calls for it; use transactions for genuine cross-document invariants, not as a default."
+    tags: [changed-since, transactions]
+  - id: c-014
+    levels: [rusty]
+    audience: engineer
+    front: "Time series collections (5.0, 2021)"
+    back: "Built-in collection type for timestamped measurement data with automatic bucketing, replacing most hand-rolled bucket schemas for genuinely time-series data."
+    tags: [changed-since]
+  - id: c-015
+    levels: [beginner, intermediate, rusty]
+    audience: manager
+    front: "Review red flag: unbounded embedded array"
+    back: "The single most common MongoDB modeling mistake. Usually surfaces months later as a performance incident, not at design time."
+    tags: [review, mistakes]

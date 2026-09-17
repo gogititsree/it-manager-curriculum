@@ -1,0 +1,136 @@
+questions:
+  - id: q-001
+    levels: [beginner, rusty]
+    audience: all
+    type: single
+    prompt: 'Which pillar answers "where did the time go, across which services, for this one request?"'
+    options:
+      - "Logs"
+      - "Metrics"
+      - "Traces"
+      - "Alerts"
+    answer: [2]
+    explanation: "Traces follow a single request across service boundaries and show the timeline. Logs give detail for one event; metrics give aggregate trends over time; alerts are a consumer of the other three, not a pillar."
+    tags: [pillars]
+
+  - id: q-002
+    levels: [beginner]
+    audience: engineer
+    type: single
+    prompt: "What makes a log line 'structured' rather than free text?"
+    options:
+      - "It is written in English rather than another language"
+      - "It is stored as key-value fields (commonly JSON) instead of a single unindexed sentence"
+      - "It includes a timestamp"
+      - "It is shorter than a free-text line"
+    answer: [1]
+    explanation: "Structured logging writes each fact as its own field so it can be indexed, filtered and aggregated. A timestamp alone does not make a line structured; free-text lines often include timestamps too."
+    tags: [structured-logging]
+
+  - id: q-003
+    levels: [beginner, intermediate]
+    audience: manager
+    type: single
+    prompt: "A team wants to add raw customer email as a label on a real-time metric so they can 'see patterns per customer.' The right response is:"
+    options:
+      - "Approve it; more detail is always better for debugging"
+      - "Refuse it as a metric label because it is unbounded, likely PII, and will multiply time-series count; suggest a structured log field instead"
+      - "Approve it but only for 24 hours"
+      - "Refuse it and suggest they stop tracking this use case entirely"
+    answer: [1]
+    explanation: "High-cardinality, PII-bearing fields belong in logs (stored per-event) not metric labels (stored per unique combination, multiplied across time). The use case is valid; the mechanism is wrong."
+    tags: [cardinality, bank-context]
+
+  - id: q-004
+    levels: [beginner, intermediate, rusty]
+    audience: engineer
+    type: truefalse
+    prompt: "Cardinality refers to the number of distinct values a field can take."
+    options: ["True", "False"]
+    answer: [0]
+    explanation: "That is the definition. Low-cardinality fields (HTTP method, status class) are cheap as metric labels; high-cardinality fields (user ID, raw URL) are not."
+    tags: [cardinality]
+
+  - id: q-005
+    levels: [intermediate]
+    audience: engineer
+    type: multi
+    prompt: "Which of these are appropriate places for a correlation/trace ID to be carried?"
+    options:
+      - "An HTTP header on every outbound call"
+      - "The envelope of a message published to a queue"
+      - "Only in the entry-point service's own logs"
+      - "Every log line written while handling the request, across all services"
+    answer: [0, 1, 3]
+    explanation: "The ID must propagate across every hop, synchronous and asynchronous, and appear in every log line for the request in every service — not just at the entry point, which is the most common place propagation silently breaks."
+    tags: [correlation-id]
+
+  - id: q-006
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "A service's observability bill has tripled in a month with no corresponding traffic growth. The first thing to check is:"
+    options:
+      - "Whether the cloud provider raised prices"
+      - "Whether a recent change added a high-cardinality metric label"
+      - "Whether the team needs a bigger budget"
+      - "Whether log retention should be shortened across the board"
+    answer: [1]
+    explanation: "A cardinality mistake can multiply storage 10-100x and is the most common silent cause of a cost spike disconnected from traffic. It is cheap to check and should be ruled out before assuming organic growth or renegotiating budget."
+    tags: [cardinality, cost]
+
+  - id: q-007
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "Tail-based sampling means:"
+    options:
+      - "Sampling a fixed percentage of traces chosen at random when the request starts"
+      - "Deciding whether to keep a trace after seeing how it ended, so errors and slow requests are kept at a higher rate than routine ones"
+      - "Only sampling the last few requests before an alert fires"
+      - "Sampling only traces from the last service in the call chain"
+    answer: [1]
+    explanation: "Tail-based sampling defers the keep/drop decision until the request completes, so it can prioritise the traces most useful for debugging (errors, high latency) instead of a blind random sample that might discard exactly the evidence needed."
+    tags: [sampling]
+
+  - id: q-008
+    levels: [rusty]
+    audience: all
+    type: single
+    prompt: "The main practical difference between 'monitoring' in the Nagios/Zabbix sense and 'observability' is best described as:"
+    options:
+      - "Observability tools are simply newer versions of monitoring tools with better UIs"
+      - "Monitoring watches for predefined failure modes; observability lets you ask new, unanticipated questions about a system's internal state after the fact"
+      - "Monitoring uses metrics and observability uses only logs"
+      - "There is no real difference; it is a marketing rename"
+    answer: [1]
+    explanation: "Monitoring is built around known checks and thresholds decided in advance. Observability is the property that lets you investigate failure modes nobody predicted, by combining logs, metrics and traces after the fact."
+    tags: [changed-since]
+
+  - id: q-009
+    levels: [rusty, intermediate]
+    audience: engineer
+    type: single
+    prompt: "A batch pipeline used to be checked with 'does the output file exist by 06:00.' The closest modern equivalent is:"
+    options:
+      - "Removing the check entirely since files are obsolete"
+      - "A metric such as a completion timestamp or counter, alerted on when it is stale, plus structured logs and a trace per run for root-causing failures"
+      - "Polling the file more frequently"
+      - "Replacing it with a single log line at the end of the run"
+    answer: [1]
+    explanation: "A metric gives a reliable, queryable signal for alerting; structured logs and a trace per run add the diagnostic detail a binary file-exists check never provided. Polling more often or a single end-of-run log line do not add that diagnostic capability."
+    tags: [changed-since]
+
+  - id: q-010
+    levels: [beginner]
+    audience: all
+    type: single
+    prompt: "Which statement about the three pillars is correct?"
+    options:
+      - "Traces replace the need for logs once adopted"
+      - "Metrics, logs and traces answer different questions and are normally used together: metric flags a problem, trace localises it, log explains it"
+      - "Logs are obsolete now that structured metrics exist"
+      - "You should pick exactly one pillar per service to reduce cost"
+    answer: [1]
+    explanation: "The three pillars are complementary, not substitutes. Discarding any one of them for cost reasons removes a distinct capability (aggregate trend, request-path localisation, or event-level detail) that the others cannot fully replace."
+    tags: [pillars]

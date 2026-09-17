@@ -1,0 +1,103 @@
+cards:
+  - id: c-001
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "Encapsulation in one sentence"
+    back: "Data and the rules about it live together; the only way to change the data is through methods that enforce the rules."
+    tags: [encapsulation]
+  - id: c-002
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "Composition vs inheritance: the default choice?"
+    back: "Composition. Inheritance only for a true is-a relationship with a stable base class."
+    tags: [design]
+  - id: c-003
+    levels: [beginner, rusty]
+    audience: all
+    front: "What is polymorphism, practically?"
+    back: "Code written against an interface works with any implementation, including ones written later or faked in tests."
+    tags: [interfaces]
+  - id: c-004
+    levels: [rusty, intermediate]
+    audience: engineer
+    front: "Java record: what do you get for free?"
+    back: "Canonical constructor, component accessors (cents(), not getCents()), equals, hashCode, toString. Immutable. Validation goes in a compact constructor."
+    tags: [records]
+  - id: c-005
+    levels: [rusty, intermediate]
+    audience: engineer
+    front: "Sealed interface: what does it do?"
+    back: "Restricts which classes may implement it (permits ...). With switch pattern matching, the compiler enforces that every case is handled."
+    tags: [sealed]
+  - id: c-006
+    levels: [rusty, intermediate]
+    audience: all
+    front: "Records are ___ immutable"
+    back: "Shallowly. A record holding a mutable List still exposes it. Copy on the way in with List.copyOf."
+    tags: [gotcha]
+  - id: c-007
+    levels: [beginner, intermediate, rusty]
+    audience: manager
+    front: "Review question that exposes weak encapsulation"
+    back: "Who else can change this? If the answer is anything with a reference, the class is a data bag and its invariants are unprotected."
+    tags: [review]
+  - id: c-008
+    levels: [beginner, intermediate, rusty]
+    audience: manager
+    front: "Where does vendor lock-in usually live in Java code?"
+    back: "Direct calls to the vendor SDK scattered through services. An interface (port) with one adapter class confines the dependency to one place."
+    tags: [interfaces, risk]
+  - id: c-009
+    levels: [intermediate, rusty]
+    audience: all
+    front: "Optional: where is it appropriate?"
+    back: "As a return type meaning may be absent. Not as a field, not as a parameter, and never .get() without checking."
+    tags: [gotcha]
+  - id: c-010
+    levels: [intermediate]
+    audience: all
+    front: "Anaemic domain model"
+    back: "Objects are data bags with getters and setters; all rules live in service classes. The objects protect nothing."
+    tags: [design]
+  - id: c-011
+    levels: [rusty]
+    audience: engineer
+    front: "Java version anchors: records, sealed, pattern switch"
+    back: "Records 16 (2021), sealed 17 (2021), pattern matching for switch 21 (2023). var 10, text blocks 15."
+    tags: [changed-since]
+  - id: c-012
+    levels: [beginner, intermediate]
+    audience: all
+    front: "Immutable object: three benefits"
+    back: "Cannot enter an invalid state after construction; safe to share across threads; trivial to reason about and test."
+    tags: [immutability]
+  - id: c-013
+    levels: [intermediate]
+    audience: manager
+    front: "SOLID's 'S', as a review question"
+    back: "What would make this class change, for reasons that have nothing to do with each other? Multiple unrelated reasons to change means split it."
+    tags: [solid, review]
+  - id: c-014
+    levels: [intermediate]
+    audience: engineer
+    front: "PECS mnemonic for wildcards"
+    back: "Producer Extends, Consumer Super. Use <? extends T> when you only read; <? super T> when you only write."
+    tags: [generics]
+  - id: c-015
+    levels: [intermediate]
+    audience: all
+    front: "Typed identifiers: what bug do they prevent?"
+    back: "Passing a debtor account id where a creditor account id is expected. Both compile as String; wrapping each in its own type makes the swap a compile error."
+    tags: [design, gotcha]
+  - id: c-016
+    levels: [intermediate]
+    audience: engineer
+    front: "Dependency inversion, applied to a Spring service"
+    back: "The domain package defines the interface (e.g. AccountRepository); an infrastructure class in another package implements it. The domain has no Spring or JPA import."
+    tags: [dependency-inversion]
+  - id: c-017
+    levels: [intermediate]
+    audience: all
+    front: "Ports and adapters, in one sentence"
+    back: "The domain owns the interface (the port); framework-specific code implements it elsewhere (the adapter). Lighter than full hexagonal architecture but same idea."
+    tags: [design]

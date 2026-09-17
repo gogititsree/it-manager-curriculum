@@ -1,0 +1,85 @@
+cards:
+  - id: c-001
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "Python typing in one sentence"
+    back: "Dynamically typed: a name labels a value, and can be relabelled to a value of a different type; every value still has a definite type at runtime."
+    tags: [types]
+  - id: c-002
+    levels: [beginner, rusty]
+    audience: engineer
+    front: "Mutable default argument gotcha"
+    back: "def f(x=[]): the list is created once at definition time and shared across every call. Use x=None and x = x or [] inside."
+    tags: [gotcha, functions]
+  - id: c-003
+    levels: [beginner]
+    audience: engineer
+    front: "list vs tuple vs dict vs set: one-line difference"
+    back: "list: ordered, mutable. tuple: ordered, immutable. dict: key lookup. set: unique, unordered, fast membership test."
+    tags: [collections]
+  - id: c-004
+    levels: [beginner, intermediate]
+    audience: engineer
+    front: "What is a comprehension?"
+    back: "A for loop and optional if filter written as one expression that builds a list, dict or set: [x for x in xs if cond]."
+    tags: [comprehensions]
+  - id: c-005
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "What does @dataclass generate?"
+    back: "__init__, __repr__ and __eq__ from a list of typed fields. Add frozen=True for immutability."
+    tags: [dataclasses]
+  - id: c-006
+    levels: [intermediate]
+    audience: engineer
+    front: "Generator vs list: when to use a generator?"
+    back: "When data may be large or unbounded. A generator (yield) produces values one at a time instead of holding the whole collection in memory."
+    tags: [generators]
+  - id: c-007
+    levels: [intermediate]
+    audience: manager
+    front: "Signal that a script won't scale with data size"
+    back: "It loads a whole file into a list (readlines(), json.load() of a huge file) instead of streaming it. Ask what happens when the input is 10x bigger."
+    tags: [performance, review]
+  - id: c-008
+    levels: [rusty]
+    audience: all
+    front: "Python 2 end of life"
+    back: "January 2020. No security patches since. A production Python 2 script is an audit finding, not just a style issue."
+    tags: [python2-to-3, bank-context]
+  - id: c-009
+    levels: [rusty]
+    audience: engineer
+    front: "Python 2 → 3: the single biggest migration bug"
+    back: "str became Unicode text and bytes became the old str. Code mixing them raises TypeError: can't concat str to bytes."
+    tags: [python2-to-3]
+  - id: c-010
+    levels: [rusty]
+    audience: engineer
+    front: "Idiomatic string formatting now"
+    back: "f-strings: f\"{name}: {amount:.2f}\". Replaced % formatting and .format() as the default since Python 3.6 (2016)."
+    tags: [changed-since]
+  - id: c-011
+    levels: [rusty]
+    audience: engineer
+    front: "Idiomatic path handling now"
+    back: "pathlib.Path, with / overloaded to join segments: Path(\"data\") / \"file.csv\". Replaced manual os.path.join string handling."
+    tags: [changed-since]
+  - id: c-012
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "with block: what does it guarantee?"
+    back: "Cleanup code (closing a file, connection or lock) runs even if the block raises an exception. Same guarantee as try/finally, for the common case."
+    tags: [context-managers]
+  - id: c-013
+    levels: [beginner, intermediate]
+    audience: manager
+    front: "Why care about type hints on an inherited codebase?"
+    back: "They are the highest-leverage, non-breaking improvement available: incremental, tool-checked, and they answer 'what does this expect' without a Slack message."
+    tags: [typing, review]
+  - id: c-014
+    levels: [intermediate]
+    audience: all
+    front: "pyproject.toml: what is it?"
+    back: "A single declarative file for a Python project's dependencies and metadata, the modern replacement for separate setup.py / requirements.txt files."
+    tags: [packaging]

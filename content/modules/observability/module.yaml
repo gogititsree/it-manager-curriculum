@@ -1,0 +1,8 @@
+title: "Observability"
+tagline: "Knowing what production is doing"
+whyItMatters: "When something breaks at 2 a.m., observability decides whether it is a 10-minute or a 10-hour incident. Managers set the standards that make that difference."
+topics:
+  - logs-metrics-traces
+  - prometheus-grafana
+  - opentelemetry
+  - alerting-design

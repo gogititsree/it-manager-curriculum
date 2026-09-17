@@ -1,0 +1,9 @@
+title: "IT Management Extras"
+tagline: "The vocabulary and judgement a manager is paid for"
+whyItMatters: "You will approve, fund, and defend technical decisions you did not make. These topics give you the frameworks and the questions that keep those decisions honest."
+topics:
+  - cicd-concepts
+  - cloud-fundamentals
+  - owasp-top-10
+  - architecture-decision-frameworks
+  - cost-tradeoff-thinking

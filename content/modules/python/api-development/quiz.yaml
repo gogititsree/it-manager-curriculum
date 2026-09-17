@@ -1,0 +1,150 @@
+questions:
+  - id: q-001
+    levels: [beginner]
+    audience: all
+    type: single
+    prompt: "What does a route do in a Python web API?"
+    options:
+      - "Encrypts the request body"
+      - "Maps an HTTP method and URL pattern to a Python function that handles it"
+      - "Connects the app to a database"
+      - "Generates a load balancer configuration"
+    answer: [1]
+    explanation: "A route is the binding between an HTTP method + URL pattern and the function that runs when a matching request arrives."
+    tags: [routing]
+
+  - id: q-002
+    levels: [beginner]
+    audience: manager
+    type: single
+    prompt: "An endpoint deletes a record when called with GET. This is a problem mainly because:"
+    options:
+      - "GET requests are slower than POST"
+      - "GET is assumed safe to repeat and cache by browsers, load balancers and retries, so an accidental or automated GET can trigger the deletion"
+      - "GET requests cannot include a URL parameter"
+      - "It is a minor style issue with no real risk"
+    answer: [1]
+    explanation: "HTTP conventions assume GET has no side effects, which is why it's the method retried automatically and sometimes prefetched or crawled. Putting a destructive action behind it violates that assumption."
+    tags: [http-methods, review]
+
+  - id: q-003
+    levels: [beginner, intermediate]
+    audience: engineer
+    type: single
+    prompt: "What does request validation at the edge of an API primarily buy you?"
+    options:
+      - "Faster response times in all cases"
+      - "Bad input is rejected clearly before business logic runs, instead of causing a confusing failure deeper in the code"
+      - "It removes the need for authentication"
+      - "It automatically generates a database schema"
+    answer: [1]
+    explanation: "Validating input once at the boundary turns malformed requests into a clear, early error response rather than an unpredictable failure somewhere downstream."
+    tags: [validation]
+
+  - id: q-004
+    levels: [intermediate, rusty]
+    audience: manager
+    type: single
+    prompt: "A team defaults to Flask for a new API with three external consumers, citing familiarity. The most useful follow-up question is:"
+    options:
+      - "Why don't you like FastAPI"
+      - "Do you already have a consistently applied validation library and a maintained contract (OpenAPI-equivalent) for your Flask services, or will this need to be built"
+      - "Which framework is more popular"
+      - "Can this be rewritten in a different language instead"
+    answer: [1]
+    explanation: "The real cost comparison is whether Flask's missing built-in validation/contract generation is already solved by the team's existing tooling, or whether it needs to be built and maintained by hand for this service."
+    tags: [decision, framework-choice]
+
+  - id: q-005
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "In pydantic v2, what replaced the v1 .dict() method on a model instance?"
+    options:
+      - ".to_json()"
+      - ".model_dump()"
+      - ".serialize()"
+      - ".export()"
+    answer: [1]
+    explanation: "pydantic v2 renamed several methods: .dict() -> .model_dump(), .parse_obj() -> .model_validate(), @validator -> @field_validator."
+    tags: [pydantic, changed-since]
+
+  - id: q-006
+    levels: [intermediate, rusty]
+    audience: engineer
+    type: single
+    prompt: "Calling a synchronous, non-async HTTP client (like requests) inside an async def route handler:"
+    options:
+      - "Is fine as long as the response is small"
+      - "Blocks the entire event loop for the duration of the call, stalling other concurrent requests on that worker"
+      - "Automatically runs in a background thread"
+      - "Raises an exception immediately"
+    answer: [1]
+    explanation: "A blocking call inside async code does not yield control back to the event loop, so every other request being handled by that worker stalls until it completes. Use an async-native client or run the blocking call in a thread pool."
+    tags: [async, gotcha]
+
+  - id: q-007
+    levels: [intermediate]
+    audience: engineer
+    type: truefalse
+    prompt: "Using async def for a route automatically makes CPU-bound work in that route faster."
+    options: ["True", "False"]
+    answer: [1]
+    explanation: "async in Python helps with I/O-bound waiting (network, disk, database calls) by letting other requests proceed while one waits. It does not speed up CPU-bound computation, which still runs on one thread at a time."
+    tags: [async]
+
+  - id: q-008
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "What does treating an API's OpenAPI spec as a 'reviewed artefact' mean in practice for a multi-consumer API?"
+    options:
+      - "Only the docs team can read it"
+      - "A change to the spec that breaks the contract gets the same review scrutiny as a breaking database schema change"
+      - "It must be rewritten by hand every release"
+      - "It replaces the need for any testing"
+    answer: [1]
+    explanation: "For an API with multiple consuming teams, the published contract is something other systems depend on; changing it without review has the same blast radius as a breaking schema change."
+    tags: [openapi, review]
+
+  - id: q-009
+    levels: [beginner, intermediate]
+    audience: manager
+    type: single
+    prompt: "\"It's an internal API, so it doesn't need authentication\" is a risky assumption mainly because:"
+    options:
+      - "Internal APIs are always slower without auth"
+      - "Internal networks can be breached, internal tools can be called by compromised systems, and audit expects to know who accessed what"
+      - "Authentication is required by the HTTP specification"
+      - "It has no real risk if the API only returns non-sensitive data"
+    answer: [1]
+    explanation: "The network boundary is not a substitute for an authentication boundary. Financial-services audit and security expectations generally require attributable access regardless of network location."
+    tags: [bank-context, auth]
+
+  - id: q-010
+    levels: [rusty]
+    audience: engineer
+    type: single
+    prompt: "What is the main practical difference in how FastAPI and Flask handle a JSON request body's shape?"
+    options:
+      - "Flask cannot accept JSON bodies at all"
+      - "FastAPI validates the body against a declared pydantic model automatically before the handler runs; Flask hands you a raw dict with no guarantee, unless you add that yourself"
+      - "FastAPI requires XML instead of JSON"
+      - "There is no difference"
+    answer: [1]
+    explanation: "FastAPI's validation is a direct consequence of declaring a pydantic model as the parameter type. Flask's request.get_json() returns whatever was sent, unvalidated, unless the developer adds checks or a separate library."
+    tags: [changed-since, validation]
+
+  - id: q-011
+    levels: [beginner, rusty]
+    audience: engineer
+    type: single
+    prompt: "Which server setup is appropriate for production traffic?"
+    options:
+      - "uvicorn --reload"
+      - "flask run --debug"
+      - "gunicorn with a worker process manager, behind a load balancer"
+      - "Running the script directly with python main.py in a terminal"
+    answer: [2]
+    explanation: "Both frameworks' development servers are explicitly unsuited to production load. gunicorn (optionally with uvicorn workers for FastAPI) is the standard process-managed production setup."
+    tags: [deployment]

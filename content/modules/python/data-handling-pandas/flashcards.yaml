@@ -1,0 +1,85 @@
+cards:
+  - id: c-001
+    levels: [beginner]
+    audience: all
+    front: "DataFrame vs Series"
+    back: "DataFrame: a table of rows and named columns. Series: a single column (or row) pulled from it."
+    tags: [dataframe]
+  - id: c-002
+    levels: [beginner, rusty]
+    audience: engineer
+    front: "Combining filter conditions on a DataFrame"
+    back: "Use & and | (not and/or), with each condition in parentheses: df[(df.a > 0) & (df.b == 'X')]."
+    tags: [filtering, gotcha]
+  - id: c-003
+    levels: [beginner, rusty]
+    audience: engineer
+    front: "How to stop pandas dropping leading zeros in an ID column"
+    back: "Specify dtype={'account_id': str} when reading the file, before pandas gets a chance to infer it as numeric."
+    tags: [dtypes, gotcha]
+  - id: c-004
+    levels: [beginner, intermediate]
+    audience: engineer
+    front: "groupby, in one line"
+    back: "Split rows into groups by a key column, apply a summary function per group, combine into a result: df.groupby('currency')['amount'].sum()."
+    tags: [groupby]
+  - id: c-005
+    levels: [intermediate]
+    audience: engineer
+    front: "Habit that catches most bad joins"
+    back: "assert len(joined) == len(left_df) after a left merge meant to be a pure enrichment — catches row duplication from a non-unique join key."
+    tags: [merge, review]
+  - id: c-006
+    levels: [intermediate]
+    audience: manager
+    front: "Why a reconciliation total might come out too high"
+    back: "Most common cause: a merge/join key that isn't unique on one side, duplicating matching rows and inflating any sum computed afterward."
+    tags: [merge, review]
+  - id: c-007
+    levels: [intermediate]
+    audience: engineer
+    front: "Vectorised vs row-wise: which is faster?"
+    back: "Vectorised (whole-column operations like df.a * 0.01) is fast. .apply(axis=1) loops row by row in Python and is typically much slower on large data."
+    tags: [performance]
+  - id: c-008
+    levels: [intermediate]
+    audience: all
+    front: "Tidy data, in one sentence"
+    back: "Each variable is a column, each observation is a row. Reshape wide exports (e.g. months as columns) to long/tidy before filtering or aggregating."
+    tags: [tidy-data]
+  - id: c-009
+    levels: [intermediate]
+    audience: manager
+    front: "pandas vs polars vs SQL: default heuristic"
+    back: "Data already in a database and the job is filter/join/aggregate: use SQL. Pandas too slow on a genuinely large file: consider polars. Otherwise: pandas is still the right default."
+    tags: [decision, polars]
+  - id: c-010
+    levels: [rusty]
+    audience: engineer
+    front: ".ix indexer: what happened to it?"
+    back: "Deprecated for ambiguously mixing label/position lookup, removed in pandas 1.0 (2020). Use .loc (label) or .iloc (position) explicitly."
+    tags: [changed-since]
+  - id: c-011
+    levels: [rusty]
+    audience: engineer
+    front: "Nullable integer dtype: what problem does it solve?"
+    back: "Old pandas silently upcasts an integer column with any missing value to float64. Int64 (capital I) holds missing values without that silent conversion."
+    tags: [changed-since, dtypes]
+  - id: c-012
+    levels: [rusty]
+    audience: all
+    front: "pandas 2.0 (2023), in one line"
+    back: "Added optional Arrow-backed dtypes and a copy-on-write mode, improving performance and reducing chained-assignment ambiguity. Check the installed version before assuming behaviour."
+    tags: [changed-since]
+  - id: c-013
+    levels: [beginner, intermediate, rusty]
+    audience: manager
+    front: "Why prefer a pandas script over an Excel macro for a recurring report"
+    back: "It's versioned, reviewable in a pull request, and runs identically every time — not a single point of failure living in one person's workbook."
+    tags: [review]
+  - id: c-014
+    levels: [beginner]
+    audience: manager
+    front: "PII in a CSV, processed by a 'quick' pandas script — what applies?"
+    back: "The same data-handling controls as the source system: where it's saved, who can run it, whether intermediate files get cleaned up. 'Just an export' is not an exemption."
+    tags: [bank-context]

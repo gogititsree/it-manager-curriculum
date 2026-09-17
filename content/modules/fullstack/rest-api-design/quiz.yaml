@@ -1,0 +1,146 @@
+questions:
+  - id: q-001
+    levels: [beginner]
+    audience: all
+    type: single
+    prompt: "In REST, what should a URL like /payments/99 identify?"
+    options:
+      - "An action to perform"
+      - "A resource (a specific payment)"
+      - "A database table name"
+      - "A programming language function"
+    answer: [1]
+    explanation: "REST organises APIs around resources (nouns) identified by URLs. Actions are expressed with HTTP verbs, not encoded into the URL as a verb."
+    tags: [resources]
+
+  - id: q-002
+    levels: [beginner, rusty]
+    audience: engineer
+    type: single
+    prompt: "Which HTTP verb is used to partially update a resource, sending only the changed fields?"
+    options:
+      - "PUT"
+      - "PATCH"
+      - "POST"
+      - "GET"
+    answer: [1]
+    explanation: "PATCH updates part of a resource. PUT conventionally replaces the entire resource, so omitted fields may be cleared. POST usually creates; GET only reads."
+    tags: [verbs]
+
+  - id: q-003
+    levels: [beginner]
+    audience: engineer
+    type: single
+    prompt: "What is the key difference between 401 Unauthorized and 403 Forbidden?"
+    options:
+      - "401 is a server error, 403 is a client error"
+      - "401 means the server does not know who you are; 403 means it knows and you're not allowed"
+      - "They are interchangeable"
+      - "403 is only used for GET requests"
+    answer: [1]
+    explanation: "401 signals missing/invalid authentication. 403 signals the caller is authenticated but lacks permission. Confusing them sends debugging down the wrong path."
+    tags: [status-codes]
+
+  - id: q-004
+    levels: [beginner, intermediate]
+    audience: manager
+    type: single
+    prompt: "A design review shows every success and error response returning 200 OK, with a 'success': false field in the body for failures. What is the concern?"
+    options:
+      - "It is slightly slower"
+      - "It breaks generic tooling (caching, monitoring, retries) that relies on the status code, not the body, to know what happened"
+      - "It is not valid JSON"
+      - "There is no concern; this is a common and acceptable pattern"
+    answer: [1]
+    explanation: "Status codes are the standard, tool-readable signal for success/failure. Burying that in the body defeats caching, monitoring and generic client error handling."
+    tags: [status-codes, review]
+
+  - id: q-005
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "Why is cursor-based pagination generally preferred over offset-based pagination for large or frequently-changing collections?"
+    options:
+      - "Cursor-based pagination supports jumping directly to page 40"
+      - "Offset-based pagination can skip or repeat rows as data changes between pages, and slows down as the offset grows"
+      - "Cursor-based pagination does not require a limit parameter"
+      - "Offset-based pagination is not supported by JSON APIs"
+    answer: [1]
+    explanation: "Offset pagination is unstable under concurrent inserts/deletes and gets slower as offset grows on large tables. Cursor-based pagination stays stable and fast but gives up direct page-jumping."
+    tags: [pagination]
+
+  - id: q-006
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "What problem does an Idempotency-Key header on POST /payments solve?"
+    options:
+      - "It speeds up the database write"
+      - "It prevents a client's network retry of the same request from creating a duplicate payment"
+      - "It encrypts the payment amount"
+      - "It replaces the need for authentication"
+    answer: [1]
+    explanation: "The server stores the result keyed by the idempotency key and returns the same result on retry instead of reprocessing, protecting against duplicate processing when a client retries after a timeout."
+    tags: [idempotency]
+
+  - id: q-007
+    levels: [intermediate, rusty]
+    audience: engineer
+    type: multi
+    prompt: "Which fields are part of the RFC 7807 Problem Details error shape?"
+    options:
+      - "type"
+      - "title"
+      - "status"
+      - "successRate"
+    answer: [0, 1, 2]
+    explanation: "Problem Details defines type (a URI identifying the error category), title, status, detail and instance. successRate is not part of the standard."
+    tags: [problem-details]
+
+  - id: q-008
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "A team ships /v2/payments with a breaking change and immediately decommissions /v1/payments the same day, without notifying the three partner banks calling it. What is the primary management failure here?"
+    options:
+      - "Using URL path versioning at all"
+      - "No deprecation window or partner communication before removing the previous version"
+      - "Choosing JSON instead of XML"
+      - "Not using GraphQL instead"
+    answer: [1]
+    explanation: "Versioning strategy is only half the plan; a deprecation policy and communication to known consumers before a breaking removal is what prevents an unannounced outage for partners."
+    tags: [versioning, bank-context]
+
+  - id: q-009
+    levels: [intermediate]
+    audience: engineer
+    type: truefalse
+    prompt: "An OpenAPI specification is most valuable when generated from code after implementation is complete, purely as documentation."
+    options: ["True", "False"]
+    answer: [1]
+    explanation: "OpenAPI delivers the most value used contract-first: reviewed before implementation, enabling mocks, generated clients, and contract tests that catch drift, not just as after-the-fact docs."
+    tags: [openapi]
+
+  - id: q-010
+    levels: [rusty]
+    audience: all
+    type: single
+    prompt: "Compared to the SOAP/WSDL era, what is the closest REST-era equivalent of a WSDL contract file?"
+    options:
+      - "A README file"
+      - "An OpenAPI specification"
+      - "A Postman collection only"
+      - "The HTTP status code list"
+    answer: [1]
+    explanation: "OpenAPI (formerly Swagger) plays the contract-description role WSDL played for SOAP, but is JSON/YAML-based, lighter, and now commonly used to generate mocks, SDKs and contract tests."
+    tags: [changed-since]
+
+  - id: q-011
+    levels: [beginner]
+    audience: engineer
+    type: truefalse
+    prompt: "Representing a payment amount as a plain floating-point number in JSON (e.g. 250.00) is the recommended practice for a bank API."
+    options: ["True", "False"]
+    answer: [1]
+    explanation: "Plain floats are a known source of rounding errors. The recommended approach is an integer minor-unit count or a string decimal, paired with an explicit currency code."
+    tags: [json-shapes]

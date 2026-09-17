@@ -1,0 +1,4 @@
+title: "Data Handling with pandas"
+summary: "DataFrames, cleaning, joins, groupby, tidy data, performance, and turning a CSV export into an answer for a status deck."
+prerequisites: ["python/syntax"]
+tags: [python, pandas, data]

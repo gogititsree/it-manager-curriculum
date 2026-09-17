@@ -1,0 +1,188 @@
+questions:
+  - id: q-001
+    levels: [beginner]
+    audience: all
+    type: single
+    prompt: "The difference between a thread and a task is:"
+    options:
+      - "They are the same thing with different names"
+      - "A thread is an OS-scheduled unit of execution; a task is a unit of work (Runnable/Callable) that can be submitted to something that manages threads"
+      - "A task always creates exactly one new thread"
+      - "A thread is cheaper to create than a task"
+    answer: [1]
+    explanation: "Threads are relatively expensive OS resources. Tasks are units of work that should normally be submitted to an executor rather than each getting a dedicated Thread."
+    tags: [threads, tasks]
+
+  - id: q-002
+    levels: [beginner]
+    audience: engineer
+    type: single
+    prompt: "Executors.newCachedThreadPool() is risky for request-facing services under load because:"
+    options:
+      - "It is slower than a fixed pool"
+      - "It has no upper bound on thread creation, so a traffic spike can create unbounded threads and exhaust memory"
+      - "It cannot run more than one task at a time"
+      - "It does not support Callable tasks"
+    answer: [1]
+    explanation: "Cached thread pools create a new thread per task when none are idle, with no ceiling. A bounded pool turns overload into a full queue instead of unbounded thread creation."
+    tags: [executors]
+
+  - id: q-003
+    levels: [beginner, intermediate]
+    audience: all
+    type: single
+    prompt: "Two threads read and write a shared boolean field with no synchronized, volatile, or other coordination. The correct description of the risk is:"
+    options:
+      - "It will simply run slightly slower"
+      - "Behaviour is undefined: one thread may never observe the other's write, and this may pass in testing anyway"
+      - "It will always throw an exception"
+      - "It is safe as long as the field is a primitive type"
+    answer: [1]
+    explanation: "Without a happens-before relationship, the Java Memory Model gives no visibility guarantee. This is genuinely undefined, not merely slow, and races routinely pass in low-load testing."
+    tags: [memory-model]
+
+  - id: q-004
+    levels: [beginner, intermediate]
+    audience: manager
+    type: single
+    prompt: "A bug report says 'intermittent, only under production load, cannot reproduce locally.' A reasonable early hypothesis is:"
+    options:
+      - "A typo in the code"
+      - "Unsynchronised shared mutable state (a race condition), since these routinely pass local/low-load testing"
+      - "The build server is misconfigured"
+      - "This description rules out a concurrency bug"
+    answer: [1]
+    explanation: "Race conditions are notoriously load- and timing-dependent and frequently pass local testing. This description is a classic fingerprint, not a reason to rule concurrency out."
+    tags: [memory-model, review]
+
+  - id: q-005
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "Virtual threads make blocking cheap mainly because:"
+    options:
+      - "They avoid I/O entirely"
+      - "When a virtual thread blocks, the JVM unmounts it from its carrier platform thread, freeing that platform thread for other work"
+      - "They run at a higher OS priority"
+      - "They use less CPU per instruction"
+    answer: [1]
+    explanation: "Virtual threads are JVM-scheduled and cheap to create; blocking one does not tie up a scarce OS thread because the runtime can unmount it from its carrier while it waits."
+    tags: [virtual-threads]
+
+  - id: q-006
+    levels: [intermediate, rusty]
+    audience: engineer
+    type: truefalse
+    prompt: "Virtual threads make CPU-bound work (e.g. encryption, serialisation) significantly faster."
+    options: ["True", "False"]
+    answer: [1]
+    explanation: "Virtual threads address thread-scheduling and blocking cost, not CPU throughput. CPU-bound work is still bounded by available cores; a platform-thread pool sized to cores is still appropriate there."
+    tags: [virtual-threads, gotcha]
+
+  - id: q-007
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "What problem does structured concurrency (StructuredTaskScope) primarily address?"
+    options:
+      - "Making garbage collection faster"
+      - "Fire-and-forget submitted tasks whose failure or completion nothing tracks; it scopes subtasks so one failure cancels the group and none can outlive the block"
+      - "Reducing heap size"
+      - "Replacing ExecutorService entirely for all use cases"
+    answer: [1]
+    explanation: "Structured concurrency ties subtask lifetimes to an enclosing scope, so a failure propagates and cancels siblings, and no subtask can leak past the block that created it."
+    tags: [structured-concurrency]
+
+  - id: q-008
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "A team wants to switch a service from G1 to ZGC because 'ZGC is faster.' The right response is:"
+    options:
+      - "Approve immediately; ZGC is strictly better"
+      - "Ask for the measured pause-time problem and the latency SLA G1 is failing to meet before switching, since ZGC trades some throughput for pause time and the switch has real operational cost"
+      - "Refuse; G1 must never be changed"
+      - "Ask them to switch to Parallel GC instead"
+    answer: [1]
+    explanation: "G1 is a reasonable default. ZGC targets very low pause times at some throughput/memory cost and comes with different tuning flags and logs. The switch should be justified by measured pause-time evidence against an SLA, not general reputation."
+    tags: [gc, decision]
+
+  - id: q-009
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "A container has a 2GB memory limit. The JVM inside it was OOM-killed with no OutOfMemoryError in its own logs. The most likely explanation is:"
+    options:
+      - "The JVM never allocates more memory than -Xmx, so this cannot happen"
+      - "The JVM (on very old versions) or a misconfigured -Xmx sized the heap above what the container actually allows, so the OS killed the process before the JVM's own heap logic saw a problem"
+      - "The application has a Java-level memory leak that GC logs would have caught first"
+      - "This only happens with ZGC"
+    answer: [1]
+    explanation: "If total JVM memory use (heap plus native memory, metaspace, thread stacks) exceeds the container's limit, the OS kills the process externally. Container-aware sizing (default since JDK 10 / backported to 8u191) and MaxRAMPercentage reduce this risk, but a fixed -Xmx set too high, or a JVM that predates container awareness, can still trigger it."
+    tags: [heap-sizing, bank-context]
+
+  - id: q-010
+    levels: [intermediate, rusty]
+    audience: engineer
+    type: single
+    prompt: "In a thread dump, many threads are BLOCKED waiting on a lock owned by one RUNNABLE thread. What does this indicate?"
+    options:
+      - "A deadlock, which must be restarted immediately"
+      - "Lock contention: the owning thread is the bottleneck, and its own stack trace shows what it is doing"
+      - "Normal, healthy behaviour needing no investigation"
+      - "A garbage collection pause"
+    answer: [1]
+    explanation: "This pattern is contention, not deadlock (deadlocks are detected and reported explicitly by the JVM). The fix starts by understanding why the owning thread holds the lock so long, often because slow I/O happens inside the critical section."
+    tags: [thread-dump]
+
+  - id: q-011
+    levels: [intermediate, rusty]
+    audience: engineer
+    type: single
+    prompt: "A GC log shows frequent Full GCs that reclaim very little memory each time. This most likely indicates:"
+    options:
+      - "A GC algorithm bug that tuning flags will fix"
+      - "Heap pressure: the live data barely fits, or is leaking, and the fix is more likely a bigger heap or finding a leak than flag tuning"
+      - "Normal, healthy GC behaviour"
+      - "The application is CPU-bound"
+    answer: [1]
+    explanation: "Frequent full collections with small reclaims mean the heap is close to full of live (reachable) objects. That points at heap sizing or a memory leak, not GC algorithm tuning."
+    tags: [gc-log]
+
+  - id: q-012
+    levels: [rusty]
+    audience: all
+    type: single
+    prompt: "CompletableFuture, introduced in Java 8, is best described as:"
+    options:
+      - "A replacement for ExecutorService"
+      - "A Future that can be composed into a pipeline (thenApply, thenCompose, thenCombine) without blocking at every step"
+      - "A JVM garbage collector"
+      - "Only usable with virtual threads"
+    answer: [1]
+    explanation: "CompletableFuture lets asynchronous steps be chained and combined without a callback pyramid or blocking on .get() between each stage. It predates virtual threads and remains current idiom for composing async work."
+    tags: [changed-since, completablefuture]
+
+  - id: q-013
+    levels: [rusty]
+    audience: engineer
+    type: truefalse
+    prompt: "CMS (Concurrent Mark Sweep) is the current default garbage collector on a current LTS JDK."
+    options: ["True", "False"]
+    answer: [1]
+    explanation: "G1 became the default in Java 9 (2017). CMS was deprecated in Java 9 and removed in Java 14; tuning knowledge built around CMS flags no longer applies to a current default JVM."
+    tags: [changed-since, gc]
+
+  - id: q-014
+    levels: [rusty]
+    audience: engineer
+    type: single
+    prompt: "Using synchronized around a blocking I/O call inside virtual-thread code is a concern because:"
+    options:
+      - "synchronized was removed from the language"
+      - "It pins the virtual thread to its carrier platform thread for the duration, defeating the cheap-blocking benefit"
+      - "It causes a compile error on virtual threads"
+      - "It has no effect on virtual threads either way"
+    answer: [1]
+    explanation: "A virtual thread executing inside a synchronized block cannot be unmounted from its carrier while blocked, so a slow call inside one negates the scalability benefit. ReentrantLock avoids this."
+    tags: [virtual-threads, gotcha]

@@ -1,0 +1,91 @@
+cards:
+  - id: c-001
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "Aggregation pipeline in one sentence"
+    back: "An array of stages; each stage's output is exactly the next stage's input, like a Unix pipe for documents."
+    tags: [fundamentals]
+  - id: c-002
+    levels: [beginner, intermediate, rusty]
+    audience: engineer
+    front: "$match vs $group vs $project"
+    back: "$match filters documents. $group collapses documents per key using accumulators. $project reshapes each document without collapsing."
+    tags: [stages]
+  - id: c-003
+    levels: [beginner, intermediate]
+    audience: engineer
+    front: "$group: what's required?"
+    back: "_id (the grouping key; use null to collapse everything into one summary document). Every other field needs an accumulator like $sum or $push."
+    tags: [group]
+  - id: c-004
+    levels: [beginner, intermediate, rusty]
+    audience: engineer
+    front: "Gotcha: field missing after $group"
+    back: "Only _id and accumulator-built fields survive a $group. Any other original field is gone unless explicitly carried forward."
+    tags: [gotcha]
+  - id: c-005
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "$lookup: what it does"
+    back: "Left outer join against another collection, attaching matches as an array field. Pair with $unwind to flatten a single match."
+    tags: [lookup]
+  - id: c-006
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "$facet: what it's for, and its limit"
+    back: "Runs multiple sub-pipelines over the same input, returned side by side — saves round trips, not compute. Each sub-pipeline still buffers fully in memory."
+    tags: [facet]
+  - id: c-007
+    levels: [intermediate, rusty]
+    audience: manager
+    front: "The #1 aggregation performance trap"
+    back: "$lookup before $match — joining the full collection before narrowing it. Move filters that don't depend on the join earlier."
+    tags: [performance]
+  - id: c-008
+    levels: [intermediate]
+    audience: engineer
+    front: "Why does index use stop after $group or $lookup?"
+    back: "Those stages produce new documents with no indexed relationship to the original collection. Only a $match effectively at the start of the pipeline can use an index."
+    tags: [performance]
+  - id: c-009
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "allowDiskUse: true — what does it actually fix?"
+    back: "Lets $group/$sort spill to disk instead of erroring past the in-memory limit. It fixes the error, not the underlying cost of the work."
+    tags: [performance]
+  - id: c-010
+    levels: [rusty]
+    audience: engineer
+    front: "$setWindowFields (5.0, 2021)"
+    back: "Computes per-document window functions (running totals, rankings, moving averages) over a sorted/partitioned window, without collapsing documents like $group does."
+    tags: [changed-since]
+  - id: c-011
+    levels: [rusty]
+    audience: engineer
+    front: "$merge vs $out"
+    back: "$out replaces an entire collection with pipeline output. $merge (4.2, 2019) can insert/update/merge by key — enables incremental rollups instead of full rebuilds."
+    tags: [changed-since]
+  - id: c-012
+    levels: [rusty, intermediate]
+    audience: engineer
+    front: "$lookup let/pipeline form (3.6, 2017): what it unlocked"
+    back: "Filtering the foreign collection before the join, non-equality conditions, and multiple join keys — the fix for joining a large collection before narrowing it."
+    tags: [changed-since, lookup]
+  - id: c-013
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "How to debug a wrong aggregation result"
+    back: "Trace stage by stage: run the pipeline truncated at each stage in turn and inspect the intermediate document shape."
+    tags: [debugging]
+  - id: c-014
+    levels: [intermediate]
+    audience: manager
+    front: "Reviewing someone else's pipeline: fastest first pass"
+    back: "Read the stage names top to bottom without the details first (filter, join, group, sort, limit) to form the story, then check fields stage by stage."
+    tags: [review]
+  - id: c-015
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "$unionWith"
+    back: "Combines results from two collections in one pipeline, without a client-side merge step."
+    tags: [changed-since]

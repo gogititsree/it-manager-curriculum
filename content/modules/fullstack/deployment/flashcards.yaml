@@ -1,0 +1,97 @@
+cards:
+  - id: c-001
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "Container image vs container, in one line"
+    back: "Image: an immutable, packaged bundle of app + runtime + dependencies. Container: a running instance of an image."
+    tags: [images]
+  - id: c-002
+    levels: [beginner, rusty]
+    audience: engineer
+    front: "VM vs container: the core structural difference"
+    back: "A VM virtualises a full computer including its own kernel (via a hypervisor). A container shares the host kernel, isolating only the process/filesystem/network view."
+    tags: [containers-vs-vms]
+  - id: c-003
+    levels: [beginner, intermediate]
+    audience: manager
+    front: "Why is container rollback more reliable than typical VM/WAR rollback?"
+    back: "The previous version is an exact, immutable, versioned image tag — not 'whatever state the VM happened to be in'."
+    tags: [rollback]
+  - id: c-004
+    levels: [beginner, intermediate]
+    audience: engineer
+    front: "Where should environment-specific config live?"
+    back: "Injected at runtime (env vars, mounted config/ConfigMaps) — never baked into the image. One image, many environments."
+    tags: [config]
+  - id: c-005
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "Kubernetes Deployment vs Service, in one line each"
+    back: "Deployment: manages replica count and rolling updates of pods. Service: a stable address/DNS name in front of a changing set of pods."
+    tags: [kubernetes]
+  - id: c-006
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "Liveness probe vs readiness probe"
+    back: "Liveness fails -> container restarted (is it fundamentally broken). Readiness fails -> removed from traffic, not restarted (can it serve requests right now)."
+    tags: [health-checks]
+  - id: c-007
+    levels: [intermediate]
+    audience: manager
+    front: "Are Kubernetes Secrets encrypted by default?"
+    back: "No — base64-encoded only. Real protection needs etcd encryption at rest and/or an external secrets manager (e.g. Vault)."
+    tags: [secrets, gotcha]
+  - id: c-008
+    levels: [intermediate]
+    audience: engineer
+    front: "Blue/green vs canary: when to pick which?"
+    back: "Blue/green: clean all-at-once cutover, good for changes needing atomicity (e.g. incompatible schema change). Canary: gradual traffic shift, limits blast radius, needs defined promotion/rollback criteria."
+    tags: [rollout-strategy]
+  - id: c-009
+    levels: [intermediate]
+    audience: engineer
+    front: "Expand/contract pattern: what problem does it solve?"
+    back: "Splits a breaking schema migration into backward/forward-compatible steps so no code version is ever incompatible with the current schema, making canary/blue-green safe."
+    tags: [migrations]
+  - id: c-010
+    levels: [intermediate]
+    audience: manager
+    front: "How to reconcile frequent automated deploys with a weekly-CAB process?"
+    back: "Pre-approve a standing change category for deploys through the full guardrailed pipeline (tests, rollout strategy, auto-rollback); reserve individual CAB review for higher-risk changes."
+    tags: [change-control, bank-context]
+  - id: c-011
+    levels: [intermediate]
+    audience: manager
+    front: "Red flag in a Kubernetes manifest review"
+    back: "replicas: 1 on a production-facing service — a single point of failure hiding in a config file."
+    tags: [review]
+  - id: c-012
+    levels: [rusty]
+    audience: all
+    front: "Docker's role in the deployment timeline"
+    back: "Popularized containers for mainstream application use starting around 2013, becoming a default part of most new deployment pipelines within a few years."
+    tags: [changed-since]
+  - id: c-013
+    levels: [rusty]
+    audience: all
+    front: "Kubernetes' role in the deployment timeline"
+    back: "Stable release 2015; became the dominant container orchestrator through the later 2010s — expect it by default over hand-managed VM fleets."
+    tags: [changed-since]
+  - id: c-014
+    levels: [rusty]
+    audience: engineer
+    front: "Gotcha: patching a running container live via SSH"
+    back: "Does not persist. A container is meant to be replaced, not patched in place — the fix disappears on the next restart or rolling update."
+    tags: [gotcha]
+  - id: c-015
+    levels: [rusty]
+    audience: engineer
+    front: "New rollback question that didn't exist in the VM era"
+    back: "Is the previous image tag still retained in the registry, and for at least as long as your required rollback window? Rollback now depends on an external registry's retention policy."
+    tags: [gotcha]
+  - id: c-016
+    levels: [beginner, intermediate]
+    audience: manager
+    front: "Are containers automatically more secure than VMs?"
+    back: "No — different isolation boundary (shared kernel vs separate kernel). A container escape is a more direct route to the host. Ask what container-specific controls are in place."
+    tags: [security]

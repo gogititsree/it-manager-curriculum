@@ -1,0 +1,136 @@
+questions:
+  - id: q-001
+    levels: [beginner, rusty]
+    audience: all
+    type: single
+    prompt: "Which section of an ADR is most often skipped, and matters most?"
+    options:
+      - "Title"
+      - "Context"
+      - "Consequences"
+      - "Status"
+    answer: [2]
+    explanation: "Consequences — what becomes easier, what becomes harder, and what you're now committed to — is the section people skip and the one a reviewer should read first. A decision with no downside was likely under-examined."
+    tags: [adr]
+
+  - id: q-002
+    levels: [beginner]
+    audience: manager
+    type: single
+    prompt: "What is the tell that an options table was built to justify a decision already made, rather than to inform it?"
+    options:
+      - "It has more than three options"
+      - "One option scores well on every single criterion, with the others as obvious strawmen"
+      - "It includes a cost column"
+      - "It was written before the decision"
+    answer: [1]
+    explanation: "A genuinely useful comparison has real tension: the chosen option should be visibly worse on at least one criterion, with the document explaining why that tradeoff was accepted."
+    tags: [options-table, review]
+
+  - id: q-003
+    levels: [beginner, intermediate]
+    audience: all
+    type: single
+    prompt: "Who proposed the widely-used four-part ADR format (title/status, context, decision, consequences)?"
+    options:
+      - "Martin Fowler"
+      - "Michael Nygard, in 2011"
+      - "The IETF"
+      - "Amazon"
+    answer: [1]
+    explanation: "Michael Nygard proposed this lightweight ADR format in 2011; it became the de facto standard for recording architecture decisions."
+    tags: [adr, history]
+
+  - id: q-004
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "In ATAM-lite, what is the actual output of scoring options against quality attributes?"
+    options:
+      - "A single numeric score to declare a winner automatically"
+      - "The tensions: where improving one attribute makes another worse, which is the real decision to discuss"
+      - "A list of every possible quality attribute in software architecture"
+      - "A guarantee that the chosen option has no downsides"
+    answer: [1]
+    explanation: "The value of ATAM-lite is surfacing where attributes trade off against each other explicitly, so the conversation is about priorities, not just competing technology preferences."
+    tags: [atam, tradeoffs]
+
+  - id: q-005
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "A decision affects only the proposing team and is easily reversible if wrong. What process fits best?"
+    options:
+      - "A full RFC with a two-week comment window"
+      - "A single accountable owner decides quickly; write the ADR after, if at all needed"
+      - "An architecture review board meeting"
+      - "No documentation of any kind, ever"
+    answer: [1]
+    explanation: "Reversible, single-team decisions don't need heavyweight process; matching process to decision type (reversible vs one-way-door) is the key judgement call at this level."
+    tags: [decision, reversible]
+
+  - id: q-006
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "An RFC gets zero comments in its two-week window and is marked approved by default. Three months later, an affected team says they never saw it. What was the likely process failure?"
+    options:
+      - "The RFC template was too short"
+      - "The RFC was broadcast generally instead of naming the specific affected teams as required reviewers with explicit acknowledgement"
+      - "The comment window was too long"
+      - "The decision should have been made unilaterally instead"
+    answer: [1]
+    explanation: "Silence-means-approval only works if the right people had a real, confirmed chance to read the proposal. Broadcasting to a channel is not the same as naming required reviewers and requiring acknowledgement."
+    tags: [rfc, gotcha]
+
+  - id: q-007
+    levels: [intermediate, rusty]
+    audience: manager
+    type: single
+    prompt: "'Disagree and commit' only works as intended when:"
+    options:
+      - "The disagreeing party is told to stop raising the objection"
+      - "The disagreement was genuinely heard first — the disagreeing person can accurately restate the reasoning for the decision, even though they disagree with it"
+      - "Everyone secretly agrees but doesn't say so"
+      - "The decision is reversed the next time someone complains"
+    answer: [1]
+    explanation: "If the disagreeing party can't accurately state the reasoning behind the decision, they weren't genuinely heard, and 'commit' is being used to shut down input rather than to move forward after real consideration."
+    tags: [disagreement]
+
+  - id: q-008
+    levels: [rusty]
+    audience: engineer
+    type: single
+    prompt: "ADR-0001 is now outdated. What is the correct way to update the record?"
+    options:
+      - "Edit ADR-0001 in place to reflect current reality"
+      - "Delete ADR-0001 since it no longer applies"
+      - "Write a new, numbered ADR that supersedes ADR-0001, and update ADR-0001's status to 'Superseded by' the new one"
+      - "Leave ADR-0001 unchanged and rely on team memory for the current state"
+    answer: [2]
+    explanation: "Superseding with a new numbered ADR preserves the history of what was decided originally and why, which is often exactly the information a future team needs. Editing or deleting the original destroys that trail."
+    tags: [adr, changed-since]
+
+  - id: q-009
+    levels: [rusty]
+    audience: engineer
+    type: truefalse
+    prompt: "Storing ADRs as markdown files in the same repository as the code, reviewed via pull request, is an example of the docs-as-code shift in how decisions are now documented."
+    options: ["True", "False"]
+    answer: [0]
+    explanation: "Docs-as-code keeps decision records versioned, searchable, and reviewed the same way as code changes, rather than living in a wiki that can drift out of sync or lose its links over time."
+    tags: [changed-since]
+
+  - id: q-010
+    levels: [beginner, rusty]
+    audience: manager
+    type: single
+    prompt: "Why is an ADR often a stronger artefact to hand an auditor than a retrospective summary written after the fact?"
+    options:
+      - "ADRs are always longer"
+      - "An ADR written and dated at decision time, with named approvers, is harder to quietly reshape in hindsight than a summary written later"
+      - "Auditors prefer markdown formatting"
+      - "ADRs don't require any review"
+    answer: [1]
+    explanation: "A decision trail created at the time, especially one versioned in a repository, is contemporaneous evidence. A retrospective explanation is reconstructed after the fact and more easily shaped by hindsight."
+    tags: [bank-context]

@@ -1,0 +1,4 @@
+title: "Cloud Fundamentals (AWS & Azure)"
+summary: "The core building blocks of public cloud — compute, storage, network, identity — and where the provider's responsibility for security ends and yours begins."
+prerequisites: []
+tags: [cloud, aws, azure, infrastructure, identity]

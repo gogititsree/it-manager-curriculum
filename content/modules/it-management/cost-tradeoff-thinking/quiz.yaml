@@ -1,0 +1,136 @@
+questions:
+  - id: q-001
+    levels: [beginner]
+    audience: manager
+    type: single
+    prompt: "A $200k in-house build is compared to a $250k/year licence and called 'cheaper'. What is missing from that comparison?"
+    options:
+      - "Nothing; the build is cheaper"
+      - "The build's ongoing run and maintenance cost over the same multi-year horizon (TCO), not just the initial build price"
+      - "The vendor's marketing materials"
+      - "The colour scheme of both products"
+    answer: [1]
+    explanation: "Comparing build cost to licence cost ignores TCO — the build's infrastructure, maintenance staff time, and eventual decommissioning over the same period, which often erases the apparent saving."
+    tags: [tco]
+
+  - id: q-002
+    levels: [beginner, rusty]
+    audience: manager
+    type: single
+    prompt: "What is the difference between 'run' cost and 'change' cost in an IT budget?"
+    options:
+      - "Run is capex, change is opex"
+      - "Run keeps existing systems operating (hosting, licences, support); change builds new capability (projects, features). They compete for the same budget."
+      - "Run only applies to cloud systems; change only applies to on-prem"
+      - "There is no meaningful difference"
+    answer: [1]
+    explanation: "Run and change split budget and people between keeping the lights on and building new things. A system with high run cost quietly starves the change budget every year it exists."
+    tags: [run-vs-change]
+
+  - id: q-003
+    levels: [beginner, intermediate]
+    audience: manager
+    type: single
+    prompt: "Which scenario best fits a 'buy' decision under a basic build-vs-buy framework?"
+    options:
+      - "The bank's proprietary risk model, core to competitive advantage"
+      - "A commodity capability like expense management, with a mature vendor market"
+      - "Anything an engineer is confident they could build in a weekend"
+      - "Any system touching customer data"
+    answer: [1]
+    explanation: "Commodity capabilities with mature vendor markets are strong buy candidates: building them yourself re-solves an already-solved problem with no competitive benefit. Core differentiators are the strongest build candidates instead."
+    tags: [build-vs-buy]
+
+  - id: q-004
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "Service A costs $50,000/month for 10 million transactions. Service B costs $8,000/month for 200,000 transactions. Which has the better unit economics?"
+    options:
+      - "Service B, because its total cost is lower"
+      - "Service A, at $0.005/transaction vs Service B's $0.04/transaction"
+      - "They are equal since both are cloud-hosted"
+      - "Cannot be determined without knowing the programming language used"
+    answer: [1]
+    explanation: "Unit cost, not raw total, is the meaningful comparison: Service A costs less per transaction despite a higher total bill, because it operates at much higher volume relative to its fixed costs."
+    tags: [unit-economics]
+
+  - id: q-005
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "The FinOps framework's three phases, in order, are:"
+    options:
+      - "Plan, Build, Run"
+      - "Inform, Optimise, Operate"
+      - "Audit, Review, Approve"
+      - "Discover, Migrate, Retire"
+    answer: [1]
+    explanation: "Inform (accurate, allocated cost visibility), Optimise (rightsizing, reserved capacity, eliminating waste), Operate (cost as a continuous input to engineering decisions) is the FinOps Foundation's maturity model."
+    tags: [finops]
+
+  - id: q-006
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "A manual process costs $2,400/month in labour and an estimated $5,000/month in error-driven rework. Automating it costs $60,000. What does cost of delay tell you about waiting two extra quarters to start?"
+    options:
+      - "Nothing measurable is lost by waiting"
+      - "Roughly $44,400 in cost not avoided during the delay (6 months at ~$7,400/month)"
+      - "The automation becomes free if delayed long enough"
+      - "Cost of delay only applies to revenue-generating projects"
+    answer: [1]
+    explanation: "Cost of delay puts a number on what waiting costs per unit of time (here, roughly $7,400/month combined labour and rework), making 'we'll get to it next quarter' visibly costly rather than free."
+    tags: [cost-of-delay]
+
+  - id: q-007
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "What is the most effective way to say no to a proposal you believe is too expensive?"
+    options:
+      - "State that it feels too expensive and move on"
+      - "Present a specific number (TCO, unit cost, or cost of delay for an alternative) and name what would need to be wrong about it to change your mind"
+      - "Avoid giving a reason to prevent argument"
+      - "Defer the decision indefinitely without a stated reason"
+    answer: [1]
+    explanation: "A numeric objection keeps the conversation on the evidence and gives the proposer a concrete path to change the outcome, unlike a gut objection which just becomes a debate about whose instinct is right."
+    tags: [decision]
+
+  - id: q-008
+    levels: [intermediate, rusty]
+    audience: manager
+    type: single
+    prompt: "What is the biggest mistake in a vendor renewal negotiation?"
+    options:
+      - "Negotiating a multi-year term"
+      - "Starting the conversation with no comparable quote from an alternative vendor"
+      - "Asking for a volume discount"
+      - "Involving procurement"
+    answer: [1]
+    explanation: "Vendors price based on your perceived alternatives. Without even a rough, credible alternative quote, you have no real leverage in the negotiation regardless of your actual usage or loyalty."
+    tags: [vendor-negotiation]
+
+  - id: q-009
+    levels: [rusty]
+    audience: manager
+    type: truefalse
+    prompt: "Cloud consumption pricing generally shifted IT spending from a capital expenditure (capex) model to an operating expenditure (opex) model."
+    options: ["True", "False"]
+    answer: [0]
+    explanation: "On-prem hardware purchases were capex, depreciated over years; cloud consumption pricing is billed as ongoing opex based on usage, changing budgeting from a one-time approval to continuous management."
+    tags: [changed-since]
+
+  - id: q-010
+    levels: [rusty]
+    audience: manager
+    type: single
+    prompt: "Why does budgeting a usage-based AI feature (priced per token) require a different approach than budgeting a traditional per-seat software licence?"
+    options:
+      - "AI features are always cheaper than licences"
+      - "Cost scales directly with usage/popularity, which product (not just engineering) influences, so the budget needs to be a monitored, alerted range rather than a fixed number set once a year"
+      - "AI vendors don't provide invoices"
+      - "There is no practical difference"
+    answer: [1]
+    explanation: "Consumption-based AI pricing means cost moves with how much a feature is actually used, unlike a fixed licence fee — so it needs unit-economics tracking, growth assumptions stated explicitly, and budget alerts rather than a single set-and-forget number."
+    tags: [changed-since, ai-cost]

@@ -1,0 +1,4 @@
+title: "MongoDB Aggregation Pipelines"
+summary: "Stages, $match/$group/$project/$lookup/$facet, pushing work earlier in the pipeline, and reading someone else's pipeline in review."
+prerequisites: [databases/document-modeling]
+tags: [mongodb, aggregation, query-performance]

@@ -1,0 +1,136 @@
+questions:
+  - id: q-001
+    levels: [beginner, rusty]
+    audience: all
+    type: single
+    prompt: "What is the core difference between Prometheus's model and a traditional push-based monitoring agent?"
+    options:
+      - "Prometheus does not support alerting"
+      - "Prometheus reaches out and scrapes each target's metrics endpoint on a schedule, rather than waiting for agents to send data"
+      - "Prometheus only works with Kubernetes"
+      - "Prometheus stores data in an RRD like Cacti"
+    answer: [1]
+    explanation: "The pull model means Prometheus itself initiates each scrape. This also means a target failing to respond is itself a detectable signal, unlike a push model where silence and health look the same."
+    tags: [pull-model]
+
+  - id: q-002
+    levels: [beginner]
+    audience: engineer
+    type: single
+    prompt: "A metric that should only ever increase (or reset to zero on restart), such as total requests served, is which metric type?"
+    options:
+      - "Gauge"
+      - "Counter"
+      - "Histogram"
+      - "Summary"
+    answer: [1]
+    explanation: "A counter is monotonically increasing. You almost always query it with rate() rather than reading the raw value."
+    tags: [metric-types]
+
+  - id: q-003
+    levels: [beginner, intermediate]
+    audience: engineer
+    type: single
+    prompt: "Why is rate() needed instead of just subtracting two counter readings?"
+    options:
+      - "rate() is faster to type"
+      - "Subtracting readings breaks across a counter reset (e.g. service restart), producing a negative, wrong result; rate() detects and corrects for resets"
+      - "rate() converts a counter into a gauge permanently"
+      - "There is no real difference; both are equally correct"
+    answer: [1]
+    explanation: "Counters reset to zero on restart. A naive subtraction across a reset produces a nonsensical negative number; rate() is specifically designed to handle this correctly."
+    tags: [promql, gotcha]
+
+  - id: q-004
+    levels: [beginner, intermediate]
+    audience: manager
+    type: single
+    prompt: "A dashboard has 45 panels covering every metric a service exposes and is rarely opened during real incidents. The most useful management response is:"
+    options:
+      - "Add more panels so nothing is missing"
+      - "Ask which dashboard on-call actually opens when paged, and consolidate toward a small golden-signals view used in practice"
+      - "Mandate that every team use exactly this dashboard as-is"
+      - "Remove Grafana and rely on raw PromQL"
+    answer: [1]
+    explanation: "A dashboard's value is measured by whether it answers incident questions quickly, not by completeness. Asking what is actually used surfaces the gap between 'built for a launch review' and 'built for 2 a.m.'"
+    tags: [dashboards]
+
+  - id: q-005
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "When should a PromQL query become a recording rule?"
+    options:
+      - "Never; recording rules are a legacy feature"
+      - "When it is used in more than one dashboard/alert, or expensive enough to feel slow interactively"
+      - "Only for gauges, never for counters"
+      - "Only when Grafana requests it automatically"
+    answer: [1]
+    explanation: "Recording rules precompute a query on a schedule so dashboards and alerts read a cheap stored value instead of recomputing an expensive expression repeatedly, and keep alert and dashboard numbers consistent."
+    tags: [recording-rules]
+
+  - id: q-006
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "A payments microservice team proposes a single Prometheus instance with 90 days of local retention and no remote-write, no second replica. The main risk to flag is:"
+    options:
+      - "90 days is too short a retention window"
+      - "A single instance is a visibility single point of failure: if it or its host fails, on-call is blind during exactly the incident that needs visibility most"
+      - "Local disk is always slower than remote storage"
+      - "PromQL cannot query a single instance correctly"
+    answer: [1]
+    explanation: "HA (multiple independently-scraping instances) protects visibility during an incident; retention length is a separate, secondary concern. For a payments-critical service, losing observability during an incident is the higher-stakes risk."
+    tags: [ha, retention]
+
+  - id: q-007
+    levels: [intermediate]
+    audience: engineer
+    type: multi
+    prompt: "Which are valid reasons a summary metric (client-side quantiles) is often less useful than a histogram for a horizontally-scaled service?"
+    options:
+      - "Summary quantiles cannot be mathematically aggregated (e.g. averaged) correctly across multiple instances"
+      - "Histograms let PromQL compute a percentile across all raw bucket data at query time, across every instance"
+      - "Summaries cannot be scraped by Prometheus at all"
+      - "Summaries are always slower to scrape than histograms"
+    answer: [0, 1]
+    explanation: "Summaries precompute quantiles per-instance, and per-instance quantiles cannot be validly combined across instances. Histograms store bucketed counts that can be correctly aggregated and queried for a percentile across the whole fleet."
+    tags: [metric-types, gotcha]
+
+  - id: q-008
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "A managed metrics platform bills primarily on active time-series count. What does this mean for how you should treat cardinality budgets?"
+    options:
+      - "Cardinality no longer matters since storage is someone else's problem"
+      - "A cardinality mistake now shows up directly and immediately on the invoice, so budgets and review are at least as important as on self-hosted Prometheus"
+      - "Only log cardinality matters under this pricing model"
+      - "Cardinality budgets should be relaxed to reduce engineering overhead"
+    answer: [1]
+    explanation: "Series-count pricing makes a cardinality mistake an immediate, visible cost, whereas self-hosted Prometheus 'only' shows it as a slow query or full disk. Either way the underlying discipline is the same; the managed model just makes the consequence faster and more visible."
+    tags: [cost, cardinality]
+
+  - id: q-009
+    levels: [rusty]
+    audience: all
+    type: single
+    prompt: "In Zabbix/Nagios terms, a Prometheus target reporting `up == 0` most closely corresponds to:"
+    options:
+      - "A confirmed, unambiguous host-down state exactly like a Nagios host check"
+      - "The last scrape of that target failing, which could be the service down, a network issue, or the service too slow to respond — a weaker signal needing similar alert-duration discipline as any threshold check"
+      - "A metric that has been deprecated"
+      - "A gauge reaching its maximum value"
+    answer: [1]
+    explanation: "up == 0 means the scrape failed, not necessarily that the whole host is down. It should be treated with the same 'do not page on one blip' discipline as any other threshold-based alert."
+    tags: [changed-since, gotcha]
+
+  - id: q-010
+    levels: [rusty, intermediate]
+    audience: engineer
+    type: truefalse
+    prompt: "Prometheus service discovery (e.g. from Kubernetes) removes the need to hand-maintain a list of scrape targets as hosts or containers come and go."
+    options: ["True", "False"]
+    answer: [0]
+    explanation: "Service discovery automatically finds and relabels targets from a source like Kubernetes or a cloud provider, which is why Prometheus fits a dynamic, autoscaled environment far better than a hand-maintained host list."
+    tags: [changed-since]

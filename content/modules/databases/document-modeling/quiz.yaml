@@ -1,0 +1,136 @@
+questions:
+  - id: q-001
+    levels: [beginner, rusty]
+    audience: all
+    type: single
+    prompt: "What is the main design difference between a relational schema and a MongoDB document schema?"
+    options:
+      - "MongoDB documents cannot contain nested objects"
+      - "Relational schemas separate storage shape from access pattern; MongoDB couples them"
+      - "MongoDB requires every field to be declared before use"
+      - "Relational schemas cannot express one-to-many relationships"
+    answer: [1]
+    explanation: "A relational schema is normalised and access patterns are handled by joins at query time. A MongoDB document's shape is chosen to match how it will be read and written, so the design decision happens earlier."
+    tags: [fundamentals]
+
+  - id: q-002
+    levels: [beginner]
+    audience: engineer
+    type: single
+    prompt: "A customer document embeds an array of that customer's linked accounts (typically 1-5). This is a good use of embedding because:"
+    options:
+      - "Accounts should always be normalised into their own table"
+      - "The list is small, bounded, and normally read together with the customer"
+      - "Embedding is always faster regardless of size"
+      - "MongoDB requires embedding for one-to-many relationships"
+    answer: [1]
+    explanation: "Embedding fits bounded data that is read together with its parent. It is not a universal rule; unbounded or independently-queried data should be referenced instead."
+    tags: [embedding]
+
+  - id: q-003
+    levels: [beginner, intermediate]
+    audience: all
+    type: truefalse
+    prompt: "An account's full transaction history should normally be embedded directly in the account document."
+    options: ["True", "False"]
+    answer: [1]
+    explanation: "Transaction history is unbounded and usually queried independently (e.g. the last 50 transactions), which argues for a separate, referenced collection rather than an ever-growing embedded array."
+    tags: [referencing, mistakes]
+
+  - id: q-004
+    levels: [intermediate, rusty]
+    audience: engineer
+    type: single
+    prompt: "A collection groups a day's events into one document per account per day, with precomputed totals. Which pattern is this?"
+    options:
+      - "Outlier pattern"
+      - "Subset pattern"
+      - "Bucket pattern"
+      - "Computed pattern only"
+    answer: [2]
+    explanation: "Grouping time-boxed events into one document per period is the bucket pattern. It often also uses the computed pattern for the totals, but the defining shape (time-boxed grouping) is bucketing."
+    tags: [patterns]
+
+  - id: q-005
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "A team wants to redesign an entire collection because a small number of corporate accounts have far more transactions than retail accounts. The better-targeted response is usually to ask about:"
+    options:
+      - "Switching the whole collection to fully referenced documents"
+      - "The outlier pattern: flag and cap the rare oversized documents, keep the common case simple"
+      - "Moving all accounts to a relational database"
+      - "Increasing the document size limit"
+    answer: [1]
+    explanation: "The outlier pattern handles the rare oversized document without paying a redesign cost (extra lookups, added complexity) for the 99% of normal-sized documents. The document size limit cannot be raised."
+    tags: [outlier-pattern, review]
+
+  - id: q-006
+    levels: [intermediate, rusty]
+    audience: engineer
+    type: multi
+    prompt: "Which of the following does $jsonSchema validation on a MongoDB collection let you enforce?"
+    options:
+      - "Required fields"
+      - "Field types (e.g. string, decimal, date)"
+      - "Automatic migration of existing documents to a new shape"
+      - "Allowed values for a field (enum)"
+    answer: [0, 1, 3]
+    explanation: "$jsonSchema checks writes against required fields, types and enums. It does not migrate or rewrite existing documents; those already in the collection are unaffected unless you touch them."
+    tags: [validation]
+
+  - id: q-007
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "Setting validationAction: 'warn' on a $jsonSchema validator is most useful for:"
+    options:
+      - "Permanently allowing invalid documents in production"
+      - "Rolling out validation against an existing collection while observing violations before enforcing"
+      - "Improving read performance"
+      - "Encrypting documents that fail validation"
+    answer: [1]
+    explanation: "'warn' logs violations without rejecting writes, which lets you introduce validation safely on a collection with existing, possibly-inconsistent data before switching to 'error'."
+    tags: [validation]
+
+  - id: q-008
+    levels: [rusty]
+    audience: engineer
+    type: single
+    prompt: "Before MongoDB 4.0 multi-document transactions existed, what was the main modeling consequence?"
+    options:
+      - "Documents could not contain arrays"
+      - "Teams often embedded data specifically to get atomicity, since only single-document writes were atomic"
+      - "Indexes were not supported"
+      - "Collections were limited to one per database"
+    answer: [1]
+    explanation: "Single-document atomicity was the only atomicity guarantee available, so embedding was sometimes chosen to keep a write atomic rather than purely for the access pattern. Transactions now make that a separate, explicit choice."
+    tags: [changed-since, transactions]
+
+  - id: q-009
+    levels: [rusty, intermediate]
+    audience: manager
+    type: single
+    prompt: "For data in scope of an audit trail, 'migrate documents to the new shape on next write' is:"
+    options:
+      - "Always the right approach, since it keeps the schema current"
+      - "Risky if applied to historical records, because it can silently rewrite what a document looked like at the time of the original transaction"
+      - "Irrelevant, since MongoDB does not support document updates"
+      - "Only a concern for sharded clusters"
+    answer: [1]
+    explanation: "Migrate-on-touch is appropriate for operational data but wrong for anything that must reconstruct a past state faithfully. Audit-relevant history needs an immutable or append-only record, separate from the current operational shape."
+    tags: [bank-context, versioning]
+
+  - id: q-010
+    levels: [beginner, intermediate]
+    audience: manager
+    type: single
+    prompt: "A schema design proposal does not mention the queries it is meant to serve. The most useful next step is to:"
+    options:
+      - "Approve it, since MongoDB schemas can be changed later"
+      - "Ask for the top 5-10 queries and their expected volume before reviewing the document shapes"
+      - "Reject it and require a relational schema instead"
+      - "Ask the team to add more indexes"
+    answer: [1]
+    explanation: "A MongoDB schema is a bet on access patterns. Without the query list, there is no way to judge whether the embed/reference choices are correct, so that is the missing input, not indexes or a different database."
+    tags: [review, fundamentals]

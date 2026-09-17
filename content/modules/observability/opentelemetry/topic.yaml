@@ -1,0 +1,4 @@
+title: "OpenTelemetry"
+summary: "What OTel standardises, context propagation, SDK vs collector deployment, and an adoption strategy across many teams."
+prerequisites: [observability/logs-metrics-traces]
+tags: [observability, opentelemetry, tracing, collector, vendor-neutrality]

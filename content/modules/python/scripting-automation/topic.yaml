@@ -1,0 +1,4 @@
+title: "Scripting & Automation"
+summary: "CLI tools, subprocess, files, HTTP, logging, retries, secrets, scheduling, and packaging a script so someone else can run it."
+prerequisites: ["python/syntax"]
+tags: [python, automation, cli, ops]

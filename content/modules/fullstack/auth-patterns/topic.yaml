@@ -1,0 +1,4 @@
+title: "Authentication & Authorization Patterns"
+summary: "Sessions, JWTs, OAuth2/OIDC, mTLS, RBAC/ABAC, and where banks get this wrong."
+prerequisites: [fullstack/rest-api-design]
+tags: [auth, oauth2, oidc, security, identity]

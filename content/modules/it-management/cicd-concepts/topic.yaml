@@ -1,0 +1,4 @@
+title: "CI/CD Concepts"
+summary: "How code moves from a commit to production safely and repeatably, and how regulated shops add controls without losing speed."
+prerequisites: []
+tags: [cicd, devops, delivery, automation, change-management]

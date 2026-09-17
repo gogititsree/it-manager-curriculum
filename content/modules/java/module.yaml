@@ -1,0 +1,7 @@
+title: "Java"
+tagline: "From objects to production JVMs"
+whyItMatters: "Most of the bank's core services are Java. You need enough fluency to read a PR, spot a design smell, and understand why the JVM ate 8 GB."
+topics:
+  - oop-fundamentals
+  - spring-boot
+  - concurrency-jvm-tuning

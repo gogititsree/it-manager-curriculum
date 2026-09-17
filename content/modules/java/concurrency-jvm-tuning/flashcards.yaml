@@ -1,0 +1,109 @@
+cards:
+  - id: c-001
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "Thread vs task"
+    back: "A thread is an OS-scheduled, relatively expensive unit of execution. A task (Runnable/Callable) is a unit of work submitted to something that manages threads for you."
+    tags: [threads, tasks]
+  - id: c-002
+    levels: [beginner]
+    audience: engineer
+    front: "Why avoid Executors.newCachedThreadPool for request-facing services?"
+    back: "No upper bound on thread creation. A load spike can create unbounded threads and exhaust memory. Prefer a bounded pool."
+    tags: [executors]
+  - id: c-003
+    levels: [beginner, intermediate]
+    audience: all
+    front: "Java Memory Model: the core risk"
+    back: "Shared mutable state read/written by multiple threads with no happens-before relationship (volatile, synchronized) has undefined behaviour, not just reduced performance."
+    tags: [memory-model]
+  - id: c-004
+    levels: [beginner, intermediate]
+    audience: manager
+    front: "'Worked in testing, fails intermittently under production load' — first hypothesis?"
+    back: "Unsynchronised shared mutable state (a race condition). These routinely pass local, low-load testing."
+    tags: [memory-model, review]
+  - id: c-005
+    levels: [beginner]
+    audience: engineer
+    front: "Read-modify-write (e.g. count++) with only volatile: safe?"
+    back: "No. volatile guarantees visibility, not atomicity. Use AtomicInteger or a lock for read-modify-write."
+    tags: [memory-model, gotcha]
+  - id: c-006
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "Virtual threads: why is blocking cheap?"
+    back: "The JVM unmounts a blocked virtual thread from its carrier platform thread, freeing the carrier for other work, instead of parking an expensive OS thread. Java 21 (2023)."
+    tags: [virtual-threads, changed-since]
+  - id: c-007
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "When do virtual threads NOT help?"
+    back: "CPU-bound work (still bounded by cores) and code that pins via synchronized around a blocking call (still ties up the carrier thread)."
+    tags: [virtual-threads, gotcha]
+  - id: c-008
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "Structured concurrency, in one sentence"
+    back: "StructuredTaskScope ties subtasks to an enclosing block: it doesn't exit until all finish, and one failure cancels the others. Preview from Java 21 (2023)."
+    tags: [structured-concurrency, changed-since]
+  - id: c-009
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "G1 vs ZGC: default choice?"
+    back: "G1 (default since Java 9). Move to ZGC only against a measured pause-time SLA G1 fails to meet — ZGC trades some throughput for very low pause times."
+    tags: [gc, decision]
+  - id: c-010
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "-Xms vs -Xmx, and why set them equal?"
+    back: "-Xms is initial heap, -Xmx is maximum. Setting them equal avoids pauses from the heap resizing under load."
+    tags: [heap-sizing]
+  - id: c-011
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "Container-aware heap sizing: what and when"
+    back: "Since JDK 10 (backported to 8u191), the JVM reads cgroup memory/CPU limits automatically instead of the host's full memory. Use -XX:MaxRAMPercentage to scale with it."
+    tags: [heap-sizing, changed-since]
+  - id: c-012
+    levels: [intermediate, rusty]
+    audience: manager
+    front: "Container OOM-killed with no JVM OutOfMemoryError logged: likely cause?"
+    back: "Total JVM memory use exceeded the container's limit before the JVM's own heap logic saw a problem; the OS killed the process externally. Check -Xmx against the container limit."
+    tags: [heap-sizing, bank-context]
+  - id: c-013
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "Thread dump: many BLOCKED threads on one lock, one thread RUNNABLE holding it"
+    back: "Lock contention, not deadlock. The RUNNABLE thread's own stack shows the actual bottleneck — often a slow call made inside the critical section."
+    tags: [thread-dump]
+  - id: c-014
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "GC log: frequent Full GCs, small reclaims each time"
+    back: "Heap pressure — live data barely fits or is leaking. Fix is usually a bigger heap or finding the leak, not GC flag tuning."
+    tags: [gc-log]
+  - id: c-015
+    levels: [rusty]
+    audience: all
+    front: "CompletableFuture: what and when"
+    back: "A composable Future (thenApply, thenCompose, thenCombine, allOf) for async pipelines without blocking at every step. Java 8 (2014)."
+    tags: [changed-since, completablefuture]
+  - id: c-016
+    levels: [rusty]
+    audience: engineer
+    front: "CMS garbage collector: current status"
+    back: "Deprecated in Java 9 (2017, when G1 became default), removed in Java 14. CMS tuning flags no longer apply on a current JDK."
+    tags: [changed-since, gc]
+  - id: c-017
+    levels: [rusty]
+    audience: engineer
+    front: "ZGC: production readiness and Generational mode"
+    back: "Production-ready around Java 15 (2020). Generational ZGC arrived as an option in Java 21 (2023), improving its throughput characteristics."
+    tags: [changed-since, gc]
+  - id: c-018
+    levels: [beginner, intermediate, rusty]
+    audience: manager
+    front: "Why insist a service ships with GC logging enabled by default?"
+    back: "Cheap, durable operational risk reduction: 'why did the JVM use 8GB' is answerable from a GC log in minutes, and unanswerable without one."
+    tags: [bank-context, gc-log]

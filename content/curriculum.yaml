@@ -1,0 +1,8 @@
+# Module order as shown on the dashboard. Each entry is a folder under content/modules/.
+modules:
+  - it-management
+  - java
+  - python
+  - fullstack
+  - databases
+  - observability

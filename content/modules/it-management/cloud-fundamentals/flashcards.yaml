@@ -1,0 +1,79 @@
+cards:
+  - id: c-001
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "Shared responsibility model, in one sentence"
+    back: "The provider secures the physical data centre and platform ('of the cloud'); you secure your data, identity configuration, network rules, and any OS you manage ('in the cloud')."
+    tags: [shared-responsibility]
+  - id: c-002
+    levels: [beginner]
+    audience: all
+    front: "Object vs block vs file storage: quick picks"
+    back: "Object (S3/Blob): files addressed by key, default for most things. Block (EBS/Managed Disk): one machine's attached disk, e.g. a database. File (EFS/Azure Files): a shared filesystem for multiple machines."
+    tags: [storage]
+  - id: c-003
+    levels: [beginner, rusty]
+    audience: all
+    front: "Region vs availability zone"
+    back: "A region is a geographic area with multiple physically separate data centres (availability zones). Multi-AZ protects against one facility failing; multi-region protects against a whole-region event."
+    tags: [regions]
+  - id: c-004
+    levels: [intermediate]
+    audience: manager
+    front: "What is a landing zone?"
+    back: "A pre-configured, multi-account/subscription environment with guardrails (logging, policy, account structure) baked in before any team starts building — security enforced up front, not reviewed after."
+    tags: [landing-zone]
+  - id: c-005
+    levels: [intermediate]
+    audience: manager
+    front: "Biggest real-world cloud IAM finding"
+    back: "Permanent standing admin access for a broad group of engineers, instead of time-boxed, just-in-time elevation. It's a policy choice, not a technical limitation."
+    tags: [iam]
+  - id: c-006
+    levels: [intermediate]
+    audience: engineer
+    front: "PrivateLink / Private Link: what does it do?"
+    back: "Lets a VM reach a managed service without traffic crossing the public internet, even though the service is technically outside your VPC/VNet."
+    tags: [networking]
+  - id: c-007
+    levels: [intermediate, rusty]
+    audience: manager
+    front: "Default: managed service or self-run?"
+    back: "Default to managed unless there's an articulated reason not to. The self-run cost comparison must include the engineering time to replicate patching, backup and failover, not just the VM price."
+    tags: [managed-services]
+  - id: c-008
+    levels: [intermediate, rusty]
+    audience: manager
+    front: "Three practices that make a cloud bill reviewable"
+    back: "Enforced tagging (not optional), budgets with alerts (not just after-the-fact reports), and reserved/committed pricing once usage is understood."
+    tags: [cost, finops]
+  - id: c-009
+    levels: [rusty]
+    audience: engineer
+    front: "On-prem SAN/disk vs cloud, and hardware firewall vs cloud"
+    back: "SAN/attached disk maps to EBS (AWS) / Managed Disk (Azure). Hardware firewall/ACL maps to Security Groups/NACLs (AWS) or NSGs (Azure)."
+    tags: [mapping]
+  - id: c-010
+    levels: [rusty]
+    audience: all
+    front: "What's genuinely different about cloud, not just renamed?"
+    back: "Infrastructure is defined as reviewable code, capacity is elastic (pay for use, not peak), identity replaces the network perimeter as the main security boundary, and managed services absorb work a team used to do."
+    tags: [changed-since]
+  - id: c-011
+    levels: [rusty]
+    audience: engineer
+    front: "Egress cost gotcha"
+    back: "Data transfer out to the internet (and sometimes cross-region) is billed; inbound is usually free. Designs moving lots of data out need this costed up front."
+    tags: [cost, gotcha]
+  - id: c-012
+    levels: [beginner, intermediate]
+    audience: manager
+    front: "The question that catches an over-broad IAM role"
+    back: "Does this service account or role have exactly the permissions it needs, or was it granted broad admin access because that was faster to set up?"
+    tags: [iam, review]
+  - id: c-013
+    levels: [rusty]
+    audience: all
+    front: "Lift-and-shift gotcha"
+    back: "Moving a fixed-size on-prem architecture straight to cloud VMs keeps on-prem's fixed-capacity cost structure with a margin on top. Savings come from redesigning to use elasticity and managed services."
+    tags: [gotcha]

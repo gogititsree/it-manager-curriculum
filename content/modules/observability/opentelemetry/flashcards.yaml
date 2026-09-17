@@ -1,0 +1,91 @@
+cards:
+  - id: c-001
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "OpenTelemetry, one sentence"
+    back: "A vendor-neutral standard (API, SDK, protocol, collector) for producing and transporting telemetry, decoupled from which backend receives it."
+    tags: [scope]
+  - id: c-002
+    levels: [beginner, intermediate]
+    audience: engineer
+    front: "API vs SDK vs OTLP vs Collector"
+    back: "API: calls your code makes. SDK: implementation behind it (batches, samples, exports). OTLP: the wire protocol. Collector: optional process that receives, transforms and routes telemetry."
+    tags: [api-sdk]
+  - id: c-003
+    levels: [beginner, intermediate]
+    audience: all
+    front: "What OTel deliberately does NOT standardise"
+    back: "Storage, query language, dashboards. That remains Prometheus/Grafana or a vendor backend's job."
+    tags: [scope]
+  - id: c-004
+    levels: [beginner, intermediate]
+    audience: manager
+    front: "Vendor-neutrality argument, one line"
+    back: "Instrumenting against OTel turns 'which vendor' into a reversible config decision made later, instead of one baked into every service's code on day one."
+    tags: [vendor-neutrality]
+  - id: c-005
+    levels: [beginner, intermediate]
+    audience: engineer
+    front: "Context propagation standard"
+    back: "W3C Trace Context, carried in the traceparent HTTP header — lets services in different languages/teams continue the same trace automatically."
+    tags: [context-propagation]
+  - id: c-006
+    levels: [intermediate]
+    audience: engineer
+    front: "Where context propagation breaks by default"
+    back: "Async boundaries — message queues and batch jobs. The producer must inject context into the message; the consumer must extract it. Needs a shared library."
+    tags: [context-propagation, gotcha]
+  - id: c-007
+    levels: [intermediate]
+    audience: engineer
+    front: "Collector pipeline: three stages"
+    back: "Receivers (data in, e.g. OTLP), processors (transform/filter/sample), exporters (data out, one or more backends)."
+    tags: [collector]
+  - id: c-008
+    levels: [intermediate]
+    audience: manager
+    front: "Instrumentation-neutral vs deployment-neutral"
+    back: "Using the OTel API alone is not enough. Without a collector tier, every service still exports directly to one vendor, so switching vendors means reconfiguring every service individually."
+    tags: [vendor-neutrality, gotcha]
+  - id: c-009
+    levels: [intermediate]
+    audience: manager
+    front: "How to prove vendor-neutrality to a skeptic"
+    back: "Add the candidate vendor as a second exporter in the collector config and run a live parallel-export pilot — zero application code changes, demonstrable in minutes."
+    tags: [vendor-neutrality]
+  - id: c-010
+    levels: [intermediate]
+    audience: manager
+    front: "Big-bang mandate vs phased OTel rollout"
+    back: "A hard cutover date tends to produce shallow, gap-ridden instrumentation under deadline pressure. Phased: collector + libraries first, pilot, mandate for new services, migrate existing ones by incident pain."
+    tags: [adoption]
+  - id: c-011
+    levels: [rusty]
+    audience: all
+    front: "OpenTelemetry origin"
+    back: "Formed 2019 from a merger of OpenTracing and OpenCensus, under the CNCF; now the de facto ingestion standard most observability vendors support."
+    tags: [changed-since]
+  - id: c-012
+    levels: [rusty]
+    audience: all
+    front: "Maturity order of OTel's signals"
+    back: "Tracing stabilised first, metrics followed, logs support matured later still — check current per-language status rather than assuming an old 'tracing only' limitation still holds."
+    tags: [changed-since]
+  - id: c-013
+    levels: [rusty, intermediate]
+    audience: engineer
+    front: "Auto-instrumentation, what it covers"
+    back: "Common frameworks (HTTP client/server, popular DB drivers, common messaging libs) get spans with no code changes. Internal libraries, queues and batch jobs usually still need explicit work."
+    tags: [gotcha]
+  - id: c-014
+    levels: [beginner, intermediate, rusty]
+    audience: manager
+    front: "Question to ask when a vendor pushes their proprietary agent over OTel"
+    back: "Ask them to quantify in writing exactly what capability is lost using open instrumentation — turns a vague feature claim into a specific, comparable cost of lock-in."
+    tags: [vendor-neutrality]
+  - id: c-015
+    levels: [intermediate]
+    audience: engineer
+    front: "Agent vs gateway collector tier"
+    back: "Agent: per host/pod, local batching and metadata. Gateway: fleet-wide, where fleet-scale work like tail sampling belongs, since it needs to see all spans for a trace."
+    tags: [collector]

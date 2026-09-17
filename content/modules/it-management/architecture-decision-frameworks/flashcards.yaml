@@ -1,0 +1,79 @@
+cards:
+  - id: c-001
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "The four parts of an ADR"
+    back: "Title and status, context, decision, consequences. Consequences is the section people skip and the one to read first when reviewing."
+    tags: [adr]
+  - id: c-002
+    levels: [beginner]
+    audience: manager
+    front: "Tell that an options table was built to justify, not inform"
+    back: "One option scores well on every row and the others look like obvious strawmen. A real comparison has genuine tension."
+    tags: [options-table]
+  - id: c-003
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "ADR format origin"
+    back: "Proposed by Michael Nygard in 2011: title/status, context, decision, consequences. It became the de facto standard."
+    tags: [adr, history]
+  - id: c-004
+    levels: [intermediate]
+    audience: manager
+    front: "ATAM-lite: what does it actually produce?"
+    back: "Explicit tensions between quality attributes (e.g. consistency vs availability) — surfacing that a disagreement is about priorities, not just technology preference."
+    tags: [atam]
+  - id: c-005
+    levels: [intermediate, rusty]
+    audience: manager
+    front: "Reversible vs one-way-door: the question to ask"
+    back: "If this turns out wrong, what does it cost to undo? Reversible → decide fast, single owner. One-way-door → slow down, RFC, tradeoff analysis."
+    tags: [decision]
+  - id: c-006
+    levels: [intermediate]
+    audience: manager
+    front: "When does an RFC earn its cost?"
+    back: "When the decision affects more than one team or sets a pattern others will follow. Skip it for reversible, single-team decisions — an RFC on everything trains people to stop reading them."
+    tags: [rfc]
+  - id: c-007
+    levels: [intermediate]
+    audience: manager
+    front: "RFC failure mode to watch for"
+    back: "Approval by silence — a broadcast comment period with no named required reviewers looks like consensus but isn't. Name affected teams explicitly and require acknowledgement."
+    tags: [rfc, gotcha]
+  - id: c-008
+    levels: [intermediate, rusty]
+    audience: manager
+    front: "Disagree and commit: the test that it was done right"
+    back: "Could the person who disagreed accurately restate the reasoning for the decision? If not, they weren't genuinely heard."
+    tags: [disagreement]
+  - id: c-009
+    levels: [intermediate]
+    audience: manager
+    front: "DACI"
+    back: "Driver, Approver, Contributors, Informed — names who drives, who has final authority, who gives input, and who just needs to know. Most decision paralysis is a missing named Approver."
+    tags: [daci]
+  - id: c-010
+    levels: [rusty]
+    audience: engineer
+    front: "How to update an outdated ADR"
+    back: "Write a new, numbered ADR that supersedes it; mark the old one's status 'Superseded by [new ADR]'. Never edit the original in place — it destroys the decision history."
+    tags: [adr, changed-since]
+  - id: c-011
+    levels: [rusty]
+    audience: engineer
+    front: "Docs-as-code for decisions"
+    back: "ADRs/RFCs as markdown in the same repo as the code, reviewed via pull request — versioned, searchable, and never orphaned in a wiki."
+    tags: [changed-since]
+  - id: c-012
+    levels: [rusty]
+    audience: manager
+    front: "RFC-as-pull-request pattern"
+    back: "The RFC is written as a markdown file in a PR; review happens as inline comments; merging the PR is the approval. One artefact, one thread, one audit trail."
+    tags: [changed-since]
+  - id: c-013
+    levels: [beginner, intermediate]
+    audience: manager
+    front: "Why an ADR beats a retrospective summary for audit purposes"
+    back: "It's contemporaneous — dated and named at decision time, hard to reshape in hindsight — unlike a summary written after the fact."
+    tags: [bank-context]

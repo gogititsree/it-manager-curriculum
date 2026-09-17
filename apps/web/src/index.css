@@ -1,0 +1,396 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------------------------------------
+   Design tokens.
+
+   One palette, two value sets. `:root` is light; dark applies when the document carries
+   data-theme="dark" (an explicit choice) or when the OS prefers dark and no choice was made.
+   lib/theme.ts owns the attribute. Nothing outside this file may name a colour literal.
+
+   The register is ink on bone paper with a prussian-blue accent: a bank's internal reference manual,
+   not a course. Callout hues are a family — equal value, low saturation, told apart by hue only —
+   and every callout also carries a written label, so kind never depends on colour alone.
+-------------------------------------------------------------------------------------------------*/
+:root {
+  --paper: #f4f4f1;
+  --surface: #ffffff;
+  --surface-2: #fafaf8;
+  --ink: #14161b;
+  --ink-2: #4b5059;
+  --ink-3: #7c828c;
+  --rule: #e2e2dd;
+  --rule-strong: #c9c9c2;
+  --accent: #1e3a63;
+  --accent-ink: #ffffff;
+  --accent-soft: #e7ecf3;
+  --focus: #2f6dd0;
+
+  --c-tip: #2e6e62;
+  --c-tip-bg: #e9f2ef;
+  --c-warning: #8a6310;
+  --c-warning-bg: #f6efdf;
+  --c-gotcha: #a0432e;
+  --c-gotcha-bg: #f7eae6;
+  --c-manager-lens: #4a4382;
+  --c-manager-lens-bg: #edecf6;
+  --c-bank-context: #2c5c78;
+  --c-bank-context-bg: #e8f0f5;
+  --c-changed-since: #7a3e6b;
+  --c-changed-since-bg: #f5ebf2;
+  --c-decision: #4d6a2c;
+  --c-decision-bg: #edf2e5;
+
+  /* shiki is loaded with a css-variables theme so highlighted code follows the page palette and
+     flips with the theme without re-highlighting. See components/CodeBlock.tsx. */
+  --shiki-foreground: #24292f;
+  --shiki-background: transparent;
+  --shiki-token-constant: #0550ae;
+  --shiki-token-string: #0a5c3a;
+  --shiki-token-comment: #6e7781;
+  --shiki-token-keyword: #8b2f6b;
+  --shiki-token-parameter: #24292f;
+  --shiki-token-function: #6639ba;
+  --shiki-token-string-expression: #0a5c3a;
+  --shiki-token-punctuation: #57606a;
+  --shiki-token-link: #0550ae;
+
+  --font-read: ui-serif, 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', serif;
+  --font-ui: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Mono', 'Cascadia Code', 'SF Mono', Menlo, Consolas, monospace;
+
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --paper: #14161a;
+  --surface: #1a1d22;
+  --surface-2: #202429;
+  --ink: #e9e9e4;
+  --ink-2: #a7acb4;
+  --ink-3: #787e87;
+  --rule: #2b2f36;
+  --rule-strong: #3c424b;
+  --accent: #9fc0ee;
+  --accent-ink: #12151a;
+  --accent-soft: #1e2530;
+  --focus: #7fb0f5;
+
+  --c-tip: #6fc4b2;
+  --c-tip-bg: #16241f;
+  --c-warning: #dba93f;
+  --c-warning-bg: #241e12;
+  --c-gotcha: #e08a72;
+  --c-gotcha-bg: #271a16;
+  --c-manager-lens: #a9a3e0;
+  --c-manager-lens-bg: #1e1c2b;
+  --c-bank-context: #86b8d6;
+  --c-bank-context-bg: #16212a;
+  --c-changed-since: #d394c0;
+  --c-changed-since-bg: #261a23;
+  --c-decision: #a6c776;
+  --c-decision-bg: #1c2317;
+
+  --shiki-foreground: #d7dae0;
+  --shiki-background: transparent;
+  --shiki-token-constant: #9fc0ee;
+  --shiki-token-string: #8fd0a8;
+  --shiki-token-comment: #767d88;
+  --shiki-token-keyword: #e099c8;
+  --shiki-token-parameter: #d7dae0;
+  --shiki-token-function: #c2aaf0;
+  --shiki-token-string-expression: #8fd0a8;
+  --shiki-token-punctuation: #9aa1ab;
+  --shiki-token-link: #9fc0ee;
+
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-ui);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* One focus treatment everywhere, always visible, never removed. */
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background: var(--accent-soft);
+    color: var(--ink);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* ---- The utility face: eyebrows, kind labels, data captions ------------------------------- */
+  .label {
+    font-family: var(--font-ui);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .measure {
+    max-width: 43rem;
+  }
+
+  /* ---- Prose -------------------------------------------------------------------------------
+     Preflight strips defaults; this puts back exactly what a lesson body needs, nothing else. */
+  .prose-ink {
+    font-family: var(--font-read);
+    font-size: 1.0625rem;
+    line-height: 1.72;
+    color: var(--ink);
+  }
+
+  @media (min-width: 768px) {
+    .prose-ink {
+      font-size: 1.125rem;
+    }
+  }
+
+  .prose-ink > * + * {
+    margin-top: 1.05em;
+  }
+
+  .prose-ink h3 {
+    font-family: var(--font-read);
+    font-size: 1.1em;
+    font-weight: 700;
+    line-height: 1.35;
+    margin-top: 1.9em;
+  }
+
+  .prose-ink h4 {
+    font-family: var(--font-ui);
+    font-size: 0.82em;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    margin-top: 1.8em;
+  }
+
+  .prose-ink ul,
+  .prose-ink ol {
+    padding-left: 1.35em;
+  }
+
+  .prose-ink ul {
+    list-style: none;
+  }
+
+  .prose-ink ul > li {
+    position: relative;
+  }
+
+  /* A ledger rule instead of a bullet. */
+  .prose-ink ul > li::before {
+    content: '';
+    position: absolute;
+    left: -0.95em;
+    top: 0.78em;
+    width: 0.42em;
+    height: 1px;
+    background: var(--rule-strong);
+  }
+
+  .prose-ink ol {
+    list-style: decimal;
+  }
+
+  .prose-ink ol > li::marker {
+    font-family: var(--font-ui);
+    font-size: 0.82em;
+    color: var(--ink-3);
+  }
+
+  .prose-ink li + li {
+    margin-top: 0.35em;
+  }
+
+  .prose-ink li > ul,
+  .prose-ink li > ol {
+    margin-top: 0.35em;
+  }
+
+  .prose-ink strong {
+    font-weight: 700;
+  }
+
+  .prose-ink em {
+    font-style: italic;
+  }
+
+  .prose-ink a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+    text-decoration-thickness: 1px;
+  }
+
+  .prose-ink a:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  .prose-ink :not(pre) > code {
+    font-family: var(--font-mono);
+    font-size: 0.86em;
+    background: var(--surface-2);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 0.08em 0.3em;
+  }
+
+  .prose-ink blockquote {
+    border-left: 2px solid var(--rule-strong);
+    padding-left: 1em;
+    color: var(--ink-2);
+    font-style: italic;
+  }
+
+  .prose-ink hr {
+    border: 0;
+    border-top: 1px solid var(--rule);
+    margin-top: 2em;
+  }
+
+  .prose-ink table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-ui);
+    font-size: 0.9em;
+  }
+
+  .prose-ink th,
+  .prose-ink td {
+    border-bottom: 1px solid var(--rule);
+    padding: 0.5em 0.6em;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .prose-ink th {
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+
+  .prose-ink img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Prose sitting inside a callout or an exercise inherits the tighter local scale. */
+  .prose-tight {
+    font-size: 1rem;
+    line-height: 1.62;
+  }
+
+  .prose-tight > * + * {
+    margin-top: 0.75em;
+  }
+
+  /* ---- Code --------------------------------------------------------------------------------- */
+  .code-surface {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    line-height: 1.62;
+    background: var(--surface-2);
+    color: var(--shiki-foreground);
+    overflow-x: auto;
+    tab-size: 4;
+  }
+
+  .code-surface pre,
+  .code-surface .shiki {
+    background: transparent !important;
+    margin: 0;
+    padding: 0.95rem 1.05rem;
+    min-width: max-content;
+  }
+
+  .code-surface code {
+    font-family: inherit;
+    background: none;
+    border: 0;
+    padding: 0;
+    white-space: pre;
+  }
+
+  /* ---- The margin rail: the signature element -----------------------------------------------
+     A continuous hairline down the lesson with each section's number sitting on it, the way a
+     ledger or a legal document numbers its clauses. Sections really are a sequence you work
+     through and tick off, so the numbering carries information rather than decorating.
+     Below 900px the rail folds away and the marker sits inline above the heading. */
+  .rail {
+    position: relative;
+  }
+
+  .rail-mark {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  @media (min-width: 900px) {
+    .rail {
+      padding-left: 3.75rem;
+    }
+
+    .rail::before {
+      content: '';
+      position: absolute;
+      left: 1.3125rem;
+      top: 0.75rem;
+      bottom: -1.5rem;
+      width: 1px;
+      background: var(--rule);
+    }
+
+    .rail:last-of-type::before {
+      bottom: 0.75rem;
+    }
+
+    .rail > .rail-mark {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 2.625rem;
+      flex-direction: column;
+      gap: 0.35rem;
+      align-items: center;
+      padding-block: 0.3rem;
+      background: var(--paper);
+    }
+  }
+}

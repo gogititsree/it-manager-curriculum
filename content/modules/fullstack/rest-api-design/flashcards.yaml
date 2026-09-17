@@ -1,0 +1,91 @@
+cards:
+  - id: c-001
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "REST core idea in one sentence"
+    back: "Organise the API around resources (nouns with URLs) and act on them with HTTP verbs, instead of naming endpoints after actions."
+    tags: [resources]
+  - id: c-002
+    levels: [beginner, intermediate, rusty]
+    audience: engineer
+    front: "GET / POST / PUT / PATCH / DELETE: one line each"
+    back: "GET reads. POST creates. PUT replaces entirely. PATCH partially updates. DELETE removes."
+    tags: [verbs]
+  - id: c-003
+    levels: [beginner, intermediate, rusty]
+    audience: engineer
+    front: "Idempotent, precisely"
+    back: "Calling it once has the same effect as calling it many times. GET, PUT, DELETE are idempotent by spec; POST generally is not."
+    tags: [idempotency]
+  - id: c-004
+    levels: [beginner, rusty]
+    audience: engineer
+    front: "401 vs 403"
+    back: "401: the server doesn't know who you are (unauthenticated). 403: it knows, and you're not allowed (unauthorized)."
+    tags: [status-codes]
+  - id: c-005
+    levels: [beginner, intermediate]
+    audience: manager
+    front: "Biggest error-handling smell in an API review"
+    back: "200 OK returned with the real success/failure encoded only in the response body. Breaks caching, monitoring and generic retry logic."
+    tags: [status-codes, review]
+  - id: c-006
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "Offset vs cursor pagination: default at scale?"
+    back: "Cursor-based (opaque token). Offset-based skips/repeats rows as data changes and slows down as offset grows on large tables."
+    tags: [pagination]
+  - id: c-007
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "Idempotency-Key header: what does the server do with it?"
+    back: "Stores the result of the first request against the key; returns the same stored result on any retry with that key instead of reprocessing."
+    tags: [idempotency]
+  - id: c-008
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "RFC 7807 Problem Details: required-ish fields"
+    back: "type (URI identifying the error category), title, status, detail, instance. Served as application/problem+json."
+    tags: [problem-details]
+  - id: c-009
+    levels: [intermediate]
+    audience: manager
+    front: "Versioning strategy is incomplete without..."
+    back: "A stated deprecation window and communication plan for consumers of the old version, before it is removed."
+    tags: [versioning, management]
+  - id: c-010
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "OpenAPI: what is it, and when is it most valuable?"
+    back: "A machine-readable API contract (YAML/JSON). Most valuable reviewed contract-first, before implementation — enables mocks, SDKs and contract tests."
+    tags: [openapi]
+  - id: c-011
+    levels: [beginner, intermediate]
+    audience: engineer
+    front: "How should money be represented in a JSON API?"
+    back: "Never a bare float. An integer minor-unit count or string decimal, paired with an explicit currency code."
+    tags: [json-shapes]
+  - id: c-012
+    levels: [rusty]
+    audience: all
+    front: "REST-era equivalent of a WSDL contract file"
+    back: "An OpenAPI specification — lighter, JSON/YAML-based, now used contract-first to generate mocks, SDKs and contract tests."
+    tags: [changed-since]
+  - id: c-013
+    levels: [intermediate]
+    audience: manager
+    front: "Why is a missing idempotency key a real risk, not a theoretical one?"
+    back: "Network retries happen regardless of client intent; without one, a retried POST /payments can create a duplicate, real payment."
+    tags: [bank-context]
+  - id: c-014
+    levels: [beginner, intermediate]
+    audience: all
+    front: "Action that doesn't fit CRUD (e.g. 'approve payment'): how to model it?"
+    back: "As an action-resource: POST /payments/99/approvals — keeps the verb vocabulary consistent and gives the action its own audit trail."
+    tags: [resources]
+  - id: c-015
+    levels: [rusty]
+    audience: all
+    front: "REST alternatives that grew since the mid-2010s: GraphQL and gRPC — where do they actually show up?"
+    back: "gRPC commonly inside internal service-to-service calls; GraphQL occasionally on a customer-facing aggregation layer. REST/JSON remains the default for external/partner APIs."
+    tags: [changed-since]

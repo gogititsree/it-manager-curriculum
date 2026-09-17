@@ -1,0 +1,139 @@
+questions:
+  - id: q-001
+    levels: [beginner]
+    audience: all
+    type: single
+    prompt: "A team wants a database mainly for sub-millisecond lookups of a value by a single known key, with no other query pattern required. Which category fits best?"
+    options:
+      - "Graph database"
+      - "Key-value store"
+      - "Analytical/columnar database"
+      - "Wide-column store"
+    answer: [1]
+    explanation: "Key-value stores are built exactly for fast get/put by a known key. Graph and columnar stores solve different query shapes; wide-column stores are for high write throughput across many partitions, not simple single-key latency."
+    tags: [key-value, categories]
+
+  - id: q-002
+    levels: [beginner, rusty]
+    audience: all
+    type: single
+    prompt: "What is the best evidence that a fraud-detection proposal genuinely needs a graph database rather than a relational store?"
+    options:
+      - "The team prefers Cypher syntax to SQL"
+      - "The core question involves traversing relationships several hops deep, and application code is already building that traversal painfully by hand"
+      - "The dataset is large"
+      - "The data changes frequently"
+    answer: [1]
+    explanation: "Dataset size and change frequency don't determine the category; query shape does. Recursive, multi-hop traversal that is straining to happen in application code is the genuine signal for a graph database."
+    tags: [graph, decision]
+
+  - id: q-003
+    levels: [beginner]
+    audience: engineer
+    type: multi
+    prompt: "Which of these are genuine operational costs of a search-engine store like Elasticsearch/OpenSearch, beyond just running the software?"
+    options:
+      - "It is usually a secondary index fed from a system of record, requiring a sync mechanism"
+      - "Shard sizing and index lifecycle management are an ongoing tuning job"
+      - "It enforces foreign-key constraints between documents"
+      - "Consistency between it and the source data is eventual, not immediate"
+    answer: [0, 1, 3]
+    explanation: "Search engines don't enforce relational constraints. The real costs are keeping it in sync with a source of truth, ongoing shard/index tuning, and living with eventual consistency between the two systems."
+    tags: [search, ops]
+
+  - id: q-004
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "In a database-selection proposal document, what is the clearest early warning sign of resume-driven selection?"
+    options:
+      - "The document names a specific product before stating consistency needs, query shape and scale shape"
+      - "The document recommends an open-source product"
+      - "The document includes a proof-of-concept plan"
+      - "The document proposes more than one database"
+    answer: [0]
+    explanation: "Naming the product before the requirements are established is the classic pattern: the technology drove the decision instead of the other way around. A proof-of-concept and even a polyglot proposal can both be perfectly sound."
+    tags: [decision, review]
+
+  - id: q-005
+    levels: [intermediate]
+    audience: all
+    type: multi
+    prompt: "Which of these are among the seven quality attributes the intermediate decision framework says every candidate database should be scored against?"
+    options:
+      - "Consistency needs"
+      - "Query shape"
+      - "The vendor's marketing conference talk quality"
+      - "Exit cost"
+      - "Operational maturity"
+    answer: [0, 1, 3, 4]
+    explanation: "The seven attributes are consistency needs, query shape, scale shape, operational maturity, licensing, managed-service availability and exit cost. Marketing quality is exactly the kind of input the framework exists to filter out."
+    tags: [framework, decision]
+
+  - id: q-006
+    levels: [intermediate, rusty]
+    audience: manager
+    type: single
+    prompt: "A team proposes three separate specialised databases (relational, document, search) for one new product, each individually well-justified. What single question exposes whether the proposal is actually ready?"
+    options:
+      - "Which database is fastest in benchmarks?"
+      - "Who owns the pipeline that keeps the stores consistent, and what happens when it breaks?"
+      - "Which database has the best free tier?"
+      - "Can all three be hosted in the same cloud region?"
+      - "Is this a stretch, given how new it would be to the team?"
+    answer: [1]
+    explanation: "Polyglot persistence's real cost is the integration tax: the sync mechanism between stores. If nobody owns it and no failure plan exists, the individually-sound choices don't add up to a ready proposal."
+    tags: [polyglot, decision]
+
+  - id: q-007
+    levels: [intermediate]
+    audience: engineer
+    type: truefalse
+    prompt: "A proof-of-concept for a candidate database should primarily aim to justify the team's preferred choice."
+    options: ["True", "False"]
+    answer: [1]
+    explanation: "The proof-of-concept's job is to try to falsify the choice — someone should be explicitly assigned to try to break it, including a failure-injection test. Confirming a preference is exactly the failure mode the process exists to prevent."
+    tags: [poc, decision]
+
+  - id: q-008
+    levels: [rusty]
+    audience: manager
+    type: single
+    prompt: "What is the main practical effect of the wave of open-source database licence changes (e.g. MongoDB's SSPL move in 2018, Elastic's 2021 licence change, Redis's 2024 change) on how a manager should evaluate a candidate?"
+    options:
+      - "Open-source databases are no longer usable in a bank"
+      - "'It's open source' is no longer sufficient; the specific current licence and what it permits must be checked for each product, not assumed from memory"
+      - "All affected products became fully proprietary with no self-hosting allowed"
+      - "It only affects hobby projects, not enterprise use"
+    answer: [1]
+    explanation: "The licence changes mainly restrict competing managed hosting, not general self-hosted use, but the terms and their implications vary by product and have changed over time — they must be verified as of now, not assumed."
+    tags: [licensing, changed-since]
+
+  - id: q-009
+    levels: [rusty]
+    audience: engineer
+    type: single
+    prompt: "What changed about the CAP-theorem-era claim that strong consistency and horizontal scalability cannot coexist?"
+    options:
+      - "The claim was proven mathematically impossible to work around and remains fully true"
+      - "Distributed SQL / NewSQL databases (e.g. Spanner-influenced systems) narrowed that tradeoff using consensus protocols and synchronised clocks, at a real cost in latency and complexity"
+      - "CAP theorem was retracted and no longer applies to any database"
+      - "Key-value stores solved this problem first"
+      - "It only ever affected document databases"
+    answer: [1]
+    explanation: "CAP still describes a real constraint, but distributed SQL systems demonstrated that strong consistency at horizontal scale is achievable in practice, at the cost of latency and operational complexity — the old blanket tradeoff is no longer the settled answer."
+    tags: [changed-since, newsql]
+
+  - id: q-010
+    levels: [rusty, intermediate]
+    audience: engineer
+    type: single
+    prompt: "A five-year-old design document justifies a separate document database with 'Postgres doesn't handle JSON well.' What is the correct first response?"
+    options:
+      - "Accept it; Postgres has never handled semi-structured data"
+      - "Re-evaluate with current Postgres JSONB, full-text search and extension capability as a serious candidate before accepting the premise"
+      - "Replace the document database with a key-value store instead"
+      - "Ignore the document since it is old"
+    answer: [1]
+    explanation: "JSONB and the modern extension ecosystem mean Postgres now credibly covers much of what used to justify a separate document store. The outdated premise should be re-tested, not assumed or dismissed wholesale."
+    tags: [changed-since, postgres]

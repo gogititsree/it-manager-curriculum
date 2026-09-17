@@ -1,0 +1,103 @@
+cards:
+  - id: c-001
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "Authentication vs authorization, in one line each"
+    back: "Authentication: who is this? Authorization: given who they are, are they allowed to do this specific thing?"
+    tags: [fundamentals]
+  - id: c-002
+    levels: [beginner, intermediate]
+    audience: engineer
+    front: "Session-based auth vs token-based auth: the core mechanical difference"
+    back: "Session: opaque cookie ID, server looks up state on every request. Token (e.g. JWT): self-contained, signed, verified without a lookup."
+    tags: [sessions-tokens]
+  - id: c-003
+    levels: [beginner, rusty]
+    audience: engineer
+    front: "OAuth2's four roles"
+    back: "Resource Owner (user), Client (app), Authorization Server (issues tokens), Resource Server (holds the data, checks tokens)."
+    tags: [oauth2]
+  - id: c-004
+    levels: [beginner, intermediate]
+    audience: all
+    front: "True MFA requires..."
+    back: "Factors from different categories: something you know, something you have, something you are. Two passwords is one factor checked twice, not MFA."
+    tags: [mfa]
+  - id: c-005
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "OIDC vs OAuth2: what does OIDC add?"
+    back: "OAuth2 authorizes API access (access token). OIDC adds a standardized identity layer on top: an ID token (JWT) and a /userinfo endpoint."
+    tags: [oidc]
+  - id: c-006
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "Why does PKCE exist?"
+    back: "Protects the Authorization Code flow for clients that can't hold a secret (mobile, SPA): a code_verifier/code_challenge pair means an intercepted code alone can't be redeemed for tokens."
+    tags: [oidc, pkce]
+  - id: c-007
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "Biggest JWT verification mistake"
+    back: "Trusting the alg field inside the token itself instead of pinning the expected algorithm server-side — enabled real historical forgery vulnerabilities (alg: none, algorithm confusion)."
+    tags: [jwt, gotcha]
+  - id: c-008
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "Is a JWT payload encrypted?"
+    back: "No — signed, not encrypted. Anyone holding the token can decode and read it. Don't put secrets or sensitive data in a standard JWT payload."
+    tags: [jwt, gotcha]
+  - id: c-009
+    levels: [intermediate]
+    audience: engineer
+    front: "How do you revoke a JWT-based session before it expires?"
+    back: "You mostly can't, by design — there's no protocol-level revocation. Mitigate with short access-token lifetimes, revocable refresh tokens, and a denylist for confirmed compromise."
+    tags: [jwt, gotcha]
+  - id: c-010
+    levels: [intermediate]
+    audience: engineer
+    front: "mTLS: what does it prove, and what doesn't it prove?"
+    back: "Proves which system is calling (both sides present certificates). Doesn't prove which end user the call is on behalf of — still need user-level auth for that."
+    tags: [mtls]
+  - id: c-011
+    levels: [intermediate]
+    audience: manager
+    front: "RBAC vs ABAC: when to pick which?"
+    back: "RBAC when permissions map to job functions and context rarely matters (simpler, easier to audit for SoD). ABAC when access genuinely depends on runtime attributes (amount, branch, time). Most real systems hybridise."
+    tags: [rbac-abac]
+  - id: c-012
+    levels: [intermediate]
+    audience: manager
+    front: "RBAC role explosion: what causes it, what fixes it?"
+    back: "Caused by encoding every context combination (branch x product x seniority) as its own role. Fixed by keeping roles for real job functions and moving varying constraints into ABAC-style policy."
+    tags: [rbac-abac]
+  - id: c-013
+    levels: [beginner, intermediate]
+    audience: manager
+    front: "Where do secrets belong?"
+    back: "A dedicated secrets manager with rotation and audit logging — never in source control or plain environment config."
+    tags: [secrets]
+  - id: c-014
+    levels: [intermediate]
+    audience: manager
+    front: "Common bank-specific auth failure mode"
+    back: "A long-lived session/token authorizing a high-value action with no step-up re-authentication required."
+    tags: [bank-context]
+  - id: c-015
+    levels: [rusty]
+    audience: all
+    front: "SAML Identity Provider -> OIDC equivalent"
+    back: "OpenID Provider / Authorization Server. (Service Provider -> Client; SAML Assertion -> ID Token.)"
+    tags: [changed-since]
+  - id: c-016
+    levels: [rusty]
+    audience: engineer
+    front: "What changed about the Implicit flow's recommendation?"
+    back: "Went from standard advice for SPAs to formally deprecated in current OAuth guidance, in favour of Authorization Code with PKCE — tokens in the URL fragment were the risk."
+    tags: [changed-since]
+  - id: c-017
+    levels: [beginner, intermediate, rusty]
+    audience: manager
+    front: "PSD2/Open Banking auth shape in four roles"
+    back: "Customer = Resource Owner, third-party provider (TPP) = Client, bank = Authorization Server and Resource Server. SCA layers on top at authentication."
+    tags: [bank-context]

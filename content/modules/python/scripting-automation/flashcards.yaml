@@ -1,0 +1,91 @@
+cards:
+  - id: c-001
+    levels: [beginner, intermediate, rusty]
+    audience: engineer
+    front: "subprocess: safe vs dangerous call"
+    back: "Safe: subprocess.run([\"git\", \"status\"]). Dangerous: shell=True with a string built from untrusted input — command injection risk."
+    tags: [subprocess, security]
+  - id: c-002
+    levels: [beginner, intermediate]
+    audience: engineer
+    front: "Why every network call needs a timeout"
+    back: "Without one, a hung server blocks the script forever with no error. requests.get(url, timeout=10)."
+    tags: [http, reliability]
+  - id: c-003
+    levels: [beginner, intermediate]
+    audience: manager
+    front: "Three questions for 'I automated it with a script'"
+    back: "What happens when it fails halfway through? Who gets told? Can it be run twice safely (idempotent)?"
+    tags: [review]
+  - id: c-004
+    levels: [intermediate]
+    audience: all
+    front: "Idempotent, in one sentence"
+    back: "Running the operation twice has the same effect as running it once — critical for anything that might be retried or re-run after a partial failure."
+    tags: [idempotency]
+  - id: c-005
+    levels: [intermediate]
+    audience: engineer
+    front: "Exponential backoff, in one line"
+    back: "Delay doubles each retry (0.5s, 1s, 2s...) instead of retrying immediately, to avoid hammering a struggling system."
+    tags: [retries]
+  - id: c-006
+    levels: [intermediate]
+    audience: engineer
+    front: "What's safe to retry automatically?"
+    back: "Idempotent operations (GET, or a POST with an idempotency key) and transient errors (timeout, connection reset). Never blindly retry a definitive error response (4xx)."
+    tags: [retries, idempotency]
+  - id: c-007
+    levels: [intermediate, rusty]
+    audience: manager
+    front: "Where should a script's secrets come from?"
+    back: "Environment variables or a secrets manager, set by the deployment pipeline. Never a literal in the file — it's exposed the moment the repo is cloned, and git history doesn't forget."
+    tags: [secrets, bank-context]
+  - id: c-008
+    levels: [beginner, intermediate]
+    audience: engineer
+    front: "print vs logging"
+    back: "print for scripts you run and watch yourself. logging (levels, timestamps, routable output) for anything scheduled or unattended."
+    tags: [logging]
+  - id: c-009
+    levels: [rusty]
+    audience: engineer
+    front: "uv, in one line"
+    back: "A fast tool from Astral (2024) that replaces pip + virtualenv for most dependency/environment work. pip/venv still work fine."
+    tags: [changed-since, tooling]
+  - id: c-010
+    levels: [rusty]
+    audience: engineer
+    front: "pipx, in one line"
+    back: "Installs a Python CLI tool into its own isolated environment on your PATH, without touching any project's own dependencies."
+    tags: [changed-since, tooling]
+  - id: c-011
+    levels: [rusty]
+    audience: manager
+    front: "cron today: still fine, or replaced?"
+    back: "Still fine for simple single-machine jobs. Teams increasingly use CI scheduled pipelines, Kubernetes CronJob, or a workflow orchestrator for anything with dependent steps or visibility needs."
+    tags: [changed-since, scheduling]
+  - id: c-012
+    levels: [beginner, rusty]
+    audience: engineer
+    front: "--dry-run: why bother?"
+    back: "The cheapest safety feature for any script that changes state — lets you validate behaviour without making the change for real."
+    tags: [safety]
+  - id: c-013
+    levels: [intermediate]
+    audience: engineer
+    front: "Atomic file write pattern"
+    back: "Write to a temp path, then rename into place. A crash mid-write never leaves a consumer reading a half-written file."
+    tags: [reliability]
+  - id: c-014
+    levels: [beginner]
+    audience: engineer
+    front: "csv.DictReader vs manual .split(',')"
+    back: "DictReader handles quoting/escaping correctly and gives you dict rows by header name. Manual splitting breaks the moment a field contains a comma or quote."
+    tags: [files]
+  - id: c-015
+    levels: [rusty]
+    audience: manager
+    front: "Biggest risk of scripts on personal crontab entries"
+    back: "Not the technology — it's organisational: ownership, credentials and failure alerting tied to one person rather than the team."
+    tags: [bank-context]

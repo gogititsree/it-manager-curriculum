@@ -1,0 +1,150 @@
+questions:
+  - id: q-001
+    levels: [beginner]
+    audience: all
+    type: single
+    prompt: "What is a pandas DataFrame?"
+    options:
+      - "A single column of data"
+      - "A table of rows and named, typed columns held in memory"
+      - "A file format for CSV data"
+      - "A database connection object"
+    answer: [1]
+    explanation: "A DataFrame is a two-dimensional table, roughly analogous to a spreadsheet sheet. A single column pulled from it is a Series."
+    tags: [dataframe]
+
+  - id: q-002
+    levels: [beginner, rusty]
+    audience: engineer
+    type: single
+    prompt: "Why combine filter conditions with & and | instead of and/or?"
+    options:
+      - "and/or are slower"
+      - "and/or don't work element-wise across a whole column and raise an error or behave unexpectedly"
+      - "& and | are deprecated"
+      - "There is no difference"
+    answer: [1]
+    explanation: "Python's and/or expect single boolean values. Comparing whole columns produces a Series of booleans, which needs the element-wise & and | operators, each condition parenthesized."
+    tags: [gotcha, filtering]
+
+  - id: q-003
+    levels: [beginner]
+    audience: engineer
+    type: single
+    prompt: "Reading an account_id column of values like '00123' without specifying a dtype risks:"
+    options:
+      - "The column being read as a list instead of a Series"
+      - "pandas inferring it as numeric and silently dropping leading zeros"
+      - "A read error"
+      - "Nothing, IDs are always read as text"
+    answer: [1]
+    explanation: "pandas infers types on read. A column that looks numeric gets converted to a numeric dtype, which drops leading zeros. Use dtype={'account_id': str} to prevent it."
+    tags: [gotcha, dtypes]
+
+  - id: q-004
+    levels: [beginner, intermediate]
+    audience: engineer
+    type: single
+    prompt: "What does groupby(\"currency\")[\"amount\"].sum() compute?"
+    options:
+      - "The overall sum of the amount column, ignoring currency"
+      - "The sum of amount for each distinct value of currency"
+      - "The number of distinct currencies"
+      - "The average amount per row"
+    answer: [1]
+    explanation: "groupby splits the DataFrame into groups by the key column, then sum() aggregates the amount column within each group."
+    tags: [groupby]
+
+  - id: q-005
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "After a left merge on account_id, len(joined) is greater than len(transactions). The most likely cause is:"
+    options:
+      - "A bug in pandas"
+      - "account_id is not unique in the right-hand table, so matching rows are duplicated"
+      - "The join used how=\"outer\" instead of how=\"left\""
+      - "The amount column contains NaN"
+    answer: [1]
+    explanation: "A left merge preserves every left row, but if the join key isn't unique on the right side, each left row can match multiple right rows, multiplying the row count for those keys."
+    tags: [merge, gotcha]
+
+  - id: q-006
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "A monthly reconciliation total is 8% higher than the source system. Before anything else, the fastest useful check is:"
+    options:
+      - "Rewrite the script in a different language"
+      - "Compare row counts before and after each merge/join step"
+      - "Increase the server's memory"
+      - "Ask the source system team to recheck their number"
+    answer: [1]
+    explanation: "An inflated total after a join is the classic symptom of a duplicate join key causing row duplication. Checking row counts around each merge isolates the step where it happens quickly."
+    tags: [merge, review]
+
+  - id: q-007
+    levels: [intermediate]
+    audience: engineer
+    type: truefalse
+    prompt: "df[\"fee\"] = df[\"amount\"] * 0.01 is generally faster than df.apply(lambda row: row[\"amount\"] * 0.01, axis=1)."
+    options: ["True", "False"]
+    answer: [0]
+    explanation: "The direct column multiplication is vectorised and operates on the whole column at once. apply(axis=1) falls back to a Python-level loop over rows and is typically much slower on large data."
+    tags: [performance]
+
+  - id: q-008
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "A team wants to rewrite a slow pandas script in polars. The most useful question to ask first is:"
+    options:
+      - "Whether polars has more GitHub stars"
+      - "What the actual bottleneck is, and whether pushing the aggregation into the source database would fix it more cheaply"
+      - "Whether the team likes Rust"
+      - "Nothing — always prefer the newer tool"
+    answer: [1]
+    explanation: "Switching libraries is one option among several (fixing a row-wise apply, doing the aggregation in SQL, using nullable/Arrow dtypes). The decision should follow from diagnosing the actual bottleneck, not defaulting to a rewrite."
+    tags: [decision, polars]
+
+  - id: q-009
+    levels: [rusty]
+    audience: engineer
+    type: single
+    prompt: "The .ix indexer, common in older pandas code, was:"
+    options:
+      - "Renamed to .loc with no behaviour change"
+      - "Removed in pandas 1.0 (2020) because it ambiguously mixed label- and position-based lookup"
+      - "Made the default indexer in pandas 2.0"
+      - "Never actually existed"
+    answer: [1]
+    explanation: ".ix guessed whether an index was a label or a position, which caused subtle bugs. It was deprecated for a long period and fully removed in pandas 1.0. Use .loc or .iloc explicitly."
+    tags: [changed-since]
+
+  - id: q-010
+    levels: [rusty, intermediate]
+    audience: engineer
+    type: single
+    prompt: "A numeric column with missing values, read with old-style default dtypes, typically becomes:"
+    options:
+      - "object dtype"
+      - "float64, even if every present value is a whole number"
+      - "An error is raised"
+      - "Int64 automatically"
+    answer: [1]
+    explanation: "Historically, any missing value in a numeric column forced an upcast to float64. Nullable extension dtypes (e.g. Int64, capital I) were added later specifically to avoid this."
+    tags: [changed-since, dtypes]
+
+  - id: q-011
+    levels: [beginner, intermediate]
+    audience: all
+    type: multi
+    prompt: "Which are true about tidy data?"
+    options:
+      - "Each variable is a column"
+      - "Each observation is a row"
+      - "Wide format (one column per month) is always tidy"
+      - "Tidy data is generally easier to filter, join and aggregate than wide data"
+    answer: [0, 1, 3]
+    explanation: "Wide format (e.g. months as separate columns) is typically untidy — it mixes what should be an observation-level variable into column headers. Tidy data means one row per observation."
+    tags: [tidy-data]

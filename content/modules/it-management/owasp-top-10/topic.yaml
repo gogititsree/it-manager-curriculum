@@ -1,0 +1,4 @@
+title: "OWASP Top 10 Security Basics"
+summary: "The ten most common web application security weaknesses, one bank-flavoured example each, and what to ask for in a design review."
+prerequisites: []
+tags: [security, appsec, owasp, risk]

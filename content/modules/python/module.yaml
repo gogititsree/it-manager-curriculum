@@ -1,0 +1,8 @@
+title: "Python"
+tagline: "The glue language of operations and data"
+whyItMatters: "Python is what your SREs script with, what your data people analyse with, and what half the internal tools are written in. Reading it well is a management skill."
+topics:
+  - syntax
+  - scripting-automation
+  - data-handling-pandas
+  - api-development

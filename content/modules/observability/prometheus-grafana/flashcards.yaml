@@ -1,0 +1,91 @@
+cards:
+  - id: c-001
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "Prometheus pull model, one sentence"
+    back: "Prometheus scrapes each service's /metrics HTTP endpoint on a schedule, rather than services pushing data to a collector."
+    tags: [pull-model]
+  - id: c-002
+    levels: [beginner, intermediate]
+    audience: engineer
+    front: "Four Prometheus metric types"
+    back: "Counter (only goes up), gauge (goes up/down), histogram (bucketed observations for percentiles), summary (client-side quantiles, mostly legacy)."
+    tags: [metric-types]
+  - id: c-003
+    levels: [beginner, intermediate, rusty]
+    audience: engineer
+    front: "Why use rate() on a counter?"
+    back: "Raw counters are cumulative and reset on restart. rate() gives a per-second average and correctly handles resets; subtracting two raw readings does not."
+    tags: [promql]
+  - id: c-004
+    levels: [intermediate]
+    audience: engineer
+    front: "Histogram vs summary for a scaled-out service"
+    back: "Histogram: PromQL can compute a valid percentile across all instances at query time. Summary: per-instance quantiles, cannot be correctly aggregated across instances."
+    tags: [metric-types, gotcha]
+  - id: c-005
+    levels: [intermediate]
+    audience: engineer
+    front: "Recording rule, one sentence"
+    back: "Precomputes an expensive or frequently-used PromQL query on a schedule and stores the result as a new metric, so dashboards/alerts read it cheaply."
+    tags: [recording-rules]
+  - id: c-006
+    levels: [intermediate]
+    audience: manager
+    front: "When should an alert query a recording rule instead of a raw expression?"
+    back: "Almost always — it keeps evaluation cheap and ensures the number that pages someone matches what the dashboard shows."
+    tags: [recording-rules, alerting]
+  - id: c-007
+    levels: [intermediate]
+    audience: manager
+    front: "Retention vs HA: two different risks"
+    back: "Retention length answers a compliance/trend question (how far back can you look). HA (multiple scraping replicas) answers an incident-response question (can you see right now if one component fails)."
+    tags: [ha, retention]
+  - id: c-008
+    levels: [beginner, intermediate]
+    audience: all
+    front: "Golden signals for a dashboard"
+    back: "Latency, traffic, errors, saturation. A useful incident dashboard leads with these before any drill-down panels."
+    tags: [dashboards]
+  - id: c-009
+    levels: [beginner, intermediate]
+    audience: manager
+    front: "\"Wall art\" dashboard: how to spot one"
+    back: "Ask on-call which dashboard they actually open when paged. If it is not the one built for a launch review, that one is decorative."
+    tags: [dashboards]
+  - id: c-010
+    levels: [intermediate]
+    audience: manager
+    front: "Series-count pricing: what it means for cardinality discipline"
+    back: "A managed metrics platform billing on active time series turns a cardinality mistake into an immediate cost, not just a slow query — budgets matter more, not less."
+    tags: [cost, cardinality]
+  - id: c-011
+    levels: [rusty]
+    audience: all
+    front: "Zabbix trigger / Nagios check -> Prometheus equivalent"
+    back: "A PromQL alerting rule evaluated on a schedule, usually against a recording rule, routed through Alertmanager."
+    tags: [changed-since]
+  - id: c-012
+    levels: [rusty]
+    audience: all
+    front: "Cacti/MRTG RRD graphs -> Prometheus/Grafana"
+    back: "RRDs fixed resolution and rollup at graph-creation time. Prometheus stores raw samples; any aggregation or function is computed at query time in PromQL."
+    tags: [changed-since]
+  - id: c-013
+    levels: [rusty]
+    audience: engineer
+    front: "up == 0 in Prometheus: what it actually means"
+    back: "The last scrape of that target failed — not necessarily 'host down.' Could be network, could be the service too slow to answer in time. Weaker signal than a Nagios host check; needs duration-based alerting."
+    tags: [gotcha]
+  - id: c-014
+    levels: [rusty, intermediate]
+    audience: all
+    front: "Static host lists -> service discovery"
+    back: "Prometheus commonly discovers scrape targets automatically (Kubernetes, cloud APIs) instead of a hand-maintained inventory — necessary once hosts/containers live minutes, not years."
+    tags: [changed-since]
+  - id: c-015
+    levels: [beginner, intermediate, rusty]
+    audience: engineer
+    front: "Pushgateway: what it is for"
+    back: "An intermediary short-lived/batch jobs push their final result to once; Prometheus then scrapes the Pushgateway like any other target. The documented exception to pull."
+    tags: [pull-model]

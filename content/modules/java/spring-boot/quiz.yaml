@@ -1,0 +1,178 @@
+questions:
+  - id: q-001
+    levels: [beginner]
+    audience: all
+    type: single
+    prompt: "Dependency injection, in plain terms, means:"
+    options:
+      - "A class creates all the objects it depends on inside its own constructor"
+      - "A class declares what it needs and something else supplies it, usually via the constructor"
+      - "A design pattern only available inside Spring"
+      - "Injecting SQL statements into a service at runtime"
+    answer: [1]
+    explanation: "DI is a general design pattern: a class receives its dependencies rather than constructing them. Spring automates the supplying part; it did not invent the pattern."
+    tags: [dependency-injection]
+
+  - id: q-002
+    levels: [beginner]
+    audience: engineer
+    type: single
+    prompt: "A starter dependency such as spring-boot-starter-web primarily provides:"
+    options:
+      - "A finished REST API you must not modify"
+      - "A curated, version-aligned bundle of libraries for one job (here: embedded server, JSON, MVC)"
+      - "A replacement for the Java compiler"
+      - "A database schema"
+    answer: [1]
+    explanation: "Starters are dependency bundles, chosen and version-pinned to work together, that pull in everything typically needed for one concern."
+    tags: [starters]
+
+  - id: q-003
+    levels: [beginner, intermediate]
+    audience: engineer
+    type: single
+    prompt: "Auto-configuration in Spring Boot decides what beans to create based on:"
+    options:
+      - "A fixed list that never changes between projects"
+      - "What is present on the classpath and whether you have already defined a conflicting bean"
+      - "Random selection at each startup"
+      - "The IDE you are using"
+    answer: [1]
+    explanation: "Auto-configuration classes are conditional (@ConditionalOnClass, @ConditionalOnMissingBean, etc.): what gets configured depends on the classpath and on beans you have already defined yourself."
+    tags: [auto-configuration]
+
+  - id: q-004
+    levels: [beginner, intermediate]
+    audience: manager
+    type: single
+    prompt: "A junior engineer asks 'where does this PaymentRepository instance come from — I never see \"new\" anywhere.' The accurate answer is:"
+    options:
+      - "It is a bug; every object must be explicitly constructed"
+      - "Spring found the class via classpath scanning (or a @Bean method) and constructed and wired it automatically"
+      - "It is generated at compile time by an annotation processor that writes the constructor call"
+      - "It only exists in tests"
+    answer: [1]
+    explanation: "This is the core of Spring's dependency injection: beans found by component scanning or declared via @Bean are constructed and wired by the framework at startup, not by explicit 'new' calls in your code."
+    tags: [dependency-injection, review]
+
+  - id: q-005
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "A trivial CRUD endpoint has a @Service class that only forwards one call to a repository, with no rule and no multi-step transaction. The best framing in review is:"
+    options:
+      - "Always mandatory; every controller must call a service, never a repository"
+      - "Defensible either way; the real question is whether the pass-through exists out of habit or for team-wide consistency, and whether that tradeoff was made deliberately"
+      - "Always wrong; a service layer must never be a pure pass-through"
+      - "Irrelevant; layering has no cost worth discussing"
+    answer: [1]
+    explanation: "Layering is a tool, not a law. A pass-through service is legitimate for consistency but has a real cost (a file, a bean, a mock in every test); the review question is whether that tradeoff was made on purpose."
+    tags: [layering, review]
+
+  - id: q-006
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "A method calls another @Transactional method on `this` from within the same class. What happens?"
+    options:
+      - "A new nested transaction starts as expected"
+      - "The call bypasses the transactional proxy, so @Transactional on the called method has no effect"
+      - "A runtime exception is thrown immediately"
+      - "The application fails to start"
+    answer: [1]
+    explanation: "@Transactional works via a proxy wrapping the bean. Calls from outside the class go through the proxy; a call from inside the class (this.method()) does not, so the annotation is silently ignored."
+    tags: [transactions, gotcha]
+
+  - id: q-007
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "A team's test suite is almost entirely @SpringBootTest classes and takes fifteen minutes to run. The most useful diagnosis is:"
+    options:
+      - "The team needs a faster CI runner"
+      - "Most of these are probably integration tests in disguise; business rules should mostly be testable without any Spring context at all"
+      - "SpringBootTest is inherently slow and should never be used"
+      - "The team should delete slow tests"
+    answer: [1]
+    explanation: "A suite dominated by full-context tests usually means business logic is entangled with the framework. Plain unit tests plus targeted slices (@WebMvcTest, @DataJpaTest) should carry most of the load."
+    tags: [testing, review]
+
+  - id: q-008
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "@DataJpaTest is the right choice for testing:"
+    options:
+      - "Business rules on a domain object with no persistence involved"
+      - "Repository query behaviour against a real (typically embedded) database, without starting the full application"
+      - "HTTP status codes returned by a controller"
+      - "Security filter chain configuration"
+    answer: [1]
+    explanation: "@DataJpaTest starts only the JPA-related slice of the context plus an embedded database, making it fast and focused on repository/query correctness."
+    tags: [testing]
+
+  - id: q-009
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "An unauthenticated /actuator/env endpoint is reachable on a production service. Why does this matter?"
+    options:
+      - "It slightly increases CPU usage"
+      - "It can expose environment variables, which may include values that look like secrets, to anyone who can reach the URL"
+      - "It has no real impact; actuator is read-only by design"
+      - "It only matters if the service handles payments"
+    answer: [1]
+    explanation: "Actuator endpoints beyond /health can expose configuration and environment details. Leaving them open is a common, real finding in security reviews and penetration tests."
+    tags: [actuator, bank-context]
+
+  - id: q-010
+    levels: [rusty]
+    audience: all
+    type: single
+    prompt: "In XML-era Spring you wrote <bean> definitions in applicationContext.xml. In Boot, the closest equivalent for your own classes is usually:"
+    options:
+      - "You must still write an applicationContext.xml"
+      - "@Component (or a more specific stereotype) found by classpath scanning, or an explicit @Bean method for things you don't own"
+      - "web.xml"
+      - "There is no equivalent; wiring is entirely manual now"
+    answer: [1]
+    explanation: "Boot replaces most hand-written XML bean wiring with classpath scanning of stereotype annotations, plus @Bean methods in @Configuration classes for objects you construct yourself."
+    tags: [changed-since]
+
+  - id: q-011
+    levels: [rusty]
+    audience: engineer
+    type: truefalse
+    prompt: "Spring Boot 3 requires Java 17 or later and moved from javax.* to jakarta.* package names."
+    options: ["True", "False"]
+    answer: [0]
+    explanation: "Boot 3.0 (2022) raised the floor to Java 17 and followed the Jakarta EE renaming, breaking source compatibility with code still importing javax.servlet/javax.persistence."
+    tags: [changed-since]
+
+  - id: q-012
+    levels: [rusty]
+    audience: engineer
+    type: single
+    prompt: "A codebase still has a class 'extends WebSecurityConfigurerAdapter'. What does this tell you?"
+    options:
+      - "It is using the current recommended security configuration style"
+      - "It predates the 2022 shift to a SecurityFilterChain @Bean with a lambda DSL, and will not compile against current Spring Security"
+      - "It is a sign of a WebFlux application"
+      - "It means CSRF protection is disabled"
+    answer: [1]
+    explanation: "WebSecurityConfigurerAdapter was deprecated in Spring Security 5.7 (2022) and removed in 6.0, replaced by a SecurityFilterChain @Bean built with the lambda-based DSL."
+    tags: [changed-since, security]
+
+  - id: q-013
+    levels: [rusty]
+    audience: manager
+    type: single
+    prompt: "A team is still deploying WAR files to a shared Tomcat instance and asks whether to move to Boot's executable-jar model. The most relevant tradeoff to raise is:"
+    options:
+      - "Executable jars cannot run in production"
+      - "The ops model changes: no shared container to patch centrally, but per-instance/container process management and log handling instead"
+      - "There is no real difference, it is purely cosmetic"
+      - "WAR deployment is always faster"
+    answer: [1]
+    explanation: "Moving to an embedded-server executable jar shifts operational responsibility from a centrally managed container to per-instance process and log management, which is a genuine operational tradeoff, not just a packaging detail."
+    tags: [changed-since, bank-context]

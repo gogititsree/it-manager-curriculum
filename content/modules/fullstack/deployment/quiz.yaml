@@ -1,0 +1,160 @@
+questions:
+  - id: q-001
+    levels: [beginner]
+    audience: all
+    type: single
+    prompt: "What is a container image?"
+    options:
+      - "A running process on a server"
+      - "A packaged, read-only bundle of an application, its runtime, and its dependencies"
+      - "A type of virtual machine"
+      - "A configuration file format"
+    answer: [1]
+    explanation: "An image is the immutable, packaged artifact. A container is a running instance of an image, similar to an object being an instance of a class."
+    tags: [images]
+
+  - id: q-002
+    levels: [beginner]
+    audience: engineer
+    type: single
+    prompt: "What is the main structural difference between a VM and a container?"
+    options:
+      - "Containers cannot run Java applications"
+      - "A VM virtualises an entire computer including its own kernel; a container shares the host's kernel and isolates only the process/filesystem/network view"
+      - "VMs are always faster to start than containers"
+      - "There is no real difference, only naming"
+    answer: [1]
+    explanation: "VMs run a full guest OS per instance via a hypervisor. Containers share the host kernel, which is why they start faster and have less overhead, but changes the isolation/security boundary."
+    tags: [containers-vs-vms]
+
+  - id: q-003
+    levels: [beginner, rusty]
+    audience: manager
+    type: single
+    prompt: "With container-based deployment, what makes rollback more reliable than a typical VM/WAR rollback?"
+    options:
+      - "Containers are always faster on every metric"
+      - "The previous version is an exact, immutable, versioned artifact (the previous image tag), not 'whatever state the VM was in'"
+      - "Rollback is no longer necessary with containers"
+      - "Containers cannot fail, so rollback is rarely used"
+    answer: [1]
+    explanation: "An image is immutable and versioned, so 'the previous version' is a precise artifact you can redeploy exactly, unlike a VM that may have drifted since the last known-good state."
+    tags: [rollback]
+
+  - id: q-004
+    levels: [beginner]
+    audience: engineer
+    type: truefalse
+    prompt: "Environment-specific configuration (like a database URL) should be baked directly into the container image, with a separate image built per environment."
+    options: ["True", "False"]
+    answer: [1]
+    explanation: "Config should be injected at runtime (env vars, mounted config), not baked into the image. Baking it in defeats 'build once, run anywhere' and reintroduces environment drift."
+    tags: [config]
+
+  - id: q-005
+    levels: [intermediate]
+    audience: engineer
+    type: multi
+    prompt: "Which are core Kubernetes objects mentioned as relevant to reading a manifest in review?"
+    options:
+      - "Pod"
+      - "Deployment"
+      - "Service"
+      - "Hypervisor"
+    answer: [0, 1, 2]
+    explanation: "Pod, Deployment and Service are Kubernetes objects. A hypervisor is a VM virtualisation concept, not a Kubernetes object."
+    tags: [kubernetes]
+
+  - id: q-006
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "What is the key difference between a liveness probe and a readiness probe?"
+    options:
+      - "They are two names for the same check"
+      - "Liveness failing triggers a restart of the container; readiness failing removes it from receiving traffic without restarting it"
+      - "Readiness probes only run once at startup"
+      - "Liveness probes check CPU usage only"
+    answer: [1]
+    explanation: "Liveness: is it fundamentally broken, restart it. Readiness: can it currently serve requests, route traffic accordingly. Pointing both at a downstream dependency check is a common, harmful mistake."
+    tags: [health-checks]
+
+  - id: q-007
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "A team says 'we use Kubernetes Secrets so our credentials are encrypted.' What should you verify?"
+    options:
+      - "Nothing further; Kubernetes Secrets are always encrypted"
+      - "Whether etcd encryption at rest is enabled and/or an external secrets manager is used, since base Secret objects are only base64-encoded by default"
+      - "Whether the team uses YAML or JSON manifests"
+      - "How many replicas the deployment has"
+    answer: [1]
+    explanation: "Kubernetes Secret objects base64-encode values by default, which is not encryption. Real protection requires etcd encryption at rest and/or an external secrets manager."
+    tags: [secrets, gotcha]
+
+  - id: q-008
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "When is blue/green generally preferred over canary?"
+    options:
+      - "When you want to expose only a small percentage of users to a new version first"
+      - "When a change (e.g. an atomic database migration) needs a clean, all-at-once cutover rather than two versions running simultaneously"
+      - "Blue/green is always strictly better than canary"
+      - "When rollback speed does not matter"
+    answer: [1]
+    explanation: "Blue/green suits changes where running two versions simultaneously against the same data would be unsafe (e.g. incompatible schema changes); canary suits changes that are safe to expose gradually."
+    tags: [rollout-strategy]
+
+  - id: q-009
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "A platform team wants to deploy ten times a day using an automated pipeline. The existing CAB process requires individual approval and a scheduled window per change. What is a workable reconciliation?"
+    options:
+      - "Deploy without any change control since automation is trusted implicitly"
+      - "Batch all deploys into one weekly release to fit the existing CAB cadence"
+      - "Pre-approve a standing change category for deploys that pass the full automated pipeline with defined guardrails (tests, rollout strategy, automated rollback), reserving individual CAB review for higher-risk changes"
+      - "Stop using CAB entirely for this team"
+    answer: [2]
+    explanation: "A pre-approved standing change category with pipeline-enforced guardrails and an auditable record per deploy reconciles frequent automated deploys with governance, without discarding either."
+    tags: [change-control, bank-context]
+
+  - id: q-010
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "A service requires a database schema change that is not backward-compatible with the old code. What is the safer pattern before doing a canary or even blue/green rollout?"
+    options:
+      - "Deploy the new code and schema change simultaneously via canary at 5%"
+      - "Use the expand/contract pattern: make the schema change backward/forward compatible first, deploy code that handles both states, then finalise the change in a later step"
+      - "Skip staging and test directly in production"
+      - "There is no way to do this safely with containers"
+    answer: [1]
+    explanation: "Expand/contract splits the migration into compatible steps so no version of the code is ever incompatible with the current schema, making canary or blue/green safe at every step."
+    tags: [rollout-strategy, migrations]
+
+  - id: q-011
+    levels: [rusty]
+    audience: all
+    type: single
+    prompt: "In VM/WAR-era terms, what is the closest equivalent of pushing an image to a registry and updating a Deployment's image tag?"
+    options:
+      - "Editing a properties file"
+      - "SCP-ing the WAR to each VM and restarting the app server on each one"
+      - "Installing a new operating system"
+      - "Changing the DNS record"
+    answer: [1]
+    explanation: "Both achieve the same goal — getting a new build running — but the container/Kubernetes version replaces manual per-machine file copying and restarts with a declared image version the orchestrator rolls out."
+    tags: [changed-since]
+
+  - id: q-012
+    levels: [rusty]
+    audience: engineer
+    type: truefalse
+    prompt: "Fixing a bug by SSHing into a running container and patching a file live is a reliable long-term fix, the same way it was for a VM."
+    options: ["True", "False"]
+    answer: [1]
+    explanation: "A container is meant to be replaced, not patched in place. Any live SSH fix disappears the next time the container restarts or is replaced by the orchestrator, unlike a hand-patched VM which could persist that state."
+    tags: [gotcha]

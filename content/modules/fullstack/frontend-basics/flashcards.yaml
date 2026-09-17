@@ -1,0 +1,85 @@
+cards:
+  - id: c-001
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "HTML, CSS, JS: what does each own?"
+    back: "HTML = structure/meaning. CSS = presentation. JavaScript = behaviour. Keep each in its own lane."
+    tags: [fundamentals]
+  - id: c-002
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "What is a component?"
+    back: "A self-contained, reusable piece of UI: markup, styling hooks and behaviour together, configured by props and state."
+    tags: [components]
+  - id: c-003
+    levels: [beginner, intermediate]
+    audience: engineer
+    front: "Props vs state?"
+    back: "Props: values passed in, like function arguments. State: data a component owns and can change, which triggers a redraw."
+    tags: [components]
+  - id: c-004
+    levels: [beginner, intermediate]
+    audience: all
+    front: "Three fetch states every data-driven screen needs"
+    back: "Loading, error, success (and often empty). Estimating only the success state is why frontend estimates slip."
+    tags: [estimation]
+  - id: c-005
+    levels: [beginner, rusty]
+    audience: engineer
+    front: "Why does a modern frontend need a build step?"
+    back: "Browsers can't parse JSX/TypeScript directly; hundreds of source files need bundling into a few optimised files; dependencies need resolving."
+    tags: [tooling]
+  - id: c-006
+    levels: [intermediate]
+    audience: engineer
+    front: "Client state vs server state vs URL state"
+    back: "Client: UI-only (dropdown open). Server: backend-owned, cacheable, can go stale. URL: page/filter/sort, belongs in query params for shareability."
+    tags: [state]
+  - id: c-007
+    levels: [intermediate]
+    audience: engineer
+    front: "Why use a server-state library (TanStack Query, SWR) instead of useEffect + fetch?"
+    back: "Centralises caching, request de-duplication, retries and staleness handling instead of reproducing bugs per screen."
+    tags: [data-fetching]
+  - id: c-008
+    levels: [intermediate]
+    audience: engineer
+    front: "Most common cause of a UI that 'feels slow' when data is already loaded"
+    back: "Unnecessary re-renders, not network latency. Profile with React DevTools before assuming a rewrite is needed."
+    tags: [performance]
+  - id: c-009
+    levels: [intermediate]
+    audience: all
+    front: "Cheapest time to build in accessibility?"
+    back: "From the start. Retrofitting means restructuring markup other components already depend on — much more expensive than building it in."
+    tags: [accessibility]
+  - id: c-010
+    levels: [intermediate]
+    audience: manager
+    front: "Two process changes that most reduce frontend estimate slip"
+    back: "Require designs to specify loading/empty/error states, not just happy path; treat mid-build design changes as a re-estimate trigger, not absorbed scope."
+    tags: [estimation, management]
+  - id: c-011
+    levels: [rusty]
+    audience: engineer
+    front: "jQuery pattern → component-era equivalent"
+    back: "$('#el').text(x) (find + mutate) becomes setState(x) (change state, framework redraws). Direct DOM mutation inside a component gets overwritten on next render."
+    tags: [changed-since]
+  - id: c-012
+    levels: [rusty]
+    audience: all
+    front: "What changed in tooling since the jQuery era (roughly)?"
+    back: "npm/pnpm package management, bundlers (webpack, then Vite/esbuild since ~2021), TypeScript as default, server-state libraries replacing hand-rolled AJAX caching."
+    tags: [changed-since]
+  - id: c-013
+    levels: [rusty]
+    audience: manager
+    front: "Valid justification for rewriting a working jQuery app?"
+    back: "Team-scale maintainability, component reuse, typed contracts, hiring pool. 'It's old' alone is not a justification — it still works."
+    tags: [bank-context]
+  - id: c-014
+    levels: [beginner, intermediate, rusty]
+    audience: manager
+    front: "Review question for 'the UI is hard to change'"
+    back: "Which of HTML/CSS/JS is tangled with another? Inline styles set by JS, or CSS selectors encoding business logic, are both signs the split has broken down."
+    tags: [review]

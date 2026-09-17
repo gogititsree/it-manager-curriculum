@@ -1,0 +1,85 @@
+cards:
+  - id: c-001
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "TCO, one sentence"
+    back: "Every cost a system incurs over its useful life — build/licence, infrastructure, maintenance, integration, decommissioning — not just the purchase price."
+    tags: [tco]
+  - id: c-002
+    levels: [beginner, rusty]
+    audience: manager
+    front: "Run cost vs change cost"
+    back: "Run keeps existing systems operating; change builds new capability. They compete for the same budget — high run cost quietly starves change every year it exists."
+    tags: [run-vs-change]
+  - id: c-003
+    levels: [beginner, intermediate]
+    audience: manager
+    front: "Build-vs-buy: the quick heuristic"
+    back: "Commodity with a mature vendor market → buy. Core to competitive advantage → build. Compare full TCO on both sides, not sticker price."
+    tags: [build-vs-buy]
+  - id: c-004
+    levels: [beginner, intermediate]
+    audience: manager
+    front: "Question that surfaces hidden run cost"
+    back: "What's the annual run cost once this is live, and who's paying for it out of whose budget? If nobody can answer, the true cost is being hidden."
+    tags: [review]
+  - id: c-005
+    levels: [intermediate]
+    audience: engineer
+    front: "Unit economics formula"
+    back: "Total cost / units of value delivered (transactions, customers, orders). Compares services fairly regardless of absolute scale."
+    tags: [unit-economics]
+  - id: c-006
+    levels: [intermediate]
+    audience: manager
+    front: "FinOps: three phases"
+    back: "Inform (accurate cost visibility), Optimise (rightsizing, reserved capacity), Operate (cost as a continuous input to engineering decisions)."
+    tags: [finops]
+  - id: c-007
+    levels: [intermediate]
+    audience: manager
+    front: "Cost of delay, one sentence"
+    back: "The cost of waiting, per unit of time — turns 'we'll get to it next quarter' into a specific number you can rank against other priorities."
+    tags: [cost-of-delay]
+  - id: c-008
+    levels: [intermediate]
+    audience: manager
+    front: "The shape of a numeric 'no'"
+    back: "State the TCO or unit-cost figure and what would need to be wrong about it to change your answer — keeps the argument on evidence, not gut feel."
+    tags: [decision]
+  - id: c-009
+    levels: [intermediate, rusty]
+    audience: manager
+    front: "Biggest vendor negotiation mistake"
+    back: "Starting a renewal conversation with no comparable quote from an alternative vendor. Vendors price to your perceived alternatives, not your loyalty."
+    tags: [vendor-negotiation]
+  - id: c-010
+    levels: [beginner, intermediate]
+    audience: manager
+    front: "Vendor risk beyond price"
+    back: "Vendor concentration without a credible exit path can itself be a regulatory finding. Factor exit cost and time into any multi-year commitment."
+    tags: [bank-context]
+  - id: c-011
+    levels: [rusty]
+    audience: manager
+    front: "Capex to opex: the core shift"
+    back: "On-prem hardware was a large, predictable, once-a-year capex purchase. Cloud consumption pricing is ongoing, variable opex — needing monthly, not annual, cost scrutiny."
+    tags: [changed-since]
+  - id: c-012
+    levels: [rusty]
+    audience: manager
+    front: "FinOps Foundation: when formalised"
+    back: "2019, as part of the Linux Foundation — formalising the joint engineering/finance/business practice of managing variable cloud cost that used to be ad hoc."
+    tags: [changed-since]
+  - id: c-013
+    levels: [rusty]
+    audience: engineer
+    front: "AI/LLM cost gotcha"
+    back: "Token-based usage pricing scales with feature popularity, not a provisioned resource — budget it as a monitored, alerted range from day one, not a fixed annual number."
+    tags: [changed-since, ai-cost]
+  - id: c-014
+    levels: [rusty]
+    audience: manager
+    front: "FOCUS spec"
+    back: "FinOps Open Cost and Usage Specification (2023) — a standard billing data format across AWS, Azure, GCP so multi-cloud cost reporting doesn't need custom parsing per vendor."
+    tags: [changed-since]

@@ -1,0 +1,103 @@
+cards:
+  - id: c-001
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "Dependency injection, in one sentence"
+    back: "A class declares what it needs (usually via its constructor) and something else supplies it, rather than the class constructing its own dependencies."
+    tags: [dependency-injection]
+  - id: c-002
+    levels: [beginner]
+    audience: engineer
+    front: "What is a Spring 'bean'?"
+    back: "An object Spring constructed and manages inside the application context — found via classpath scanning (@Component) or declared with @Bean."
+    tags: [beans]
+  - id: c-003
+    levels: [beginner]
+    audience: engineer
+    front: "What does a 'starter' dependency do?"
+    back: "Pulls in a curated, version-aligned bundle of libraries for one concern, e.g. spring-boot-starter-web brings an embedded server, JSON support and MVC."
+    tags: [starters]
+  - id: c-004
+    levels: [beginner, intermediate]
+    audience: engineer
+    front: "What decides what auto-configuration creates?"
+    back: "Conditions on the classpath (@ConditionalOnClass) and whether you already defined a conflicting bean yourself (@ConditionalOnMissingBean)."
+    tags: [auto-configuration]
+  - id: c-005
+    levels: [beginner, intermediate]
+    audience: manager
+    front: "Field injection (@Autowired on a field) vs constructor injection: default choice?"
+    back: "Constructor injection. It makes dependencies explicit, testable without Spring, and surfaces circular dependencies at startup instead of hiding them."
+    tags: [dependency-injection, review]
+  - id: c-006
+    levels: [beginner]
+    audience: engineer
+    front: "How do you change configuration per environment without a rebuild?"
+    back: "Spring profiles: profile-specific blocks in application.yml, activated with spring.profiles.active or the SPRING_PROFILES_ACTIVE env var."
+    tags: [configuration]
+  - id: c-007
+    levels: [intermediate]
+    audience: engineer
+    front: "@Transactional self-invocation bug"
+    back: "Calling another @Transactional method on `this` from inside the same class bypasses the proxy; the annotation is silently ignored."
+    tags: [transactions, gotcha]
+  - id: c-008
+    levels: [intermediate]
+    audience: engineer
+    front: "Where should @Transactional go?"
+    back: "On service-layer methods representing a business operation, called from outside the class — not on controllers, not on individual repository methods."
+    tags: [transactions]
+  - id: c-009
+    levels: [intermediate]
+    audience: manager
+    front: "Test suite is mostly @SpringBootTest and slow: what does that usually mean?"
+    back: "Business logic is entangled with the framework. Most tests should need no Spring context at all; use @WebMvcTest / @DataJpaTest for the rest."
+    tags: [testing, review]
+  - id: c-010
+    levels: [intermediate]
+    audience: engineer
+    front: "@WebMvcTest vs @DataJpaTest vs @SpringBootTest"
+    back: "@WebMvcTest: controller only, service mocked. @DataJpaTest: repository against a real embedded DB. @SpringBootTest: full context, use sparingly."
+    tags: [testing]
+  - id: c-011
+    levels: [intermediate]
+    audience: manager
+    front: "Actuator exposure: what to check in review"
+    back: "management.endpoints.web.exposure.include should be an explicit allow-list, not '*', and sensitive endpoints should require authentication."
+    tags: [actuator, bank-context]
+  - id: c-012
+    levels: [rusty]
+    audience: all
+    front: "XML <bean> definitions: modern equivalent?"
+    back: "@Component (found by classpath scanning) for your own classes; @Bean methods in an @Configuration class for objects you construct yourself."
+    tags: [changed-since]
+  - id: c-013
+    levels: [rusty]
+    audience: all
+    front: "Spring Boot's headline change and year"
+    back: "Auto-configuration, starters and an embedded server, removing most hand-written XML wiring for infrastructure. Boot 1.0, 2014."
+    tags: [changed-since]
+  - id: c-014
+    levels: [rusty]
+    audience: engineer
+    front: "javax.* to jakarta.*: when and why"
+    back: "Spring Boot 3.0 (2022) followed the Jakarta EE renaming and requires Java 17+. Old javax.persistence/javax.servlet code will not compile against Boot 3."
+    tags: [changed-since]
+  - id: c-015
+    levels: [rusty]
+    audience: engineer
+    front: "WebSecurityConfigurerAdapter: what replaced it, and when"
+    back: "A @Bean returning a SecurityFilterChain, built with a lambda DSL. Deprecated in Spring Security 5.7 (2022), removed in 6.0."
+    tags: [changed-since, security]
+  - id: c-016
+    levels: [rusty]
+    audience: engineer
+    front: "Virtual threads in Spring Boot: what and when"
+    back: "spring.threads.virtual.enabled=true (Boot 3.2, 2023, needs Java 21) runs request handling on virtual threads, absorbing far more concurrent blocking I/O per instance."
+    tags: [changed-since]
+  - id: c-017
+    levels: [rusty]
+    audience: all
+    front: "WAR-on-shared-Tomcat vs Boot executable jar: the real tradeoff"
+    back: "Not just packaging — it shifts ops from a centrally patched shared container to per-instance/container process, log and patch management."
+    tags: [changed-since, bank-context]

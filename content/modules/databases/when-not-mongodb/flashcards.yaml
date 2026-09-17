@@ -1,0 +1,91 @@
+cards:
+  - id: c-001
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "$lookup vs a relational join: the real difference"
+    back: "Explicit, per-query, not automatically indexed like a foreign key, and enforces no referential integrity."
+    tags: [joins]
+  - id: c-002
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "Multi-document transactions: what's the catch?"
+    back: "They work (since 4.0, 2018) but cost more than a single-document write. Heavy, routine cross-document needs still argue against MongoDB."
+    tags: [transactions]
+  - id: c-003
+    levels: [beginner, intermediate]
+    audience: manager
+    front: "Ad-hoc BI reporting against MongoDB"
+    back: "The relational BI ecosystem generally doesn't talk to it natively. Budget for ETL into a reporting store, or a standing pipeline-writing function."
+    tags: [reporting]
+  - id: c-004
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "MongoDB audit trail: what you get by default"
+    back: "Nothing. Documents are mutable with no built-in immutable/temporal record. You must engineer an append-only history deliberately."
+    tags: [audit]
+  - id: c-005
+    levels: [intermediate, rusty]
+    audience: manager
+    front: "Schema drift with no owner"
+    back: "Inconsistent field names/types accumulate because no one reviews document shape changes. A governance gap, not a database defect — but MongoDB removes the forcing function a relational ALTER provides."
+    tags: [schema-drift]
+  - id: c-006
+    levels: [intermediate, rusty]
+    audience: manager
+    front: "The schema-drift tell to ask about"
+    back: "\"Who approves a new field being added to this collection, and is validation updated?\" No answer means drift is already happening."
+    tags: [schema-drift]
+  - id: c-007
+    levels: [intermediate, rusty]
+    audience: manager
+    front: "Operational maturity gap"
+    back: "Running MongoDB well (failover, backup, upgrades, index tuning under load) is its own skill set. A relational-only team is starting from different instincts, and the gap shows up first in an incident."
+    tags: [operations]
+  - id: c-008
+    levels: [intermediate, rusty]
+    audience: manager
+    front: "The five decision criteria"
+    back: "Transactional weight, join density, reporting/audit requirement, immutability requirement, team operational maturity — scored and weighted, not a veto checklist."
+    tags: [decision-framework]
+  - id: c-009
+    levels: [beginner, intermediate]
+    audience: manager
+    front: "Where MongoDB is a genuinely good fit"
+    back: "A read-heavy, document-shaped domain (customer profile, catalogue, content store) with low cross-document transaction needs and no strict immutability requirement."
+    tags: [good-fit]
+  - id: c-010
+    levels: [intermediate, rusty]
+    audience: manager
+    front: "Migration away: the usual biggest delay"
+    back: "Reconciling data quality problems and drifted shapes the flexible schema had been hiding — not the mechanical schema translation itself."
+    tags: [migration]
+  - id: c-011
+    levels: [intermediate]
+    audience: manager
+    front: "A real migration away: what it actually involves"
+    back: "Schema translation (unwinding embed patterns), data reconciliation, a dual-write or change-data-capture period, application code rework, and its own budget/timeline — not a database swap."
+    tags: [migration]
+  - id: c-012
+    levels: [rusty]
+    audience: all
+    front: "What narrowed the transactional argument, and what didn't"
+    back: "4.0 (2018) transactions narrowed the gap — the capability exists. The cost gap versus single-document writes did not close. Volume and consequence still decide it."
+    tags: [changed-since]
+  - id: c-013
+    levels: [rusty]
+    audience: engineer
+    front: "Change streams (3.6, 2017) and audit trails"
+    back: "Made building a deliberate audit log or feeding an immutable external store practically cheaper. Did not make immutability a built-in guarantee."
+    tags: [changed-since]
+  - id: c-014
+    levels: [beginner, intermediate, rusty]
+    audience: manager
+    front: "Re-evaluating a database decision"
+    back: "Fit at launch isn't guaranteed to hold years later — volume, transaction value and reporting obligations grow. Worth re-running the criteria periodically on live regulated systems."
+    tags: [bank-context]
+  - id: c-015
+    levels: [intermediate]
+    audience: manager
+    front: "\"Not a great fit anymore\" vs \"we should migrate\""
+    back: "Different conclusions with very different price tags. Revisiting fit may mean re-engineering within MongoDB (e.g. proper immutable records); migration is a much larger, separate decision."
+    tags: [decision-framework, migration]

@@ -1,0 +1,4 @@
+title: "Python Syntax Essentials"
+summary: "Types, collections, comprehensions, functions, and the idioms that make code 'pythonic' — plus, for the rusty reader, the Python 2 to 3 patch."
+prerequisites: []
+tags: [python, syntax, fundamentals]

@@ -1,0 +1,91 @@
+cards:
+  - id: c-001
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "What an index does"
+    back: "A sorted structure letting a query jump to matching documents instead of scanning the whole collection."
+    tags: [fundamentals]
+  - id: c-002
+    levels: [beginner, intermediate, rusty]
+    audience: engineer
+    front: "COLLSCAN vs IXSCAN"
+    back: "COLLSCAN: full collection scan, no usable index. IXSCAN: an index was used. Check with explain('executionStats')."
+    tags: [explain]
+  - id: c-003
+    levels: [beginner, intermediate]
+    audience: engineer
+    front: "explain() diagnostic signal"
+    back: "totalDocsExamined much larger than nReturned usually means a missing or wrong index."
+    tags: [explain]
+  - id: c-004
+    levels: [beginner, intermediate, rusty]
+    audience: manager
+    front: "The cost of an index"
+    back: "Speeds up matching reads, slows down every write to that collection. Should be justified by an actual query, not added by default."
+    tags: [tradeoffs]
+  - id: c-005
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "ESR rule"
+    back: "Compound index field order: Equality fields first, then Sort fields, then Range fields."
+    tags: [esr]
+  - id: c-006
+    levels: [intermediate, rusty]
+    audience: manager
+    front: "ESR ordered wrong: what happens"
+    back: "Query still returns correct results but falls back to an in-memory sort instead of using the index for ordering — slower, and memory-capped for large results."
+    tags: [esr, gotcha]
+  - id: c-007
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "Covered query"
+    back: "Every field the query needs (filter, sort, returned fields) exists in the index, so MongoDB never fetches the document. explain() shows totalDocsExamined: 0."
+    tags: [covered-queries]
+  - id: c-008
+    levels: [beginner, intermediate, rusty]
+    audience: manager
+    front: "Working set"
+    back: "The actively-used data + indexes. Performance falls off sharply, not gradually, once it no longer fits in RAM."
+    tags: [working-set]
+  - id: c-009
+    levels: [intermediate, rusty]
+    audience: manager
+    front: "Sharding: what it actually solves"
+    back: "Genuine dataset-size or write-throughput ceilings on a single server. Not a fix for a missing index or bad schema — check explain() first."
+    tags: [sharding]
+  - id: c-010
+    levels: [intermediate, rusty]
+    audience: manager
+    front: "Shard key: why it matters so much"
+    back: "Close to a permanent choice. Correcting a poor one later means reorganising the entire dataset — treat it like a one-way schema decision."
+    tags: [sharding, bank-context]
+  - id: c-011
+    levels: [rusty]
+    audience: engineer
+    front: "explain() tiers"
+    back: "queryPlanner (chosen plan only), executionStats (plan + actual counts — use this for diagnosis), allPlansExecution (every candidate plan considered)."
+    tags: [changed-since]
+  - id: c-012
+    levels: [rusty]
+    audience: engineer
+    front: "Hidden indexes (4.4, 2020)"
+    back: "hideIndex() removes an index from planner consideration without dropping it — test whether it's needed, reversibly."
+    tags: [changed-since]
+  - id: c-013
+    levels: [rusty]
+    audience: engineer
+    front: "Wildcard indexes (4.2, 2019)"
+    back: "{ \"$**\": 1 } indexes all fields without naming them — for unpredictable document shapes, not a substitute for a designed compound index on a known hot query."
+    tags: [changed-since]
+  - id: c-014
+    levels: [intermediate, rusty]
+    audience: engineer
+    front: "Total index size and sizing"
+    back: "Indexes must fit in memory too. Several large compound indexes can make total index size exceed document data size — plan capacity for both."
+    tags: [sizing]
+  - id: c-015
+    levels: [beginner]
+    audience: engineer
+    front: "_id index"
+    back: "Created automatically on every collection and cannot be dropped."
+    tags: [fundamentals]

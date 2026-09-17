@@ -1,0 +1,136 @@
+questions:
+  - id: q-001
+    levels: [beginner, rusty]
+    audience: all
+    type: single
+    prompt: "What is the main risk of rebuilding an artefact separately for each environment instead of promoting one build?"
+    options:
+      - "It is slower than rebuilding once"
+      - "You can no longer prove the exact thing that passed testing is what reached production"
+      - "It uses more storage in the artefact registry"
+      - "It prevents rollback"
+    answer: [1]
+    explanation: "A dependency or base image can change between builds, so a per-environment rebuild breaks the guarantee that tested code is what ships. Build once, promote the same artefact everywhere."
+    tags: [artefacts]
+
+  - id: q-002
+    levels: [beginner]
+    audience: engineer
+    type: single
+    prompt: "In a standard pipeline, what does the 'package' stage produce?"
+    options:
+      - "A list of failing tests"
+      - "One immutable, versioned artefact (image, JAR, binary)"
+      - "A deployment to production"
+      - "The pipeline's YAML definition"
+    answer: [1]
+    explanation: "Packaging turns tested source into a single versioned artefact that later stages deploy unchanged. Deployment and testing are separate stages."
+    tags: [pipeline-stages]
+
+  - id: q-003
+    levels: [beginner, intermediate]
+    audience: manager
+    type: single
+    prompt: "A team's pipeline has no clearly defined failure behaviour: sometimes it stops, sometimes it seems to continue. What should you ask first?"
+    options:
+      - "How many stages does the pipeline have?"
+      - "What happens when a stage fails, does the pipeline stop and leave the previous version running, and who is notified?"
+      - "How fast is the pipeline?"
+      - "Which cloud provider do they use?"
+    answer: [1]
+    explanation: "Undefined or inconsistent failure behaviour is a bigger risk than pipeline speed: it means a broken build could silently reach production. Clarify and enforce a stop-on-failure default first."
+    tags: [risk, review]
+
+  - id: q-004
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "A team defends long-lived GitFlow release branches for an internally-deployed service with good test coverage, citing 'stability'. What is the strongest counter-question?"
+    options:
+      - "Which git hosting provider do they use?"
+      - "What is their merge conflict rate and average branch age, and would trunk-based development with feature flags meet the same stability need with faster feedback?"
+      - "How many developers are on the team?"
+      - "Do they use tabs or spaces?"
+    answer: [1]
+    explanation: "GitFlow was designed for infrequent, versioned releases to external consumers. For an internally-deployed service with good coverage, long branches usually just delay feedback and increase merge risk without adding real stability."
+    tags: [branching, decision]
+
+  - id: q-005
+    levels: [intermediate, rusty]
+    audience: all
+    type: multi
+    prompt: "Which of these are among the four DORA metrics?"
+    options:
+      - "Deployment frequency"
+      - "Lines of code per developer"
+      - "Change failure rate"
+      - "Time to restore service"
+    answer: [0, 2, 3]
+    explanation: "The four DORA metrics are deployment frequency, lead time for changes, change failure rate, and time to restore service. Lines of code is not a DORA metric and is a poor productivity proxy generally."
+    tags: [dora, metrics]
+
+  - id: q-006
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "Which pattern best satisfies segregation of duties for production deployments?"
+    options:
+      - "A written policy stating developers should not deploy their own code"
+      - "A pipeline rule requiring approval from a separate group before a protected production environment will deploy, recorded automatically"
+      - "A weekly meeting where all changes are read aloud"
+      - "Trusting senior engineers to self-police"
+    answer: [1]
+    explanation: "A policy document or meeting is not enforced by anything; a pipeline rule (required reviewers on a protected environment) actually blocks the action and produces an automatic audit record."
+    tags: [bank-context, gates]
+
+  - id: q-007
+    levels: [rusty, intermediate]
+    audience: engineer
+    type: single
+    prompt: "In a GitOps model (Argo CD/Flux), how does a change typically reach production?"
+    options:
+      - "The CI pipeline runs kubectl apply directly against the production cluster using a stored credential"
+      - "A controller running in the target environment continuously reconciles running state against a git repository, so deployment is a git merge to that repo"
+      - "An engineer SSHes into the server and applies the change manually"
+      - "Production polls the CI server directly for new builds every night"
+    answer: [1]
+    explanation: "GitOps inverts the push model: a controller inside the environment pulls and reconciles state from a declarative git repository, so the pipeline's job is to update that repo (via a reviewed merge) rather than hold standing deploy credentials."
+    tags: [gitops, changed-since]
+
+  - id: q-008
+    levels: [rusty]
+    audience: all
+    type: truefalse
+    prompt: "GitOps generally reduces the need for long-lived cloud deployment credentials stored in the CI system."
+    options: ["True", "False"]
+    answer: [0]
+    explanation: "Because the reconciling controller lives in the target environment and pulls from git, the pipeline itself no longer needs standing production credentials, which is one of GitOps' main security benefits."
+    tags: [gitops, security]
+
+  - id: q-009
+    levels: [beginner, rusty]
+    audience: engineer
+    type: single
+    prompt: "Why is tagging a container image 'latest' and redeploying it considered risky?"
+    options:
+      - "latest images are always larger"
+      - "The tag is mutable, so you cannot be certain which exact build is running or was tested"
+      - "It is not supported by any registry"
+      - "It disables automated tests"
+    answer: [1]
+    explanation: "A mutable tag like latest can point to a different image over time. Pinning to an immutable tag or digest (e.g. the commit SHA) is what lets you prove which exact artefact is deployed."
+    tags: [artefacts, gotcha]
+
+  - id: q-010
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "A CAB (change advisory board) reviews every change, including trivial config tweaks, in a weekly meeting. What is the most likely consequence?"
+    options:
+      - "Change failure rate will drop sharply"
+      - "Review becomes a rubber stamp for most changes because there is no time to meaningfully assess forty items an hour, while genuinely risky changes get the same shallow review as trivial ones"
+      - "Deployment frequency will increase"
+      - "It removes the need for automated tests"
+    answer: [1]
+    explanation: "Reviewing every change at the same depth regardless of risk does not scale; it produces rubber-stamping rather than real scrutiny. Risk-based routing (automatic gates for low risk, human review reserved for high risk) is the pattern that actually works."
+    tags: [gates, bank-context]

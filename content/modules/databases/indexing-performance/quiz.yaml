@@ -1,0 +1,136 @@
+questions:
+  - id: q-001
+    levels: [beginner, rusty]
+    audience: all
+    type: single
+    prompt: "What does an index let MongoDB avoid doing?"
+    options:
+      - "Storing the data on disk"
+      - "Reading every document in the collection to find matches"
+      - "Enforcing a schema"
+      - "Replicating data across nodes"
+    answer: [1]
+    explanation: "An index is a sorted structure that lets a query jump to matching documents instead of scanning the whole collection (a collection scan)."
+    tags: [fundamentals]
+
+  - id: q-002
+    levels: [beginner]
+    audience: engineer
+    type: single
+    prompt: "In explain('executionStats') output, what does stage: COLLSCAN mean?"
+    options:
+      - "An index was used successfully"
+      - "The query examined every document because no usable index was found"
+      - "The query failed"
+      - "The collection is sharded"
+    answer: [1]
+    explanation: "COLLSCAN means a full collection scan. It is not automatically wrong — a query that legitimately needs most of the collection will still show it — but paired with a small nReturned relative to totalDocsExamined, it usually signals a missing index."
+    tags: [explain]
+
+  - id: q-003
+    levels: [beginner, intermediate]
+    audience: manager
+    type: single
+    prompt: "Why isn't adding an index always the right call?"
+    options:
+      - "Indexes are limited to one per collection"
+      - "Every index speeds up matching reads but slows down every write to that collection"
+      - "Indexes cannot be created on nested fields"
+      - "MongoDB does not support more than one index type"
+    answer: [1]
+    explanation: "Indexes cost write performance because they must be updated on every insert/update. An index should be justified by an actual query it serves, not added by default."
+    tags: [tradeoffs]
+
+  - id: q-004
+    levels: [intermediate, rusty]
+    audience: engineer
+    type: single
+    prompt: "For a query that filters by accountId (equality), status (equality), and sorts by postedAt, what is the ESR-ordered compound index?"
+    options:
+      - "{ postedAt: 1, accountId: 1, status: 1 }"
+      - "{ accountId: 1, status: 1, postedAt: 1 }"
+      - "{ status: 1, postedAt: 1, accountId: 1 }"
+      - "{ postedAt: 1, status: 1, accountId: 1 }"
+    answer: [1]
+    explanation: "ESR: Equality fields (accountId, status) first, then the Sort field (postedAt). There is no range field in this query."
+    tags: [esr]
+
+  - id: q-005
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "A compound index puts a range field before the sort field it should support. What actually happens?"
+    options:
+      - "The query fails with an error"
+      - "The query still returns correct results but falls back to an in-memory sort instead of using the index for ordering"
+      - "MongoDB automatically reorders the index"
+      - "The index is silently ignored entirely"
+    answer: [1]
+    explanation: "Wrong ESR order doesn't break correctness, but it prevents the index from serving the sort, forcing MongoDB to sort the narrowed result set in memory — slower, and capped by a memory limit for large result sets."
+    tags: [esr, gotcha]
+
+  - id: q-006
+    levels: [intermediate, rusty]
+    audience: engineer
+    type: truefalse
+    prompt: "A covered query still needs to fetch the full document from the collection after using the index."
+    options: ["True", "False"]
+    answer: [1]
+    explanation: "A covered query is answered entirely from the index — every filter, sort and returned field exists in the index — so MongoDB skips fetching the document. explain() shows totalDocsExamined: 0."
+    tags: [covered-queries]
+
+  - id: q-007
+    levels: [beginner, intermediate]
+    audience: manager
+    type: single
+    prompt: "A system was fast for a year and has recently become slow with no code changes. The most likely explanation covered in this topic is:"
+    options:
+      - "The database engine has a bug"
+      - "Data volume grew past the point where the working set fits in available memory"
+      - "MongoDB requires periodic restarts"
+      - "The index on _id expired"
+    answer: [1]
+    explanation: "Performance degrades sharply once the actively-used data and indexes (the working set) no longer fit in RAM, because reads start hitting disk instead of cache. This is a capacity question, not a code defect."
+    tags: [working-set]
+
+  - id: q-008
+    levels: [intermediate, rusty]
+    audience: manager
+    type: single
+    prompt: "A team proposes sharding a collection because reports are slow, before running explain() on the slow queries. What should happen first?"
+    options:
+      - "Approve sharding immediately since more infrastructure rarely hurts"
+      - "Diagnose with explain() first — sharding does not fix a missing or badly ordered index"
+      - "Reject sharding permanently for this collection"
+      - "Migrate to a relational database instead"
+    answer: [1]
+    explanation: "Sharding solves genuine size/throughput ceilings, not bad query plans. Diagnosing with explain() first, and fixing indexing or schema issues, is cheaper and often sufficient — sharding should be reached for only once those are ruled out."
+    tags: [sharding, review]
+
+  - id: q-009
+    levels: [rusty]
+    audience: engineer
+    type: single
+    prompt: "What does hiding an index (hideIndex()) let you do that dropping it does not?"
+    options:
+      - "Permanently delete the index to save space"
+      - "Test whether the index is actually needed, reversibly, without a drop-and-rebuild"
+      - "Make the index faster"
+      - "Convert it to a unique index"
+    answer: [1]
+    explanation: "hideIndex() removes an index from the query planner's consideration without deleting it, so you can check for regressions and reverse the change instantly — much cheaper than dropping and rebuilding a large index to find out if it was needed."
+    tags: [changed-since]
+
+  - id: q-010
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "Why is a shard key choice treated with the same rigour as a one-way schema decision?"
+    options:
+      - "Because MongoDB requires the shard key to match the primary key"
+      - "Because changing it later means reorganising the entire dataset, close to a migration"
+      - "Because it can only be an ObjectId"
+      - "Because it must be changed every six months"
+    answer: [1]
+    explanation: "The shard key determines how data is distributed across shards. Correcting a poor choice after the fact is a major, disruptive operation, not a configuration change — worth the same scrutiny as an irreversible schema decision."
+    tags: [sharding, bank-context]

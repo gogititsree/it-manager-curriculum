@@ -1,0 +1,4 @@
+title: "PostgreSQL Essentials"
+summary: "Pragmatic relational modelling, transactions and isolation levels, indexes and EXPLAIN, JSONB, partitioning, connection pooling and pgbouncer, extensions, and vacuum/bloat as the operational surprise every team eventually hits."
+prerequisites: []
+tags: [databases, postgres, sql, relational]

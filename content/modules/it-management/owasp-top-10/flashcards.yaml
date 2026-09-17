@@ -1,0 +1,85 @@
+cards:
+  - id: c-001
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "OWASP Top 10 2021: #1 category"
+    back: "Broken Access Control — the server trusts a client-supplied ID or role instead of independently checking permissions."
+    tags: [access-control]
+  - id: c-002
+    levels: [beginner, intermediate]
+    audience: engineer
+    front: "Injection fix, one line"
+    back: "Parameterised queries / bound parameters — input is always treated as data, never as code, regardless of content."
+    tags: [injection]
+  - id: c-003
+    levels: [beginner, intermediate]
+    audience: all
+    front: "Insecure Design (A04): what makes it different from other categories?"
+    back: "The flaw is in the intended behaviour, not a coding mistake — e.g. no rate limit on a password reset. It needs a redesign; no scanner or patch fixes it."
+    tags: [insecure-design]
+  - id: c-004
+    levels: [beginner]
+    audience: all
+    front: "SSRF in one sentence"
+    back: "Server-Side Request Forgery: tricking a server into making a request on the attacker's behalf, often to reach internal-only systems or cloud metadata endpoints."
+    tags: [ssrf]
+  - id: c-005
+    levels: [intermediate]
+    audience: engineer
+    front: "SAST vs DAST vs SCA: one line each"
+    back: "SAST scans source code (injection, hardcoded secrets). DAST attacks a running app (misconfig, missing headers). SCA checks dependencies against known CVEs."
+    tags: [tooling]
+  - id: c-006
+    levels: [intermediate]
+    audience: manager
+    front: "What none of SAST/DAST/SCA catch well"
+    back: "Business-logic and access-control flaws that depend on runtime context, and insecure-design flaws where the code does exactly what was specified. Penetration testing and threat modelling cover this gap."
+    tags: [tooling]
+  - id: c-007
+    levels: [intermediate]
+    audience: manager
+    front: "STRIDE, briefly"
+    back: "A threat-modelling framework: Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, Elevation of privilege — applied to each trust boundary in a design before code is written."
+    tags: [threat-modelling]
+  - id: c-008
+    levels: [intermediate, rusty]
+    audience: manager
+    front: "Why 'shift left' is more than a slogan"
+    back: "A flaw caught at design time costs a conversation. Caught in a pen test, it costs a redesign under deadline pressure. Caught after a breach, it costs an incident and a regulator call."
+    tags: [sdlc]
+  - id: c-009
+    levels: [rusty]
+    audience: all
+    front: "2017 to 2021: biggest ranking move"
+    back: "Broken Access Control jumped from #5 to #1. Injection dropped from #1 to #3."
+    tags: [changed-since]
+  - id: c-010
+    levels: [rusty]
+    audience: all
+    front: "2017 to 2021: what got folded together"
+    back: "XSS folded into Injection (A03). XXE folded into Security Misconfiguration (A05). Insecure Deserialization broadened into Software and Data Integrity Failures (A08)."
+    tags: [changed-since]
+  - id: c-011
+    levels: [rusty]
+    audience: all
+    front: "2017 to 2021: what's genuinely new"
+    back: "Insecure Design (A04) and Server-Side Request Forgery (A10) — both new top-level categories, not renames."
+    tags: [changed-since]
+  - id: c-012
+    levels: [beginner, intermediate, rusty]
+    audience: manager
+    front: "Review question for access control, any feature"
+    back: "If I change this ID in the request, does the server independently verify I'm allowed to see it, or does it just trust me?"
+    tags: [review]
+  - id: c-013
+    levels: [intermediate]
+    audience: manager
+    front: "First security tool to buy with zero coverage today"
+    back: "SCA (software composition analysis). Fastest to deploy, low false positives, and catches A06 (vulnerable/outdated components) — a common, cheap-to-prevent cause of real breaches."
+    tags: [decision]
+  - id: c-014
+    levels: [beginner]
+    audience: all
+    front: "A02 Cryptographic Failures: what to check"
+    back: "Is sensitive data encrypted at rest and in transit, with a current algorithm, and who holds the keys — not just 'is it encrypted, yes/no'."
+    tags: [crypto]

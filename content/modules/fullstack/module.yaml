@@ -1,0 +1,8 @@
+title: "Full Stack"
+tagline: "How the pieces of a web system fit"
+whyItMatters: "You will review designs that span browser to database. This module gives you the end-to-end map and the vocabulary at each hop."
+topics:
+  - frontend-basics
+  - rest-api-design
+  - auth-patterns
+  - deployment

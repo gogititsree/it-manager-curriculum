@@ -1,0 +1,136 @@
+questions:
+  - id: q-001
+    levels: [beginner, rusty]
+    audience: all
+    type: single
+    prompt: "What distinguishes a symptom alert from a cause alert?"
+    options:
+      - "Symptom alerts are always more severe than cause alerts"
+      - "A symptom alert fires on what the customer would notice (errors, timeouts); a cause alert fires on an internal condition (CPU, disk) that might or might not lead to customer impact"
+      - "Cause alerts are only used in development environments"
+      - "There is no real difference; the terms are interchangeable"
+    answer: [1]
+    explanation: "Symptom alerts directly answer whether the customer is affected and should be the default for paging. Cause alerts are useful as early warning for slow-building, predictable problems, not as the primary paging signal."
+    tags: [symptom-vs-cause]
+
+  - id: q-002
+    levels: [beginner]
+    audience: engineer
+    type: single
+    prompt: "An alert fires immediately on any single scrape where error_rate > 5%, with no duration requirement. The most likely consequence is:"
+    options:
+      - "It will be perfectly reliable since it catches every excursion"
+      - "It will fire on brief, self-resolving blips, training the on-call team to distrust or ignore it"
+      - "It will never fire falsely because 5% is a high threshold"
+      - "It requires no runbook since the condition is simple"
+    answer: [1]
+    explanation: "Without a sustained-duration requirement (a for: clause), a threshold alert fires on transient noise, which is the most common cause of alert fatigue."
+    tags: [alert-quality, gotcha]
+
+  - id: q-003
+    levels: [beginner, intermediate]
+    audience: manager
+    type: single
+    prompt: "Before approving a new alert that pages someone, the most useful question to ask is:"
+    options:
+      - "Does this alert use the newest monitoring tool?"
+      - "What does the responder do differently, right now, because this fired, that they would not do otherwise?"
+      - "How many other alerts already exist for this service?"
+      - "Is the alert's PromQL expression efficient?"
+    answer: [1]
+    explanation: "If there is no distinct action a page prompts, it should not page — at most it belongs on a dashboard. This question filters out alerts that exist only because a metric was available, not because it is actionable."
+    tags: [alert-quality]
+
+  - id: q-004
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    type: truefalse
+    prompt: "An SLO's target should generally be set from what customers actually require, sanity-checked against current performance, rather than simply set equal to whatever the service currently achieves."
+    options: ["True", "False"]
+    answer: [0]
+    explanation: "Setting an SLO equal to current performance bakes in no margin to detect real degradation and gives false confidence that the current level is acceptable rather than merely typical."
+    tags: [slo]
+
+  - id: q-005
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "An error budget for a 99.9% monthly SLO represents:"
+    options:
+      - "The amount of money allocated to fixing bugs that month"
+      - "The 0.1% of requests/time allowed to fail or breach the target before the SLO itself is breached, treated as a resource to deliberately spend on deploys and acceptable background failure"
+      - "The number of alerts allowed to fire per month"
+      - "A budget for on-call staffing costs"
+    answer: [1]
+    explanation: "The error budget is the gap between 100% and the SLO target, expressed as an allowance the team can spend, not an aspirational buffer to avoid touching."
+    tags: [error-budget]
+
+  - id: q-006
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "Why does burn-rate alerting typically use two time windows (short and long) rather than one?"
+    options:
+      - "To reduce the number of PromQL queries needed"
+      - "A short window alone pages on brief, self-resolving spikes; a long window alone is too slow to catch a genuinely fast, severe burn quickly. Requiring both catches real fast burns while filtering blips"
+      - "Prometheus requires at least two windows for any alert"
+      - "It halves the number of false positives by definition regardless of window choice"
+    answer: [1]
+    explanation: "The two-window pattern (e.g. Google SRE's multi-window approach) balances speed of detection for real incidents against noise suppression for transient spikes, which neither a single short nor single long window achieves alone."
+    tags: [burn-rate]
+
+  - id: q-007
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "A team proposes a blanket 99.99% SLO across all twelve of their services 'to be safe.' The main concern to raise is:"
+    options:
+      - "99.99% is always too strict and should never be used"
+      - "A uniform target either over-invests effort in low-impact services or creates false confidence that all twelve are equally critical, when they likely are not"
+      - "SLOs should never apply to more than one service at a time"
+      - "This will make the error budget too generous"
+    answer: [1]
+    explanation: "SLOs should be set per service based on actual customer/business impact. A blanket high target ignores that some of the twelve services likely matter far less than others, wasting effort or masking real prioritisation needs during an incident."
+    tags: [slo, review]
+
+  - id: q-008
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "Why is on-call attrition described as expensive beyond the obvious hiring cost?"
+    options:
+      - "It is not actually more expensive than normal attrition"
+      - "A departing on-call engineer typically takes institutional incident knowledge with them, which is exactly the knowledge that makes the next incident faster to resolve"
+      - "On-call engineers always have unique technical skills no one else has"
+      - "Replacing an on-call engineer requires a new pager device"
+    answer: [1]
+    explanation: "Beyond months of hiring and ramp-up time, losing incident-response knowledge specifically degrades the team's ability to resolve future incidents quickly, compounding the cost beyond a generic attrition case."
+    tags: [on-call-health, bank-context]
+
+  - id: q-009
+    levels: [rusty]
+    audience: all
+    type: single
+    prompt: "Compared to threshold-by-feel alerting, what did SLO and error-budget culture primarily add?"
+    options:
+      - "A requirement to use a specific commercial paging vendor"
+      - "A calculated, defensible basis for deciding what is urgent enough to page, tied to an explicit customer-facing target, instead of tuning numbers until the noise feels acceptable"
+      - "The elimination of the need for runbooks"
+      - "A guarantee that no alert will ever be noisy again"
+    answer: [1]
+    explanation: "SLOs and burn-rate alerting replace ad hoc threshold tuning with a number derived from an agreed customer-facing target, making the urgency of a page auditable rather than a matter of individual judgement."
+    tags: [changed-since]
+
+  - id: q-010
+    levels: [rusty, intermediate]
+    audience: engineer
+    type: single
+    prompt: "A team sets a fast-burn alert using only a single 5-minute window at roughly 14x the base error rate, with no longer-window check. The main risk is:"
+    options:
+      - "It will never fire"
+      - "It will fire on brief spikes that self-resolve within minutes, since a single short window cannot distinguish a real sustained fast burn from transient noise"
+      - "It will only fire once per month regardless of conditions"
+      - "It is functionally identical to a proper two-window burn-rate alert"
+    answer: [1]
+    explanation: "The long-window check exists specifically to confirm the elevated rate is sustained, not a blip. Dropping it reintroduces the noise problem burn-rate alerting was meant to solve."
+    tags: [burn-rate, gotcha]

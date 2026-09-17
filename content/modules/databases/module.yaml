@@ -1,0 +1,10 @@
+title: "MongoDB & Databases"
+tagline: "Choosing and running the right store"
+whyItMatters: "Data decisions are the hardest to reverse. This module covers MongoDB deeply, then widens to when you should reach for something else."
+topics:
+  - document-modeling
+  - aggregation-pipelines
+  - indexing-performance
+  - when-not-mongodb
+  - choosing-a-database
+  - postgres-essentials

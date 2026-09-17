@@ -1,0 +1,136 @@
+questions:
+  - id: q-001
+    levels: [beginner, rusty]
+    audience: all
+    type: single
+    prompt: "What does OpenTelemetry primarily standardise?"
+    options:
+      - "The dashboard and storage backend used to view telemetry"
+      - "The production and transport of telemetry data (API, SDK, protocol, collector), independent of the backend"
+      - "A single company's proprietary monitoring agent"
+      - "The pricing model observability vendors must use"
+    answer: [1]
+    explanation: "OTel deliberately does not provide storage, query, or dashboards — that remains the job of Prometheus, Grafana, or a vendor backend. It standardises how telemetry is produced and moved."
+    tags: [scope]
+
+  - id: q-002
+    levels: [beginner]
+    audience: engineer
+    type: single
+    prompt: "Which OpenTelemetry component is the one application code calls directly?"
+    options:
+      - "The Collector"
+      - "OTLP"
+      - "The API"
+      - "The backend"
+    answer: [2]
+    explanation: "The API is the stable interface application code depends on (start a span, record a metric). The SDK implements it, OTLP transports the result, and the collector is optional infrastructure in between."
+    tags: [api-sdk]
+
+  - id: q-003
+    levels: [beginner, intermediate]
+    audience: manager
+    type: single
+    prompt: "The main procurement argument for requiring OpenTelemetry-based instrumentation is:"
+    options:
+      - "It is free, unlike every commercial APM tool"
+      - "It decouples instrumentation from the backend vendor, turning a vendor choice into a reversible, later decision instead of one baked into application code"
+      - "It guarantees better performance than any proprietary agent"
+      - "It eliminates the need for a collector or any infrastructure"
+    answer: [1]
+    explanation: "The value is decoupling: switching or trialling a vendor becomes a routing/config change rather than a re-instrumentation project across every service."
+    tags: [vendor-neutrality]
+
+  - id: q-004
+    levels: [beginner, intermediate]
+    audience: engineer
+    type: single
+    prompt: "Context propagation across services is standardised via which mechanism?"
+    options:
+      - "A vendor-specific correlation ID header"
+      - "The W3C Trace Context specification, carried in the traceparent HTTP header"
+      - "Cookies set by the load balancer"
+      - "A shared database table of active trace IDs"
+    answer: [1]
+    explanation: "traceparent under W3C Trace Context is the open standard that lets services written by different teams, in different languages, propagate the same trace without agreeing on anything vendor-specific."
+    tags: [context-propagation]
+
+  - id: q-005
+    levels: [intermediate]
+    audience: engineer
+    type: multi
+    prompt: "Which of these are things an OpenTelemetry Collector can do that direct SDK-to-backend export cannot easily achieve?"
+    options:
+      - "Route the same telemetry to two backends at once (e.g. during a vendor pilot) without changing application code"
+      - "Strip PII attributes centrally before data leaves the organisation's infrastructure"
+      - "Replace the need for any instrumentation in application code"
+      - "Apply tail-based sampling using data from the whole fleet, not just one service"
+    answer: [0, 1, 3]
+    explanation: "The collector centralises routing, PII stripping and fleet-wide sampling decisions. It does not remove the need for services to be instrumented in the first place."
+    tags: [collector]
+
+  - id: q-006
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "A team claims 'we adopted OpenTelemetry so we are vendor-neutral,' but every service exports directly to one vendor's OTLP endpoint with no collector. What is the accurate assessment?"
+    options:
+      - "The claim is fully accurate; using the OTel API is sufficient"
+      - "Instrumentation code is vendor-neutral, but the deployment is not: switching vendors would still require reconfiguring every service individually, since there is no central routing point"
+      - "The claim is false; OTLP is itself a proprietary protocol"
+      - "It does not matter since OTel guarantees vendor neutrality regardless of topology"
+    answer: [1]
+    explanation: "Vendor-neutral instrumentation and a vendor-neutral deployment are two different things. Without a collector tier, every service still has to change individually to switch vendors, which undermines the practical benefit even though the instrumentation API itself is open."
+    tags: [vendor-neutrality, gotcha]
+
+  - id: q-007
+    levels: [intermediate]
+    audience: engineer
+    type: single
+    prompt: "For a request that crosses a Kafka topic between two services, what is required for the trace to remain a single trace rather than splitting into two?"
+    options:
+      - "Nothing; OTel propagates context across any transport automatically"
+      - "The producer must inject trace context into the message headers/envelope, and the consumer must extract it and continue the same trace, usually via a shared library"
+      - "Both services must run on the same host"
+      - "Kafka itself must be OTel-certified"
+    answer: [1]
+    explanation: "Automatic propagation works for synchronous calls (HTTP/gRPC) where both sides use standard instrumentation. Asynchronous transports like Kafka require deliberate code to carry context in the message, which is why a shared library matters."
+    tags: [context-propagation, async]
+
+  - id: q-008
+    levels: [intermediate]
+    audience: manager
+    type: single
+    prompt: "For a rollout across many teams, which sequencing is most likely to produce carefully-instrumented services rather than box-ticking under deadline pressure?"
+    options:
+      - "A single hard cutover date mandated for all teams simultaneously"
+      - "Platform team stands up collector infrastructure and shared libraries first, pilots with a couple of willing teams, mandates for new services immediately, then migrates existing services opportunistically prioritised by incident pain"
+      - "Wait for every team to request it individually with no central coordination"
+      - "Only instrument services after a major incident has already occurred there"
+    answer: [1]
+    explanation: "A phased rollout anchored to new-service-by-default plus opportunistic, priority-driven migration produces better instrumentation than a big-bang deadline, which tends to produce shallow, gap-ridden coverage built under time pressure."
+    tags: [adoption]
+
+  - id: q-009
+    levels: [rusty]
+    audience: all
+    type: single
+    prompt: "Compared to a proprietary APM agent from the vendor-agent era, the key structural change OpenTelemetry makes is:"
+    options:
+      - "It is always cheaper to run"
+      - "It separates instrumentation (open, vendor-neutral) from the backend (still a real product choice), where previously both were bundled into one vendor commitment"
+      - "It removes the need for any backend at all"
+      - "It only works with open-source backends"
+    answer: [1]
+    explanation: "OTel does not eliminate the need for a backend; it decouples the instrumentation layer from it, so the backend choice is no longer welded to the instrumentation code."
+    tags: [changed-since]
+
+  - id: q-010
+    levels: [rusty, intermediate]
+    audience: engineer
+    type: truefalse
+    prompt: "OpenTelemetry's metrics and logs support matured later than its tracing support, so a years-old assumption that 'OTel is tracing-only' should be re-checked against current status rather than assumed still true."
+    options: ["True", "False"]
+    answer: [0]
+    explanation: "Tracing stabilised first; metrics and then logs followed and have substantially matured in more recent versions across the officially supported languages. The maturity gap that existed a few years ago has largely closed."
+    tags: [changed-since]

@@ -1,0 +1,4 @@
+title: "When NOT to Use MongoDB"
+summary: "The honest limits: transactions, joins, ad-hoc reporting, regulatory audit trails, schema drift, and operational maturity — with real decision criteria for a bank."
+prerequisites: [databases/document-modeling]
+tags: [mongodb, architecture-decisions, risk, bank-context]

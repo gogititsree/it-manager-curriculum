@@ -1,0 +1,91 @@
+cards:
+  - id: c-001
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "Logs vs metrics vs traces: one question each"
+    back: "Logs: what exactly happened here? Metrics: how is the system behaving over time? Traces: where did the time go across services, for this one request?"
+    tags: [pillars]
+  - id: c-002
+    levels: [beginner, intermediate]
+    audience: all
+    front: "Structured logging, one sentence"
+    back: "Writing each log line as key-value fields (usually JSON) instead of a free-text sentence, so it can be indexed and queried like data."
+    tags: [structured-logging]
+  - id: c-003
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "Cardinality, plain definition"
+    back: "The number of distinct values a field can take. Low: HTTP method. Unbounded: user ID, email, trace ID."
+    tags: [cardinality]
+  - id: c-004
+    levels: [beginner, intermediate, rusty]
+    audience: manager
+    front: "Why cardinality quietly destroys budgets"
+    back: "A metrics store keeps one time series per unique label combination. A high-cardinality label (user ID) can multiply series count by millions, months before the cost shows up."
+    tags: [cardinality, cost]
+  - id: c-005
+    levels: [beginner, intermediate]
+    audience: engineer
+    front: "Rule for what belongs in a metric label"
+    back: "Only fields with a small, bounded set of values across all time. User IDs, emails, raw URLs and trace IDs go in logs or traces, never metric labels."
+    tags: [cardinality]
+  - id: c-006
+    levels: [beginner, intermediate]
+    audience: all
+    front: "Correlation ID, one sentence"
+    back: "One identifier generated at request entry, propagated to every downstream call and included in every log line, so one customer action can be followed across services."
+    tags: [correlation-id]
+  - id: c-007
+    levels: [intermediate]
+    audience: engineer
+    front: "Where correlation IDs most often break"
+    back: "At an async boundary — a message published to a queue — because someone must deliberately carry the ID into the message envelope; HTTP headers propagate more naturally."
+    tags: [correlation-id, gotcha]
+  - id: c-008
+    levels: [beginner, intermediate]
+    audience: engineer
+    front: "Tail-based sampling, one sentence"
+    back: "Decide whether to keep a trace after it finishes, keeping ~100% of errors/slow requests and only a sample of routine ones — so the interesting evidence is never randomly dropped."
+    tags: [sampling]
+  - id: c-009
+    levels: [intermediate]
+    audience: manager
+    front: "Three cost levers for observability, ranked by leverage"
+    back: "Metric cardinality (can be 10-100x), log verbosity/retention (linear but large), trace sampling rate (roughly proportional)."
+    tags: [cost]
+  - id: c-010
+    levels: [intermediate]
+    audience: manager
+    front: "Review question that catches most cardinality mistakes"
+    back: "\"For this label, list the possible values.\" If the answer is \"it depends on the request,\" it is not a metric label."
+    tags: [cardinality, review]
+  - id: c-011
+    levels: [rusty]
+    audience: all
+    front: "Monitoring vs observability, in one line"
+    back: "Monitoring watches for failure modes you predefined. Observability lets you ask new questions about internal state you did not anticipate, after the fact."
+    tags: [changed-since]
+  - id: c-012
+    levels: [rusty]
+    audience: all
+    front: "Nagios host-down check -> modern equivalent"
+    back: "Still valid but now one signal among thousands; the harder question moved from 'is this host up' to 'which of N services in this request's path is slow or failing,' which needs a trace, not a host check."
+    tags: [changed-since]
+  - id: c-013
+    levels: [beginner, intermediate, rusty]
+    audience: manager
+    front: "Retention: logs vs metrics vs traces, typical shape"
+    back: "Metrics: cheap, keep long (downsampled) for trends. Logs: retained per compliance/audit need for the data class. Traces: short-lived, aggressively sampled — operational value fades fast."
+    tags: [retention]
+  - id: c-014
+    levels: [beginner, intermediate]
+    audience: all
+    front: "PII in logs: the rule"
+    back: "Only fields on an explicit, agreed allow-list are logged unmasked. Agree this with data protection before shipping a logging standard, not after an audit finding."
+    tags: [bank-context]
+  - id: c-015
+    levels: [intermediate]
+    audience: manager
+    front: "Why a structured-logging standard needs a shared library, not just a document"
+    back: "A document is read once and drifts. A shared logging library that only accepts structured calls makes the compliant path the easy path."
+    tags: [standards]

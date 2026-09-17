@@ -1,0 +1,4 @@
+title: "Architecture Decision Frameworks"
+summary: "Lightweight, durable ways to make and record architecture decisions — ADRs, quality-attribute tradeoffs, and reversible-vs-one-way-door thinking."
+prerequisites: []
+tags: [architecture, decisions, governance, documentation]

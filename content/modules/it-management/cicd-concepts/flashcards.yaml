@@ -1,0 +1,73 @@
+cards:
+  - id: c-001
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "Build once, promote everywhere: why does it matter?"
+    back: "Rebuilding per environment risks a dependency changing between builds, so you can no longer prove what passed testing is what shipped. Build one artefact, deploy it unchanged everywhere."
+    tags: [artefacts]
+  - id: c-002
+    levels: [beginner]
+    audience: all
+    front: "Standard pipeline stages, in order"
+    back: "Build, test, package (artefact), deploy to test environment, deploy to production — each stage a pass/fail gate."
+    tags: [pipeline-stages]
+  - id: c-003
+    levels: [beginner, intermediate, rusty]
+    audience: manager
+    front: "Question that catches most pipeline risk"
+    back: "Is what's in production the same binary that passed our tests, or did something rebuild it along the way?"
+    tags: [review]
+  - id: c-004
+    levels: [intermediate]
+    audience: all
+    front: "Trunk-based development vs GitFlow: default for internal services?"
+    back: "Trunk-based, with feature flags for incomplete work. GitFlow's long branches suit infrequent, versioned external releases, which most internal services don't need."
+    tags: [branching]
+  - id: c-005
+    levels: [intermediate, rusty]
+    audience: manager
+    front: "Segregation of duties in a pipeline: how do you actually enforce it?"
+    back: "A pipeline rule — required reviewers on a protected production environment — not a policy document. Ask: would the pipeline actually stop an unapproved deploy?"
+    tags: [bank-context, gates]
+  - id: c-006
+    levels: [intermediate, rusty]
+    audience: all
+    front: "DORA's four metrics"
+    back: "Deployment frequency, lead time for changes, change failure rate, time to restore service. Read together — not just the one that flatters a team."
+    tags: [dora]
+  - id: c-007
+    levels: [rusty, intermediate]
+    audience: engineer
+    front: "GitOps in one sentence"
+    back: "A controller in the target environment (Argo CD, Flux) continuously reconciles running state against a git repo; deployment becomes a reviewed git merge, not a pipeline push with standing credentials."
+    tags: [gitops, changed-since]
+  - id: c-008
+    levels: [rusty]
+    audience: engineer
+    front: "Why avoid the 'latest' tag for deployed images?"
+    back: "It's mutable — you can't prove which exact build is running or was tested. Pin to an immutable tag or digest, e.g. the commit SHA."
+    tags: [gotcha]
+  - id: c-009
+    levels: [beginner, intermediate]
+    audience: manager
+    front: "Rollback: plan vs. reality"
+    back: "A rollback plan that's never been rehearsed isn't a rollback capability. It needs to be a tested, one-command action."
+    tags: [risk]
+  - id: c-010
+    levels: [intermediate]
+    audience: manager
+    front: "Why CAB review-everything meetings fail as a control"
+    back: "Reviewing every change at the same depth doesn't scale — it becomes a rubber stamp. Route by risk: automatic gates for low risk, human review reserved for genuinely risky changes."
+    tags: [bank-context, gates]
+  - id: c-011
+    levels: [rusty]
+    audience: engineer
+    front: "Policy-as-code: what changed?"
+    back: "Checklists a human read are increasingly enforced by tools (OPA/Conftest, AWS Config, Azure Policy) that fail the pipeline automatically on violation, with a logged pass/fail per change."
+    tags: [policy-as-code, changed-since]
+  - id: c-012
+    levels: [beginner, intermediate, rusty]
+    audience: all
+    front: "Continuous delivery vs continuous deployment"
+    back: "Delivery: every change that passes the pipeline is releasable on demand. Deployment: it's actually released automatically. Delivery keeps a human 'go' decision; deployment removes it."
+    tags: [definitions]
