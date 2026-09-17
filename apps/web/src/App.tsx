@@ -9,11 +9,15 @@
  *   /review/cards                  (inside ReviewPage) FlashcardRunner
  *   /settings                      SettingsPage   defaults, API token
  *
- * AuthGate wraps everything: with no token in localStorage the API answers 401 to every route, so
- * the app asks for the token once instead of rendering a page of failures.
+ * AuthGate wraps everything in SERVER mode: with no token in localStorage the API answers 401 to
+ * every route, so the app asks for the token once instead of rendering a page of failures. In static
+ * mode there is no server and no token, so the gate would be a locked door in front of an open room
+ * — it is skipped entirely.
  */
+import type { ReactNode } from 'react';
 import { Link, Route, Routes } from 'react-router-dom';
 import { AuthGate } from './components/AuthGate';
+import { isStaticMode } from './lib/api';
 import { Shell } from './components/Shell';
 import { Empty } from './components/ui';
 import { Dashboard } from './pages/Dashboard';
@@ -22,9 +26,14 @@ import { ReviewPage } from './pages/ReviewPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { TopicPage } from './pages/TopicPage';
 
+/** No token exists in static mode, so the gate is not rendered at all. */
+function Gate({ children }: { children: ReactNode }) {
+  return isStaticMode ? <>{children}</> : <AuthGate>{children}</AuthGate>;
+}
+
 export function App() {
   return (
-    <AuthGate>
+    <Gate>
       <Shell>
         <Routes>
           <Route path="/" element={<Dashboard />} />
@@ -35,7 +44,7 @@ export function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Shell>
-    </AuthGate>
+    </Gate>
   );
 }
 

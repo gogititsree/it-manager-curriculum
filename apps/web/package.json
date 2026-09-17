@@ -8,11 +8,13 @@
     "build": "tsc -p tsconfig.json --noEmit && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "echo \"no tests\""
+    "test": "echo \"no tests\"",
+    "build:static": "tsc -p tsconfig.json --noEmit && vite build --mode static"
   },
   "dependencies": {
     "@itmc/api-client": "workspace:*",
     "@itmc/core": "workspace:*",
+    "@itmc/local-client": "workspace:*",
     "@tanstack/react-query": "^5.59.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

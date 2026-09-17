@@ -48,6 +48,7 @@ Two kinds of data, deliberately separated:
 packages/core        zod schemas for content + API DTOs, ID helpers, progress maths, spaced repetition
 packages/db          Drizzle schema, migrations, openDb()
 packages/api-client  fetch-based typed client (browser, React Native, Node)
+packages/local-client browser-only client with the SAME surface: no server, state in a KeyValueStore
 tools/content-build  markdown/yaml -> bundle.json compiler + validator + topic scaffolder
 apps/api             Fastify: auth, content store, routes
 apps/web             React + Vite + TanStack Query + Tailwind
@@ -59,8 +60,9 @@ docs/                this folder
 Allowed imports (arrows point at what may be imported):
 
 ```
-apps/web    -> api-client, core
+apps/web    -> api-client, local-client, core
 apps/mobile -> api-client, core
+local-client -> core, api-client (TYPES ONLY)
 apps/api    -> db, core
 db          -> core
 api-client  -> core
@@ -69,7 +71,27 @@ content-build -> core
 ```
 
 Anything that violates this (e.g. web importing db, core importing fs) is a bug. `core` must contain
-no I/O so that mobile can run progress and SRS logic offline.
+no I/O so that mobile can run progress and SRS logic offline. `local-client` obeys the same rule one
+level up: no Node APIs, no `fs`, no `process`, and no direct `localStorage` — persistence arrives as
+an injected `KeyValueStore`, so the package is as portable as `core`.
+
+### Two modes: server and static (ADR-014)
+
+The web app is built twice from one source tree. `VITE_APP_MODE` decides which client
+`apps/web/src/lib/api.ts` exports as `api`; both satisfy `ApiClient`, so no page or hook changes.
+
+| | server (default) | static (`pnpm build:static`) |
+| --- | --- | --- |
+| Content | `GET /api/content/*` from the bundle the API loaded at boot | `bundle.json` fetched once from `${BASE_URL}content/bundle.json` |
+| State | SQLite via `apps/api` | `localStorage`, keys namespaced `itmc.v1.*` |
+| Auth | bearer token, `AuthGate` on first run | none; `AuthGate` is not rendered |
+| Backup | `scripts/backup.mjs` | export / import JSON on the settings page |
+| Base path | `/` | `VITE_BASE` (GitHub Pages serves from `/<repo>/`); the router gets a matching `basename` |
+| Deep links | Fastify SPA fallback | `404.html`, a copy of `index.html`, plus `.nojekyll` |
+
+Behaviour is mirrored, not reinvented: each route's header comment in `apps/api/src/routes/` is the
+spec that `packages/local-client/src/index.ts` implements a second time. When a route changes, both
+implementations change.
 
 ## 4. Content model
 

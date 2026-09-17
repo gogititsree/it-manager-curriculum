@@ -168,6 +168,32 @@ Minutes are an estimate from event types (rule in DATA-MODEL.md §4), shown as a
 
 **Consequences.** Slightly more writes; trivially rebuildable aggregates; a free audit trail.
 
+## ADR-014 Static mode: a second client, not a second app
+
+**Context.** The app should also be readable with no server at all — published to GitHub Pages, or
+opened from a folder — without forking the UI or duplicating the progress and spaced-repetition
+rules that `packages/core` already owns.
+
+**Decision.** Add `packages/local-client`: a browser-only implementation of the same method surface
+as `@itmc/api-client`, reusing `core` for every rule and persisting through an injected
+`KeyValueStore` port (the web app supplies a localStorage adapter). `apps/web/src/lib/api.ts` picks
+the client at build time from `VITE_APP_MODE`; everything downstream of it is unchanged. A
+compile-time assertion in `local-client` requires its return type to be assignable to `ApiClient`,
+so the two cannot drift silently.
+
+The package depends on `@itmc/api-client` for **types only**, which is why it throws its own
+`LocalClientError` rather than `ApiError`; `apps/web/src/lib/errors.ts` reads `status` off either.
+
+Static mode also means state lives only in one browser, so the local client adds two methods beyond
+the ApiClient surface — `exportState()` and `importState()` — surfaced on the settings page.
+
+**Consequences.** One UI, two transports. No page, hook or component knows which mode it is in, and
+the server build is byte-for-byte what it was (the unused client constant-folds away). The costs are
+honest ones: the compiled bundle ships to the browser, so quiz answers are present in it and are
+only withheld per session rather than truly secret; progress does not sync between devices; and
+every future route must be implemented twice — once in `apps/api`, once here — with the route's
+header comment as the shared spec.
+
 ## Considered and rejected
 
 - **Content in the database with an admin editor.** Unreviewable, no diffs, another UI to build.

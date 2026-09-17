@@ -1,0 +1,74 @@
+name: Deploy static build to GitHub Pages
+
+# Publishes on every push to main, so the hosted copy never drifts from the repository. The
+# self-hosted Windows server (docs/OPERATIONS.md) remains the primary deployment and keeps the
+# durable progress; this is the read-anywhere copy, where progress lives in the visitor's browser.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# One in-flight deployment at a time; a newer run supersedes a queued one but never cancels a
+# deployment already in progress.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # No `version:` — package.json's "packageManager" field is the single source of truth.
+      # See the comment in ci.yml.
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - uses: actions/configure-pages@v5
+        id: pages
+
+      # `base` has to match where Pages will serve this from. configure-pages resolves that for
+      # us (https://<owner>.github.io/<repo>/ for a project site, or / for a user site), so a fork
+      # under a different name needs no edit to apps/web/.env.static.
+      - name: Build the static site
+        env:
+          VITE_BASE: ${{ steps.pages.outputs.base_path }}
+        run: pnpm build:static
+
+      # Cheap insurance against the two failure modes that are invisible until someone opens the
+      # site: no curriculum to read, and every deep link 404ing for real.
+      - name: Check the output has what Pages needs
+        run: |
+          set -euo pipefail
+          test -f apps/web/dist/index.html
+          test -f apps/web/dist/404.html
+          test -f apps/web/dist/.nojekyll
+          test -s apps/web/dist/content/bundle.json
+          cmp apps/web/dist/index.html apps/web/dist/404.html
+          echo "static output is complete"
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/web/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

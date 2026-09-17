@@ -6,9 +6,10 @@
  * Copy rules (docs/ARCHITECTURE.md §8): errors say what happened and what to do, never apologise;
  * an empty screen is an invitation to act, not a mood.
  */
-import { ApiError } from '@itmc/api-client';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+import { isStaticMode } from '../lib/api';
+import { httpStatusOf } from '../lib/errors';
 
 // ---------------------------------------------------------------- surfaces
 
@@ -196,8 +197,9 @@ export function Empty({ title, children, action }: { title: string; children?: R
 }
 
 function describe(error: unknown): { title: string; detail: string; action?: ReactNode } {
-  if (error instanceof ApiError) {
-    if (error.status === 401)
+  const status = httpStatusOf(error);
+  if (status !== undefined) {
+    if (status === 401)
       return {
         title: 'The API rejected this token',
         detail: 'The token in this browser does not match AUTH_TOKEN on the server. Enter the current one to continue.',
@@ -207,14 +209,24 @@ function describe(error: unknown): { title: string; detail: string; action?: Rea
           </Link>
         ),
       };
-    if (error.status === 404)
-      return { title: 'Not found', detail: 'The server has no content under that id. It may have been renamed in a later build.' };
-    if (error.status === 501)
+    if (status === 404)
+      return { title: 'Not found', detail: 'There is no content under that id. It may have been renamed in a later build.' };
+    if (status === 501)
       return {
         title: 'This part of the API is not built yet',
         detail: 'The route answered 501. Reading lessons works; anything that records progress will start working once the server route lands.',
       };
-    return { title: `Request failed (${error.status})`, detail: error.message };
+    return {
+      title: `Request failed (${status})`,
+      detail: error instanceof Error ? error.message : 'The request did not succeed.',
+    };
+  }
+  if (isStaticMode) {
+    return {
+      title: 'The curriculum could not be loaded',
+      detail:
+        'This build reads its content from a file served next to the app. Reload the page; if it keeps failing the deployment is missing content/bundle.json.',
+    };
   }
   return {
     title: 'No answer from the API',

@@ -18,6 +18,8 @@ web client) against those contracts.
 | `tools/content-build` — compiler, validator, scaffolder | Complete. Supports `--only <module>` for parallel authoring |
 | `apps/api` — all routes, repositories, auth, static serving, config guard | Complete. 50 tests passing |
 | `apps/web` — all pages, lesson renderer, review runners, design system | Complete |
+| `packages/local-client` — browser-only client for static mode | Complete. 32 unit tests passing |
+| Static / GitHub Pages build (`pnpm build:static`) | Complete and verified in a real browser. See "Static mode" |
 | `content/` — 6 modules, 26 topics | Complete. 78 of 78 lessons `ready`, 282 quiz questions, 401 flashcards |
 | Production packaging — Docker, CI, service setup, backup, tokens | Complete and verified. See `docs/OPERATIONS.md` |
 | `apps/mobile` | Not started, by design. See "Future work" |
@@ -29,7 +31,7 @@ Run on Windows 11, Node 24, pnpm 11 on 2026-09-16. Every command below was execu
 | Check | Result |
 | --- | --- |
 | `pnpm -r typecheck` | Clean across all 7 workspace projects |
-| `pnpm -r test` | 55 passing (5 core, 50 API) |
+| `pnpm -r test` | 92 passing (5 core, 5 db, 50 API, 32 local-client) |
 | `pnpm content:validate` | 78 lessons, 282 questions, 401 flashcards, zero errors |
 | `pnpm build` | Packages, content bundle, API and web client all build |
 | `pnpm db:migrate` | Applies cleanly and is idempotent on re-run |
@@ -92,6 +94,36 @@ project directory, so `AUTH_TOKEN` there is what the container gets and the `${A
 in `docker-compose.yml` never fires. Put a real token in `.env` before `docker compose up`. If you
 forget, the container's own startup check refuses to run rather than coming up unprotected, which is
 the behaviour you want but looks like a crash loop until you read the logs.
+## Static mode (browser-only, GitHub Pages)
+
+The same app builds a second way, with **no server, no database and no token**. ADR-014 has the
+reasoning; `docs/ARCHITECTURE.md` §3 has the comparison table. The short version:
+
+```bash
+pnpm build:static          # packages -> content bundle -> web, in static mode
+# output: apps/web/dist with content/bundle.json, 404.html and .nojekyll
+```
+
+- `packages/local-client` reimplements the `@itmc/api-client` surface against `localStorage` and a
+  fetched `bundle.json`. It reuses `@itmc/core` for every rule; a compile-time assertion in
+  `src/index.ts` fails `pnpm -r typecheck` if the two surfaces ever drift.
+- `apps/web/src/lib/api.ts` is the ONLY file that chooses. No page or hook knows the mode exists.
+- `apps/web/.env.static` sets `VITE_APP_MODE=static` and `VITE_BASE=/it-manager-curriculum/`.
+  A fork under another name overrides it from the environment: `VITE_BASE=/my-fork/ pnpm build:static`.
+  For a user site (`<user>.github.io`) set it to `/`.
+- Deep links work through `404.html` (a copy of `index.html`), which is how GitHub Pages does SPA
+  fallback. The router is given a matching `basename`, or every link would resolve one level wrong.
+- **Progress lives in that browser only.** The settings page says so and offers a JSON download and
+  restore, which is the static-mode equivalent of `scripts/backup.mjs`. Restoring replaces, never
+  merges.
+- `.github/workflows/pages.yml` publishes it. It is `workflow_dispatch` only by design: uncomment the
+  `push` trigger if you want every commit to main to deploy.
+
+Two things to be honest about. The compiled bundle is public, so **quiz answers are in it** — the
+client withholds them per session, as the API does, but a determined reader can open the JSON.
+And `pnpm build:static` overwrites `apps/web/dist`, so run `pnpm build` again before `pnpm start`
+if you switch back to serving from the API.
+
 ## Architecture rules — still binding
 
 1. **Do not change** `packages/core/src/content.ts`, `packages/db/src/schema.ts`, or the directive

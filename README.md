@@ -30,6 +30,23 @@ Generate a strong token instead of using the default:
 node scripts/new-token.mjs "laptop"
 ```
 
+## Read it without a server
+
+The same app also builds as a plain static site — no API, no database, no token — for GitHub Pages
+or any file host:
+
+```bash
+pnpm build:static             # apps/web/dist, ready to publish
+```
+
+Progress then lives in that browser's `localStorage` instead of SQLite, and the settings page gains
+a download / restore pair so it can be backed up and moved. Set `VITE_BASE` to wherever the site is
+served from (`apps/web/.env.static` defaults to `/it-manager-curriculum/`); `.github/workflows/pages.yml`
+does this for you and is run manually. Details in [HANDOFF.md](HANDOFF.md) and ADR-014.
+
+Note that a static deployment ships the compiled curriculum to the browser, so the quiz answers are
+in it. The client still withholds them until you answer, but they are not secret.
+
 ## How it works
 
 Content is **markdown and YAML in this repo**, compiled at build time into a single JSON bundle the
@@ -52,6 +69,7 @@ apps/mobile         Placeholder for a future Expo client (shares core + api-clie
 packages/core       Platform-agnostic domain: content schemas, progress maths, spaced repetition.
 packages/db         Drizzle schema + migrations.
 packages/api-client Typed client used by web now and mobile later.
+packages/local-client Same surface, no server: content from a JSON file, state in localStorage.
 tools/content-build Compiles content/ into the JSON bundle the API serves.
 content/            The curriculum itself.
 scripts/            Token management, backup.
@@ -76,6 +94,7 @@ docs/               Architecture, data model, design decisions, authoring guide,
 | --- | --- |
 | `pnpm dev` | API + web with hot reload |
 | `pnpm build` | Everything, production output |
+| `pnpm build:static` | Browser-only build for GitHub Pages (overwrites `apps/web/dist`) |
 | `pnpm start` | Run the built API (serves the UI too) |
 | `pnpm verify` | Typecheck, validate content, run tests |
 | `pnpm content:validate` | Schema-check every lesson, quiz and flashcard |
